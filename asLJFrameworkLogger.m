@@ -20,13 +20,15 @@ static BOOL verboseLogging = NO;
 
 +(void)log:(NSString*)format, ...
 {
-	va_list ap;
-	NSString *print;
-	va_start(ap,format);
-	print=[[NSString alloc] initWithFormat:format arguments:ap];
-	va_end(ap);
-	NSLog(@"%@",print);
-	[print release];
+	if (verboseLogging) {
+		va_list ap;
+		NSString *print;
+		va_start(ap,format);
+		print=[[NSString alloc] initWithFormat:format arguments:ap];
+		va_end(ap);
+		NSLog(@"%@",print);
+		[print release];
+	}
 }
 
 @end
