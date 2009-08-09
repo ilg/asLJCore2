@@ -40,33 +40,26 @@
 
 - (NSArray *)getKeysByLabel:(NSString *)theLabel
 {
-/*	KeychainSearch *theSearch = [KeychainSearch keychainSearchWithKeychains:NULL];
-	KeychainItem *aKey;
-	NSMutableArray *theResults = [NSMutableArray arrayWithCapacity:0];
-	[theSearch setLabel:theLabel];
-	for (aKey in [theSearch internetSearchResults]) {
-		[theResults addObject:[NSString stringWithFormat:@"%@@%@",[aKey account],[aKey server]]];
-	}
-	return theResults;
- */
 	NSMutableArray *theResults = [NSMutableArray arrayWithCapacity:1];
 	
-	// construct the search attribute list--searching for keys with name asLJ_login
-	char label[strlen([theLabel UTF8String])];
-	strcpy(label, [theLabel UTF8String]);
-	SecKeychainAttributeList attrList;
-	SecKeychainAttribute attrib;
-	attrList.count = 1;
-	attrib.tag = kSecLabelItemAttr;
-	attrib.data = label;
-	attrib.length = strlen(attrib.data);
-	attrList.attr  = &attrib;
+	// construct the search attribute list
+ 	struct SecKeychainAttribute searchAttrs[] = {
+ 		{
+ 			.tag    = kSecLabelItemAttr,
+ 			.length = [theLabel length],
+ 			.data   = (void *)[theLabel UTF8String],
+ 		}
+ 	};
+ 	struct SecKeychainAttributeList searchAttrList = {
+ 		.count = 1,
+ 		.attr  = searchAttrs,
+ 	};	
 	
 	OSStatus status;
 	SecKeychainSearchRef searchRef = nil;
 	status = SecKeychainSearchCreateFromAttributes(NULL,	// default keychain
 												   kSecInternetPasswordItemClass, // internet key
-												   &attrList, // attribute list constructed above
+												   &searchAttrList, // attribute list constructed above
 												   &searchRef);  // the returned search reference
 	
 	if (status == noErr) {
@@ -102,6 +95,8 @@
 												  length:attrList->attr[1].length
 												encoding:NSUTF8StringEncoding];
 				[theResults addObject:[NSString stringWithFormat:@"%@@%@",account,server]];
+				[account release];
+				[server release];
 			} else {
 //				NSLog(@"Error extracting infomation from keychain item");
 			}
@@ -129,10 +124,76 @@
 					 withAccount:(NSString *)theAccount
 					  withServer:(NSString *)theServer
 {
-	KeychainItem *aKey = [self getKeychainItemByLabel:theLabel 
-										  withAccount:theAccount 
-										   withServer:theServer];
-	return [aKey dataAsString];
+	NSString *theResult = nil;
+	
+	// construct the search attribute list
+ 	struct SecKeychainAttribute searchAttrs[] = {
+ 		{
+ 			.tag    = kSecLabelItemAttr,
+ 			.length = [theLabel length],
+ 			.data   = (void *)[theLabel UTF8String],
+ 		},
+ 		{
+ 			.tag    = kSecServerItemAttr,
+ 			.length = [theServer length],
+ 			.data   = (void *)[theServer UTF8String],
+ 		},
+ 		{
+ 			.tag    = kSecAccountItemAttr,
+ 			.length = [theAccount length],
+ 			.data   = (void *)[theAccount UTF8String],
+ 		}
+ 	};
+ 	struct SecKeychainAttributeList searchAttrList = {
+ 		.count = 3,
+ 		.attr  = searchAttrs,
+ 	};	
+	
+	OSStatus status;
+	SecKeychainSearchRef searchRef = nil;
+	status = SecKeychainSearchCreateFromAttributes(NULL,	// default keychain
+												   kSecInternetPasswordItemClass, // internet key
+												   &searchAttrList, // attribute list constructed above
+												   &searchRef);  // the returned search reference
+	
+	if (status == noErr) {
+		SecKeychainItemRef itemRef = nil;
+		status = SecKeychainSearchCopyNext(searchRef, &itemRef);
+		if (status == noErr) {
+			//Output storage.
+			struct SecKeychainAttributeList *attrList = NULL;
+			UInt32 passwordLength = 0U;
+			void  *passwordBytes = NULL;
+			
+			//First, grab the username.
+			UInt32    tags[] = {  };
+			UInt32 formats[] = {  };
+			struct SecKeychainAttributeInfo info = {
+				.count  = 0,
+				.tag    = tags,
+				.format = formats,
+			};
+			status = SecKeychainItemCopyAttributesAndData(itemRef,
+														  &info,
+														  /*itemClass*/ NULL,
+														  &attrList,
+														  &passwordLength,
+														  &passwordBytes);
+			if (status == noErr) {
+				theResult = [[[NSString alloc] initWithBytes:passwordBytes
+													  length:passwordLength
+													encoding:NSUTF8StringEncoding]
+							 autorelease];
+			} else {
+				//				NSLog(@"Error extracting infomation from keychain item");
+			}
+			
+			SecKeychainItemFreeAttributesAndData(attrList, passwordBytes);
+			if (itemRef) CFRelease(itemRef);
+		}
+	}
+	if (searchRef) CFRelease(searchRef);
+	return theResult;
 }
 
 - (void)makeNewInternetKeyWithLabel:(NSString *)theLabel
