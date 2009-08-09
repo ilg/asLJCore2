@@ -1,10 +1,14 @@
-/*
- *  asLJFramework.h
- *  asLJFramework
- *
- *  Created by Isaac Greenspan on 8/8/09.
- *
- */
+//
+//  asLJFramework.h
+//  asLJFramework
+//
+//  Created by Isaac Greenspan on 7/17/09.
+//
+
+
+
+// This is, to the best of my knowledge, a 2-clause "Simplified" BSD license.
+// This license applies to asLJFramework as a whole.
 
 /*** BEGIN LICENSE TEXT ***
  
@@ -33,7 +37,92 @@
  
  *** END LICENSE TEXT ***/
 
+
+
+
+#import <Cocoa/Cocoa.h>
+
 #import "LJEntry.h"
-#import "LJInterface.h"
-#import "LJMoods.h"
 #import "LJErrors.h"
+
+
+
+@interface asLJFramework : NSObject {
+
+}
+
+#pragma mark -
+#pragma mark initialization/confifguration
+
+// set the name under which account keychain items are stored
++ (void)setKeychainItemName:(NSString *)theName;
+
+// set the version string reported to the LJ-type site
++ (void)setClientVersion:(NSString *)theVersion;
+
+// enable/disable verbose logging
++ (void)setVerboseLogging:(BOOL)verbose;
+
+
+#pragma mark -
+#pragma mark account-handling
+
++ (NSArray *)allAccounts;
+
++ (void)addAccountOnServer:(NSString *)server
+			  withUsername:(NSString *)username
+			  withPassword:(NSString *)password;
+
++ (void)deleteAccount:(NSString *)account;
+
++ (void)editAccount:(NSString *)account
+		  setServer:(NSString *)server
+		setUsername:(NSString *)username
+		setPassword:(NSString *)password;
+
+
+#pragma mark -
+#pragma mark server interaction
+
++ (NSDictionary *)loginTo:(NSString *)account
+					error:(NSError **)anError;
++ (NSDictionary *)loginTo:(NSString *)account;
+
++ (NSDictionary *)getDayCountsFor:(NSString *)account
+					  withJournal:(NSString *)journal
+							error:(NSError **)anError;
++ (NSDictionary *)getDayCountsFor:(NSString *)account
+					  withJournal:(NSString *)journal;
+
++ (NSDictionary *)getEntriesFor:(NSString *)account
+					withJournal:(NSString *)journal
+						 onDate:(NSCalendarDate *)date
+						  error:(NSError **)anError;
++ (NSDictionary *)getEntriesFor:(NSString *)account
+					withJournal:(NSString *)journal
+						 onDate:(NSCalendarDate *)date;
+
++ (NSArray *)getTagsFor:(NSString *)account
+			withJournal:(NSString *)journal
+				  error:(NSError **)anError;
++ (NSArray *)getTagsFor:(NSString *)account
+			withJournal:(NSString *)journal;
+
++ (BOOL)deleteEntryFor:(NSString *)account
+		   withJournal:(NSString *)journal
+			withItemID:(NSString *)itemid
+				 error:(NSError **)anError;
++ (void)deleteEntryFor:(NSString *)account
+		   withJournal:(NSString *)journal
+			withItemID:(NSString *)itemid;
+
+
+#pragma mark -
+#pragma mark moods
+
++ (NSArray *)getMoodStringsForServer:(NSString *)theServer;
++ (NSString *)getMoodIDForString:(NSString *)theMood
+					  withServer:(NSString *)theServer;
+
+
+@end

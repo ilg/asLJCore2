@@ -1,5 +1,5 @@
 //
-//  LJInterface.m
+//  asLJFramework.m
 //  asLJFramework
 //
 //  Created by Isaac Greenspan on 7/17/09.
@@ -32,12 +32,12 @@
  
  *** END LICENSE TEXT ***/
 
-#import "LJInterface.h"
+#import "asLJFramework.h"
 #import "LJxmlrpc.h"
 #import "LJMoods.h"
 #import "KeychainStuff.h"
 
-@implementation LJInterface
+@implementation asLJFramework
 
 #pragma mark -
 #pragma mark initialization/confifguration
@@ -186,7 +186,7 @@ static NSString *keychainItemName;
 
 + (NSDictionary *)loginTo:(NSString *)account
 {
-	return [LJInterface loginTo:account error:NULL];
+	return [self loginTo:account error:NULL];
 }
 
 + (NSDictionary *)getDayCountsFor:(NSString *)account
@@ -224,7 +224,7 @@ static NSString *keychainItemName;
 + (NSDictionary *)getDayCountsFor:(NSString *)account
 					  withJournal:(NSString *)journal
 {
-	return [LJInterface getDayCountsFor:account withJournal:journal error:NULL];
+	return [self getDayCountsFor:account withJournal:journal error:NULL];
 }
 
 + (NSDictionary *)getEntriesFor:(NSString *)account
@@ -279,7 +279,7 @@ static NSString *keychainItemName;
 					withJournal:(NSString *)journal
 						 onDate:(NSCalendarDate *)date
 {
-	return [LJInterface getEntriesFor:account withJournal:journal onDate:date error:NULL];
+	return [self getEntriesFor:account withJournal:journal onDate:date error:NULL];
 }
 
 + (NSArray *)getTagsFor:(NSString *)account
@@ -316,7 +316,7 @@ static NSString *keychainItemName;
 + (NSArray *)getTagsFor:(NSString *)account
 			withJournal:(NSString *)journal
 {
-	return [LJInterface getTagsFor:account withJournal:journal error:NULL];
+	return [self getTagsFor:account withJournal:journal error:NULL];
 }
 
 + (BOOL)deleteEntryFor:(NSString *)account
@@ -354,7 +354,7 @@ static NSString *keychainItemName;
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid
 {
-	[LJInterface deleteEntryFor:account withJournal:journal withItemID:itemid error:NULL];
+	[self deleteEntryFor:account withJournal:journal withItemID:itemid error:NULL];
 }
 
 
