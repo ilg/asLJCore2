@@ -33,7 +33,6 @@
  *** END LICENSE TEXT ***/
 
 #import <Cocoa/Cocoa.h>
-#import <Keychain/Keychain.h>
 
 
 @interface KeychainStuff :  NSObject 

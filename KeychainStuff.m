@@ -33,8 +33,6 @@
  *** END LICENSE TEXT ***/
 
 #import "KeychainStuff.h"
-#import <Keychain/Keychain.h>
-#import <Keychain/KeychainSearch.h>
 
 @implementation KeychainStuff
 
@@ -205,18 +203,35 @@
 						 withServer:(NSString *)theServer
 					   withPassword:(NSString *)thePassword
 {
-	Keychain *theKeychain = [Keychain defaultKeychain];
-	KeychainItem *theItem =	[theKeychain addInternetPassword:thePassword 
-													onServer:theServer 
-												  forAccount:theAccount
-														port:0
-														path:nil
-											inSecurityDomain:nil
-													protocol:kSecProtocolTypeAny
-														auth:kSecAuthenticationTypeDefault
-											 replaceExisting:YES];
-	[theItem setLabel:theLabel];
+	struct SecKeychainAttribute newAttrs[] = {
+		{
+			.tag    = kSecLabelItemAttr,
+			.length = [theLabel length],
+			.data   = (void *)[theLabel UTF8String],
+		},
+		{
+			.tag    = kSecServerItemAttr,
+			.length = [theServer length],
+			.data   = (void *)[theServer UTF8String],
+		},
+		{
+			.tag    = kSecAccountItemAttr,
+			.length = [theAccount length],
+			.data   = (void *)[theAccount UTF8String],
+		}
+	};
+	struct SecKeychainAttributeList newAttrList = {
+		.count = 3,
+		.attr  = newAttrs,
+	};
 	
+	SecKeychainItemCreateFromContent(kSecInternetPasswordItemClass,
+									 &newAttrList,
+									 [thePassword length],
+									 [thePassword UTF8String],
+									 NULL, // default keychain
+									 NULL, // default access--the app creating it
+									 NULL);
 }
 
 - (void)deleteKeychainItemByLabel:(NSString *)theLabel
