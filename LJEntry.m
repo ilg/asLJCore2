@@ -164,6 +164,7 @@
 		[self setServer:theServer];
 		
 		// do the LJ call to load the entry and set the rest of the properties
+		NSError *myError;
 		LJxmlrpc *theLJCall = [[LJxmlrpc alloc] init];
 		if (![theLJCall call:@"getevents"
 				  withParams:[NSDictionary dictionaryWithObjectsAndKeys: // (value, key); end with nil
@@ -175,14 +176,15 @@
 							  ]
 					   atURL:SERVER2URL(server)
 					 forUser:account
-					   error:anError]) {
+					   error:&myError]) {
 			// call failed
 			[theLJCall release];
 			isFault = TRUE;
-			faultString = [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey];
-			faultCode = [NSNumber numberWithInteger:[*anError code]];
+			faultString = [[myError userInfo] objectForKey:NSLocalizedDescriptionKey];
+			faultCode = [NSNumber numberWithInteger:[myError code]];
 			VLOG(@"Fault (%@): %@", faultCode, faultString);
 			self = nil;
+			if (anError != NULL) *anError = [[myError copy] autorelease];
 			return nil;
 		} else {
 			// call succeded
@@ -224,6 +226,7 @@
 	// do the LJ call to save the entry, return TRUE for success, FALSE for failure
 	LJxmlrpc *theLJCall = [[LJxmlrpc alloc] init];
 	
+	NSError *myError;
 	NSMutableDictionary *theParams = [NSMutableDictionary dictionaryWithDictionary:[self getEntryAsDictionary]];
 	[theParams setObject:@"mac" forKey:@"lineendings"];
 	[theParams setObject:itemid forKey:@"itemid"];
@@ -231,13 +234,14 @@
 			  withParams:theParams
 				   atURL:SERVER2URL(server)
 				 forUser:account
-				   error:anError]) {
+				   error:&myError]) {
 		// call failed
 		[theLJCall release];
 		isFault = TRUE;
-		faultString = [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey];
-		faultCode = [NSNumber numberWithInteger:[*anError code]];
+		faultString = [[myError userInfo] objectForKey:NSLocalizedDescriptionKey];
+		faultCode = [NSNumber numberWithInteger:[myError code]];
 		VLOG(@"Fault (%@): %@", faultCode, faultString);
+		if (anError != NULL) *anError = [[myError copy] autorelease];
 		return FALSE;
 	} else {
 		// call succeded
@@ -263,19 +267,21 @@
 	// do the LJ call to post the entry, return TRUE for success, FALSE for failure
 	LJxmlrpc *theLJCall = [[LJxmlrpc alloc] init];
 	
+	NSError *myError;
 	NSMutableDictionary *theParams = [NSMutableDictionary dictionaryWithDictionary:[self getEntryAsDictionary]];
 	[theParams setObject:@"mac" forKey:@"lineendings"];
 	if (![theLJCall call:@"postevent"
 			  withParams:theParams
 				   atURL:SERVER2URL(server)
 				 forUser:account
-				   error:anError]) {
+				   error:&myError]) {
 		// call failed
 		[theLJCall release];
 		isFault = TRUE;
-		faultString = [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey];
-		faultCode = [NSNumber numberWithInteger:[*anError code]];
+		faultString = [[myError userInfo] objectForKey:NSLocalizedDescriptionKey];
+		faultCode = [NSNumber numberWithInteger:[myError code]];
 		VLOG(@"Fault (%@): %@", faultCode, faultString);
+		if (anError != NULL) *anError = [[myError copy] autorelease];
 		return FALSE;
 	} else {
 		// call succeded

@@ -134,6 +134,7 @@ static NSString *keychainItemName;
 	NSDictionary *theResult;
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	LJxmlrpc *loginCall = [[LJxmlrpc alloc] init];
+	NSError *myError;
 	if (![loginCall call:@"login"
 			  withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
 						  @"1",@"getpickws",
@@ -142,10 +143,11 @@ static NSString *keychainItemName;
 						  nil]
 				   atURL:SERVER2URL([accountInfo objectForKey:@"server"])
 				 forUser:[accountInfo objectForKey:@"username"]
-				   error:anError]) {
+				   error:&myError]) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
+		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
 		VLOG(@"... logged in.");
@@ -177,6 +179,7 @@ static NSString *keychainItemName;
 							error:(NSError **)anError
 {
 	NSDictionary *theResult;
+	NSError *myError;
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
 	if (![theCall call:@"getdaycounts"
@@ -185,10 +188,11 @@ static NSString *keychainItemName;
 						nil]
 				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
 			   forUser:[accountInfo objectForKey:@"username"]
-				 error:anError]) {
+				 error:&myError]) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
+		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
 		NSArray *dayCountArray = [theCall objectForKey:@"daycounts"];
@@ -216,6 +220,7 @@ static NSString *keychainItemName;
 						  error:(NSError **)anError
 {
 	NSDictionary *theResult;
+	NSError *myError;
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
 	if (![theCall call:@"getevents"
@@ -232,10 +237,11 @@ static NSString *keychainItemName;
 						nil]
 				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
 			   forUser:[accountInfo objectForKey:@"username"]
-				 error:anError]) {
+				 error:&myError]) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
+		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
 		NSArray *eventArray = [theCall objectForKey:@"events"];
@@ -270,6 +276,7 @@ static NSString *keychainItemName;
 				  error:(NSError **)anError
 {
 	NSArray *theResult;
+	NSError *myError;
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
 	if (![theCall call:@"getusertags"
@@ -278,10 +285,11 @@ static NSString *keychainItemName;
 						nil]
 				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
 			   forUser:[accountInfo objectForKey:@"username"]
-				 error:anError]) {
+				 error:&myError]) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
+		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
 		NSArray *tagsArray = [theCall objectForKey:@"tags"];
@@ -308,6 +316,7 @@ static NSString *keychainItemName;
 				 error:(NSError **)anError
 {
 	BOOL theResult;
+	NSError *myError;
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
 	if (![theCall call:@"editevent"
@@ -320,10 +329,11 @@ static NSString *keychainItemName;
 						nil]
 				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
 			   forUser:[accountInfo objectForKey:@"username"]
-				 error:anError]) {
+				 error:&myError]) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = NO;
+		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
 		VLOG(@"Deleted entry with itemid=%@",itemid);
