@@ -39,6 +39,9 @@
 
 @implementation LJInterface
 
+#pragma mark -
+#pragma mark initialization/confifguration
+
 static NSString *keychainItemName;
 
 // set the name under which account keychain items are stored
@@ -55,8 +58,17 @@ static NSString *keychainItemName;
 	[LJxmlrpc setClientVersion:theVersion];
 }
 
+// enable/disable verbose logging
++ (void)setVerboseLogging:(BOOL)verbose
+{
+	[asLJFrameworkLogger setVerboseLogging:verbose];
+}
 
 
+#pragma mark -
+#pragma mark internal utility
+
+// turn a@b into @"username" => a, @"server" => b
 + (NSDictionary *)splitAccountString:(NSString *)account
 {
 	NSArray *parts = [account componentsSeparatedByString:@"@"];
@@ -70,6 +82,9 @@ static NSString *keychainItemName;
 	}
 }
 
+
+#pragma mark -
+#pragma mark account-handling
 
 + (NSArray *)allAccounts
 {
@@ -126,6 +141,10 @@ static NSString *keychainItemName;
 	[k release];
 }
 
+
+#pragma mark -
+#pragma mark server interaction
+
 + (NSDictionary *)loginTo:(NSString *)account
 					error:(NSError **)anError
 {
@@ -142,11 +161,11 @@ static NSString *keychainItemName;
 				 forUser:[accountInfo objectForKey:@"username"]
 				   error:anError]) {
 		// call failed
-		DLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 	} else {
 		// call succeded
-		DLOG(@"... logged in.");
+		VLOG(@"... logged in.");
 		
 		// store new moods
 		NSArray *newMoods = [loginCall objectForKey:@"moods"];
@@ -185,12 +204,12 @@ static NSString *keychainItemName;
 			   forUser:[accountInfo objectForKey:@"username"]
 				 error:anError]) {
 		// call failed
-		DLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 	} else {
 		// call succeded
 		NSArray *dayCountArray = [theCall objectForKey:@"daycounts"];
-		DLOG(@"Got counts for %d days",[dayCountArray count]);
+		VLOG(@"Got counts for %d days",[dayCountArray count]);
 		NSMutableDictionary *temporaryResults = [NSMutableDictionary dictionaryWithCapacity:[dayCountArray count]];
 		for (id theDayCount in dayCountArray) {
 			[temporaryResults setObject:[theDayCount objectForKey:@"count"]
@@ -232,12 +251,12 @@ static NSString *keychainItemName;
 			   forUser:[accountInfo objectForKey:@"username"]
 				 error:anError]) {
 		// call failed
-		DLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 	} else {
 		// call succeded
 		NSArray *eventArray = [theCall objectForKey:@"events"];
-		DLOG(@"Got %d events",[eventArray count]);
+		VLOG(@"Got %d events",[eventArray count]);
 		NSMutableDictionary *temporaryResults = [NSMutableDictionary dictionaryWithCapacity:[eventArray count]];
 		for (id anEvent in eventArray) {
 			[temporaryResults setObject:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -278,12 +297,12 @@ static NSString *keychainItemName;
 			   forUser:[accountInfo objectForKey:@"username"]
 				 error:anError]) {
 		// call failed
-		DLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 	} else {
 		// call succeded
 		NSArray *tagsArray = [theCall objectForKey:@"tags"];
-		DLOG(@"Got %d tags",[tagsArray count]);
+		VLOG(@"Got %d tags",[tagsArray count]);
 		NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[tagsArray count]];
 		for (id aTag in tagsArray) {
 			[temporaryResults addObject:[aTag objectForKey:@"name"]];
@@ -320,11 +339,11 @@ static NSString *keychainItemName;
 			   forUser:[accountInfo objectForKey:@"username"]
 				 error:anError]) {
 		// call failed
-		DLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		VLOG(@"Fault (%d): %@", [*anError code], [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = NO;
 	} else {
 		// call succeded
-		DLOG(@"Deleted entry with itemid=%@",itemid);
+		VLOG(@"Deleted entry with itemid=%@",itemid);
 		theResult = YES;
 	}
 	[theCall release];
@@ -336,6 +355,21 @@ static NSString *keychainItemName;
 			withItemID:(NSString *)itemid
 {
 	[LJInterface deleteEntryFor:account withJournal:journal withItemID:itemid error:NULL];
+}
+
+
+#pragma mark -
+#pragma mark moods
+
++ (NSArray *)getMoodStringsForServer:(NSString *)theServer
+{
+	return [LJMoods getMoodStringsForServer:theServer];
+}
+
++ (NSString *)getMoodIDForString:(NSString *)theMood
+					  withServer:(NSString *)theServer
+{
+	return [LJMoods getMoodIDForString:theMood withServer:theServer];
 }
 
 @end

@@ -167,7 +167,7 @@ static NSString *clientVersion;
 		faultCode = [response faultCode];
 		faultString = [response faultString];
 		
-		DLOG(@"Error returned by XMLRPC call (%@): %@",faultCode,faultString);
+		VLOG(@"Error returned by XMLRPC call (%@): %@",faultCode,faultString);
 		
 		[self setObject:[NSNumber numberWithBool:TRUE] forKey:@"isFault"];
 		[self setObject:faultCode forKey:@"faultCode"];
@@ -193,7 +193,7 @@ static NSString *clientVersion;
 	faultCode = [[NSNumber numberWithInteger:[error code]] retain];
 	faultString = [[error userInfo] objectForKey:NSLocalizedDescriptionKey];
 	innerError = [error retain];
-	DLOG(@"Error with XMLRPC request (%@): %@",faultCode,faultString);
+	VLOG(@"Error with XMLRPC request (%@): %@",faultCode,faultString);
 	
 	[self setObject:[NSNumber numberWithBool:TRUE] forKey:@"isFault"];
 	[self setObject:faultCode forKey:@"faultCode"];
@@ -283,7 +283,7 @@ static NSString *clientVersion;
 	 forUser:(NSString *)username
 	   error:(NSError **)anError
 {
-	DLOG(@"Calling method %@ for %@@%@...",methodName,username,serverURL);
+	VLOG(@"Calling method %@ for %@@%@...",methodName,username,serverURL);
 	// [serverURL] is something like http://www.livejournal.com/interface/xmlrpc
 	
 	// set challenge to the 'challenge' element of the result of calling 'getchallenge', no params needed

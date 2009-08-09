@@ -181,7 +181,7 @@
 			isFault = TRUE;
 			faultString = [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey];
 			faultCode = [NSNumber numberWithInteger:[*anError code]];
-			DLOG(@"Fault (%@): %@", faultCode, faultString);
+			VLOG(@"Fault (%@): %@", faultCode, faultString);
 			self = nil;
 			return nil;
 		} else {
@@ -237,7 +237,7 @@
 		isFault = TRUE;
 		faultString = [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey];
 		faultCode = [NSNumber numberWithInteger:[*anError code]];
-		DLOG(@"Fault (%@): %@", faultCode, faultString);
+		VLOG(@"Fault (%@): %@", faultCode, faultString);
 		return FALSE;
 	} else {
 		// call succeded
@@ -275,7 +275,7 @@
 		isFault = TRUE;
 		faultString = [[*anError userInfo] objectForKey:NSLocalizedDescriptionKey];
 		faultCode = [NSNumber numberWithInteger:[*anError code]];
-		DLOG(@"Fault (%@): %@", faultCode, faultString);
+		VLOG(@"Fault (%@): %@", faultCode, faultString);
 		return FALSE;
 	} else {
 		// call succeded

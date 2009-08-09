@@ -39,24 +39,38 @@
 
 }
 
+#pragma mark -
+#pragma mark initialization/confifguration
+
 // set the name under which account keychain items are stored
 + (void)setKeychainItemName:(NSString *)theName;
 
 // set the version string reported to the LJ-type site
 + (void)setClientVersion:(NSString *)theVersion;
 
+// enable/disable verbose logging
++ (void)setVerboseLogging:(BOOL)verbose;
 
+
+#pragma mark -
+#pragma mark account-handling
 
 + (NSArray *)allAccounts;
+
 + (void)addAccountOnServer:(NSString *)server
 			  withUsername:(NSString *)username
 			  withPassword:(NSString *)password;
+
 + (void)deleteAccount:(NSString *)account;
+
 + (void)editAccount:(NSString *)account
 		  setServer:(NSString *)server
 		setUsername:(NSString *)username
 		setPassword:(NSString *)password;
 
+
+#pragma mark -
+#pragma mark server interaction
 
 + (NSDictionary *)loginTo:(NSString *)account
 					error:(NSError **)anError;
@@ -89,5 +103,14 @@
 + (void)deleteEntryFor:(NSString *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid;
+
+
+#pragma mark -
+#pragma mark moods
+
++ (NSArray *)getMoodStringsForServer:(NSString *)theServer;
++ (NSString *)getMoodIDForString:(NSString *)theMood
+					  withServer:(NSString *)theServer;
+
 
 @end

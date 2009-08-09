@@ -38,6 +38,11 @@
 #define SERVER2URL(s) [NSString stringWithFormat:@"http://%@/interface/xmlrpc",s]
 
 
+// verbose logging using our logging class
+#import "asLJFrameworkLogger.h"
+#define VLOG(s...) [asLJFrameworkLogger log:s]
+
+
 // debug logging (turns into NOOP for release versions)
 #ifdef DEBUG
 	#define DLOG(s...) NSLog(@"%s:%d %@",__FILE__,__LINE__,[NSString stringWithFormat:s])
