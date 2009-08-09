@@ -7,7 +7,7 @@
 
 
 
-// This is, to the best of my knowledge, a 2-clause "Simplified" BSD license.
+// The license below is, to the best of my knowledge, a 2-clause "Simplified" BSD license.
 // This license applies to asLJFramework as a whole.
 
 /*** BEGIN LICENSE TEXT ***
@@ -36,6 +36,12 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
  *** END LICENSE TEXT ***/
+
+/*	asLJFramework is based upon the XML-RPC Framework,
+	Copyright (c) 2008 Eric Czarny <eczarny@gmail.com>,
+	used under its MIT license.
+ */
+
 
 
 

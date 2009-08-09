@@ -35,7 +35,7 @@
 #import "LJxmlrpc.h"
 #import "asLJFrameworkKeychain.h"
 #import <CommonCrypto/CommonDigest.h>
-#import <XMLRPC/XMLRPC.h>
+#import <XMLRPC.h>
 #import "LJErrors.h"
 
 

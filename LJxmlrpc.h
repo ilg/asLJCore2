@@ -33,7 +33,7 @@
  *** END LICENSE TEXT ***/
 
 #import <Cocoa/Cocoa.h>
-#import <XMLRPC/XMLRPC.h>
+#import <XMLRPC.h>
 
 @interface LJxmlrpcRaw : NSMutableDictionary <XMLRPCConnectionDelegate> {
 	bool waitingForResponse;
