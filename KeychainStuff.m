@@ -1,5 +1,5 @@
 //
-//  KeychainStuff.m
+//  asLJFrameworkKeychain.m
 //  asLJFramework
 //
 //  Created by Isaac Greenspan on 1/22/09.
@@ -32,11 +32,11 @@
  
  *** END LICENSE TEXT ***/
 
-#import "KeychainStuff.h"
+#import "asLJFrameworkKeychain.h"
 
-@implementation KeychainStuff
+@implementation asLJFrameworkKeychain
 
-- (NSArray *)getKeysByLabel:(NSString *)theLabel
++ (NSArray *)getKeysByLabel:(NSString *)theLabel
 {
 	NSMutableArray *theResults = [NSMutableArray arrayWithCapacity:1];
 	
@@ -107,7 +107,7 @@
 	return [NSArray arrayWithArray:theResults];
 }
 
-- (SecKeychainItemRef)getKeychainRefByLabel:(NSString *)theLabel
++ (SecKeychainItemRef)getKeychainRefByLabel:(NSString *)theLabel
 								withAccount:(NSString *)theAccount
 								 withServer:(NSString *)theServer
 {
@@ -154,7 +154,7 @@
 	return theResult;
 }
 
-- (NSString *)getPasswordByLabel:(NSString *)theLabel
++ (NSString *)getPasswordByLabel:(NSString *)theLabel
 					 withAccount:(NSString *)theAccount
 					  withServer:(NSString *)theServer
 {
@@ -198,7 +198,7 @@
 	return theResult;
 }
 
-- (void)makeNewInternetKeyWithLabel:(NSString *)theLabel
++ (void)makeNewInternetKeyWithLabel:(NSString *)theLabel
 						withAccount:(NSString *)theAccount
 						 withServer:(NSString *)theServer
 					   withPassword:(NSString *)thePassword
@@ -234,7 +234,7 @@
 									 NULL);
 }
 
-- (void)deleteKeychainItemByLabel:(NSString *)theLabel
++ (void)deleteKeychainItemByLabel:(NSString *)theLabel
 					  withAccount:(NSString *)theAccount
 					   withServer:(NSString *)theServer
 {
@@ -247,7 +247,7 @@
 	}
 }
 
-- (void)editKeychainItemByLabel:(NSString *)theLabel
++ (void)editKeychainItemByLabel:(NSString *)theLabel
 					withAccount:(NSString *)theAccount
 					 withServer:(NSString *)theServer
 					 setAccount:(NSString *)newAccount

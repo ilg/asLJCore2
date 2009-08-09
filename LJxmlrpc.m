@@ -33,7 +33,7 @@
  *** END LICENSE TEXT ***/
 
 #import "LJxmlrpc.h"
-#import "KeychainStuff.h"
+#import "asLJFrameworkKeychain.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <XMLRPC/XMLRPC.h>
 #import "LJErrors.h"
@@ -298,13 +298,10 @@ static NSString *clientVersion;
 		
 		// set response to md5( challenge + md5([password]) )   where md5() returns the hex digest
 		NSString *serverFQDN = [[serverURL componentsSeparatedByString:@"/"] objectAtIndex:2];
-		KeychainStuff *myKeychainAccessor = [[[KeychainStuff alloc] init] autorelease];
 		NSString *pwdMD5 = [LJxmlrpc 
-							md5:[myKeychainAccessor 
-								 getPasswordByLabel:keychainItemName
-								 withAccount:username
-								 withServer:serverFQDN]
-							];
+							md5:[asLJFrameworkKeychain getPasswordByLabel:keychainItemName
+															  withAccount:username
+															   withServer:serverFQDN]];
 		NSString *authResponse = [LJxmlrpc
 								  md5:[NSString
 									   stringWithFormat:@"%@%@",

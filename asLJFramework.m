@@ -35,7 +35,7 @@
 #import "asLJFramework.h"
 #import "LJxmlrpc.h"
 #import "LJMoods.h"
-#import "KeychainStuff.h"
+#import "asLJFrameworkKeychain.h"
 
 @implementation asLJFramework
 
@@ -88,9 +88,7 @@ static NSString *keychainItemName;
 
 + (NSArray *)allAccounts
 {
-	KeychainStuff *k = [[KeychainStuff alloc] init];
-	NSArray *accountArray = [k getKeysByLabel:keychainItemName];
-	[k release];
+	NSArray *accountArray = [asLJFrameworkKeychain getKeysByLabel:keychainItemName];
 	return [NSArray arrayWithArray:accountArray];
 }
 
@@ -98,27 +96,18 @@ static NSString *keychainItemName;
 			  withUsername:(NSString *)username
 			  withPassword:(NSString *)password
 {
-	KeychainStuff *k = [[KeychainStuff alloc] init];
-	
-	[k makeNewInternetKeyWithLabel:keychainItemName
-					   withAccount:username
-						withServer:server
-					  withPassword:password];
-	
-	[k release];
+	[asLJFrameworkKeychain makeNewInternetKeyWithLabel:keychainItemName
+										   withAccount:username
+											withServer:server
+										  withPassword:password];
 }
 
 + (void)deleteAccount:(NSString *)account
 {
-	KeychainStuff *k = [[KeychainStuff alloc] init];
-	
 	NSDictionary *accountInfo = [self splitAccountString:account];
-	
-	[k deleteKeychainItemByLabel:keychainItemName
-					 withAccount:[accountInfo objectForKey:@"username"]
-					  withServer:[accountInfo objectForKey:@"server"]];
-	
-	[k release];
+	[asLJFrameworkKeychain deleteKeychainItemByLabel:keychainItemName
+										 withAccount:[accountInfo objectForKey:@"username"]
+										  withServer:[accountInfo objectForKey:@"server"]];
 }
 
 + (void)editAccount:(NSString *)account
@@ -126,18 +115,13 @@ static NSString *keychainItemName;
 		setUsername:(NSString *)username
 		setPassword:(NSString *)password
 {
-	KeychainStuff *k = [[KeychainStuff alloc] init];
-	
 	NSDictionary *accountInfo = [self splitAccountString:account];
-	
-	[k editKeychainItemByLabel:keychainItemName
-				   withAccount:[accountInfo objectForKey:@"username"]
-					withServer:[accountInfo objectForKey:@"server"]
-					setAccount:username
-					 setServer:server
-				   setPassword:password];
-	
-	[k release];
+	[asLJFrameworkKeychain editKeychainItemByLabel:keychainItemName
+									   withAccount:[accountInfo objectForKey:@"username"]
+										withServer:[accountInfo objectForKey:@"server"]
+										setAccount:username
+										 setServer:server
+									   setPassword:password];
 }
 
 

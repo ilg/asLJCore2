@@ -1,5 +1,5 @@
 //
-//  KeychainStuff.h
+//  asLJFrameworkKeychain.h
 //  asLJFramework
 //
 //  Created by Isaac Greenspan on 1/22/09.
@@ -35,22 +35,22 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface KeychainStuff :  NSObject 
+@interface asLJFrameworkKeychain :  NSObject 
 {
 	
 }
-- (NSArray *)getKeysByLabel:(NSString *)theLabel;
-- (NSString *)getPasswordByLabel:(NSString *)theLabel
++ (NSArray *)getKeysByLabel:(NSString *)theLabel;
++ (NSString *)getPasswordByLabel:(NSString *)theLabel
 					 withAccount:(NSString *)theAccount
 					  withServer:(NSString *)theServer;
-- (void)makeNewInternetKeyWithLabel:(NSString *)theLabel
++ (void)makeNewInternetKeyWithLabel:(NSString *)theLabel
 						withAccount:(NSString *)theAccount
 						 withServer:(NSString *)theServer
 					   withPassword:(NSString *)thePassword;
-- (void)deleteKeychainItemByLabel:(NSString *)theLabel
++ (void)deleteKeychainItemByLabel:(NSString *)theLabel
 					  withAccount:(NSString *)theAccount
 					   withServer:(NSString *)theServer;
-- (void)editKeychainItemByLabel:(NSString *)theLabel
++ (void)editKeychainItemByLabel:(NSString *)theLabel
 					withAccount:(NSString *)theAccount
 					 withServer:(NSString *)theServer
 					 setAccount:(NSString *)newAccount
