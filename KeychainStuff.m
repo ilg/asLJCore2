@@ -52,11 +52,13 @@
 	NSMutableArray *theResults = [NSMutableArray arrayWithCapacity:1];
 	
 	// construct the search attribute list--searching for keys with name asLJ_login
+	char label[strlen([theLabel UTF8String])];
+	strcpy(label, [theLabel UTF8String]);
 	SecKeychainAttributeList attrList;
 	SecKeychainAttribute attrib;
 	attrList.count = 1;
 	attrib.tag = kSecLabelItemAttr;
-	strcpy(attrib.data, [theLabel UTF8String]);
+	attrib.data = label;
 	attrib.length = strlen(attrib.data);
 	attrList.attr  = &attrib;
 	
