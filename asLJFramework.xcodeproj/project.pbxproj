@@ -15,13 +15,13 @@
 		719A89CE102D6CE70001F6CE /* LJxmlrpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 719A89C5102D6CE70001F6CE /* LJxmlrpc.h */; };
 		719A89CF102D6CE70001F6CE /* LJxmlrpc.m in Sources */ = {isa = PBXBuildFile; fileRef = 719A89C6102D6CE70001F6CE /* LJxmlrpc.m */; };
 		719A89D3102D6D240001F6CE /* XMLRPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 719A89D1102D6D240001F6CE /* XMLRPC.framework */; };
-		719A8A19102D6DB30001F6CE /* KeychainStuff.h in Headers */ = {isa = PBXBuildFile; fileRef = 719A8A17102D6DB30001F6CE /* KeychainStuff.h */; };
-		719A8A1A102D6DB30001F6CE /* KeychainStuff.m in Sources */ = {isa = PBXBuildFile; fileRef = 719A8A18102D6DB30001F6CE /* KeychainStuff.m */; };
 		719F7CEA102E668B00D06772 /* asLJFrameworkLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F7CE8102E668B00D06772 /* asLJFrameworkLogger.h */; };
 		719F7CEB102E668B00D06772 /* asLJFrameworkLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F7CE9102E668B00D06772 /* asLJFrameworkLogger.m */; };
 		719F7D7A102E758B00D06772 /* asLJFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F7D78102E758B00D06772 /* asLJFramework.m */; };
 		719F7D7B102E758B00D06772 /* asLJFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F7D79102E758B00D06772 /* asLJFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		719F7F23102EA02100D06772 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 719F7F22102EA02100D06772 /* Security.framework */; };
+		719F8061102EB96500D06772 /* asLJFrameworkKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F805F102EB96500D06772 /* asLJFrameworkKeychain.h */; };
+		719F8062102EB96500D06772 /* asLJFrameworkKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F8060102EB96500D06772 /* asLJFrameworkKeychain.m */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -40,13 +40,13 @@
 		719A89C5102D6CE70001F6CE /* LJxmlrpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJxmlrpc.h; sourceTree = "<group>"; };
 		719A89C6102D6CE70001F6CE /* LJxmlrpc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJxmlrpc.m; sourceTree = "<group>"; };
 		719A89D1102D6D240001F6CE /* XMLRPC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XMLRPC.framework; sourceTree = "<group>"; };
-		719A8A17102D6DB30001F6CE /* KeychainStuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainStuff.h; sourceTree = "<group>"; };
-		719A8A18102D6DB30001F6CE /* KeychainStuff.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeychainStuff.m; sourceTree = "<group>"; };
 		719F7CE8102E668B00D06772 /* asLJFrameworkLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJFrameworkLogger.h; sourceTree = "<group>"; };
 		719F7CE9102E668B00D06772 /* asLJFrameworkLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJFrameworkLogger.m; sourceTree = "<group>"; };
 		719F7D78102E758B00D06772 /* asLJFramework.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJFramework.m; sourceTree = "<group>"; };
 		719F7D79102E758B00D06772 /* asLJFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJFramework.h; sourceTree = "<group>"; };
 		719F7F22102EA02100D06772 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
+		719F805F102EB96500D06772 /* asLJFrameworkKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJFrameworkKeychain.h; sourceTree = "<group>"; };
+		719F8060102EB96500D06772 /* asLJFrameworkKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJFrameworkKeychain.m; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* asLJFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = asLJFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -113,12 +113,12 @@
 				719A89BF102D6CE70001F6CE /* LJEntry.m */,
 				719F7CE8102E668B00D06772 /* asLJFrameworkLogger.h */,
 				719F7CE9102E668B00D06772 /* asLJFrameworkLogger.m */,
+				719F805F102EB96500D06772 /* asLJFrameworkKeychain.h */,
+				719F8060102EB96500D06772 /* asLJFrameworkKeychain.m */,
 				719A89C3102D6CE70001F6CE /* LJMoods.h */,
 				719A89C4102D6CE70001F6CE /* LJMoods.m */,
 				719A89C5102D6CE70001F6CE /* LJxmlrpc.h */,
 				719A89C6102D6CE70001F6CE /* LJxmlrpc.m */,
-				719A8A17102D6DB30001F6CE /* KeychainStuff.h */,
-				719A8A18102D6DB30001F6CE /* KeychainStuff.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -163,9 +163,9 @@
 				719A89C9102D6CE70001F6CE /* LJErrors.h in Headers */,
 				719A89CC102D6CE70001F6CE /* LJMoods.h in Headers */,
 				719A89CE102D6CE70001F6CE /* LJxmlrpc.h in Headers */,
-				719A8A19102D6DB30001F6CE /* KeychainStuff.h in Headers */,
 				719F7CEA102E668B00D06772 /* asLJFrameworkLogger.h in Headers */,
 				719F7D7B102E758B00D06772 /* asLJFramework.h in Headers */,
+				719F8061102EB96500D06772 /* asLJFrameworkKeychain.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,9 +228,9 @@
 				719A89C8102D6CE70001F6CE /* LJEntry.m in Sources */,
 				719A89CD102D6CE70001F6CE /* LJMoods.m in Sources */,
 				719A89CF102D6CE70001F6CE /* LJxmlrpc.m in Sources */,
-				719A8A1A102D6DB30001F6CE /* KeychainStuff.m in Sources */,
 				719F7CEB102E668B00D06772 /* asLJFrameworkLogger.m in Sources */,
 				719F7D7A102E758B00D06772 /* asLJFramework.m in Sources */,
+				719F8062102EB96500D06772 /* asLJFrameworkKeychain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
