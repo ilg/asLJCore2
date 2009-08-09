@@ -22,6 +22,7 @@
 		719F7CEB102E668B00D06772 /* asLJFrameworkLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F7CE9102E668B00D06772 /* asLJFrameworkLogger.m */; };
 		719F7D7A102E758B00D06772 /* asLJFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F7D78102E758B00D06772 /* asLJFramework.m */; };
 		719F7D7B102E758B00D06772 /* asLJFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F7D79102E758B00D06772 /* asLJFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		719F7F23102EA02100D06772 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 719F7F22102EA02100D06772 /* Security.framework */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -47,6 +48,7 @@
 		719F7CE9102E668B00D06772 /* asLJFrameworkLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJFrameworkLogger.m; sourceTree = "<group>"; };
 		719F7D78102E758B00D06772 /* asLJFramework.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJFramework.m; sourceTree = "<group>"; };
 		719F7D79102E758B00D06772 /* asLJFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJFramework.h; sourceTree = "<group>"; };
+		719F7F22102EA02100D06772 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* asLJFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = asLJFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -60,6 +62,7 @@
 				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
 				719A89D2102D6D240001F6CE /* Keychain.framework in Frameworks */,
 				719A89D3102D6D240001F6CE /* XMLRPC.framework in Frameworks */,
+				719F7F23102EA02100D06772 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,6 +132,7 @@
 				719A89D0102D6D230001F6CE /* Keychain.framework */,
 				719A89D1102D6D240001F6CE /* XMLRPC.framework */,
 				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
+				719F7F22102EA02100D06772 /* Security.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
