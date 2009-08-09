@@ -114,10 +114,9 @@ static NSString *keychainItemName;
 	
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	
-	[[k getKeychainItemByLabel:keychainItemName
-				   withAccount:[accountInfo objectForKey:@"username"]
-					withServer:[accountInfo objectForKey:@"server"]]
-	 deleteCompletely];
+	[k deleteKeychainItemByLabel:keychainItemName
+					 withAccount:[accountInfo objectForKey:@"username"]
+					  withServer:[accountInfo objectForKey:@"server"]];
 	
 	[k release];
 }
@@ -131,12 +130,12 @@ static NSString *keychainItemName;
 	
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	
-	KeychainItem *theItem = [k getKeychainItemByLabel:keychainItemName
-										  withAccount:[accountInfo objectForKey:@"username"]
-										   withServer:[accountInfo objectForKey:@"server"]];
-	[theItem setServer:server];
-	[theItem setAccount:username];
-	[theItem setDataFromString:password];
+	[k editKeychainItemByLabel:keychainItemName
+				   withAccount:[accountInfo objectForKey:@"username"]
+					withServer:[accountInfo objectForKey:@"server"]
+					setAccount:username
+					 setServer:server
+				   setPassword:password];
 	
 	[k release];
 }

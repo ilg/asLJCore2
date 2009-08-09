@@ -41,9 +41,6 @@
 	
 }
 - (NSArray *)getKeysByLabel:(NSString *)theLabel;
-- (KeychainItem *)getKeychainItemByLabel:(NSString *)theLabel
-							 withAccount:(NSString *)theAccount
-							  withServer:(NSString *)theServer;
 - (NSString *)getPasswordByLabel:(NSString *)theLabel
 					 withAccount:(NSString *)theAccount
 					  withServer:(NSString *)theServer;
@@ -51,4 +48,13 @@
 						withAccount:(NSString *)theAccount
 						 withServer:(NSString *)theServer
 					   withPassword:(NSString *)thePassword;
+- (void)deleteKeychainItemByLabel:(NSString *)theLabel
+					  withAccount:(NSString *)theAccount
+					   withServer:(NSString *)theServer;
+- (void)editKeychainItemByLabel:(NSString *)theLabel
+					withAccount:(NSString *)theAccount
+					 withServer:(NSString *)theServer
+					 setAccount:(NSString *)newAccount
+					  setServer:(NSString *)newServer
+					setPassword:(NSString *)newPassword;
 @end
