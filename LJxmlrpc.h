@@ -59,9 +59,6 @@
 	 withParams:(NSDictionary *)paramDict
 		  atURL:(NSString *)serverURL;
 
-+ (void)loopThroughDictionary: (NSMutableDictionary *)theDictionary;
-+ (void)loopThroughArray: (NSMutableArray *)theArray;
-
 // primitive methods for NSDictionary/NSMutableDictionary subclassing
 - (id)init;
 - (NSUInteger)count;

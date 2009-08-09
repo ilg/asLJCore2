@@ -61,11 +61,10 @@
 												   &searchRef);  // the returned search reference
 	
 	if (status == noErr) {
-		OSStatus itemGettingStatus;
 		SecKeychainItemRef itemRef = nil;
 		OSStatus err;
 		NSString *account, *server;
-		while ( (itemGettingStatus = SecKeychainSearchCopyNext(searchRef, &itemRef)) == noErr ) {
+		while (SecKeychainSearchCopyNext(searchRef, &itemRef) == noErr ) {
 			//Output storage.
 			struct SecKeychainAttributeList *attrList = NULL;
 			UInt32 passwordLength = 0U;

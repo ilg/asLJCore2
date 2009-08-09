@@ -198,7 +198,7 @@ static NSString *keychainItemName;
 			[temporaryResults setObject:[theDayCount objectForKey:@"count"]
 								 forKey:[theDayCount objectForKey:@"date"]];
 		}
-		theResult = [[NSDictionary dictionaryWithDictionary:temporaryResults] autorelease];
+		theResult = [NSDictionary dictionaryWithDictionary:temporaryResults];
 	}
 	[theCall release];
 	return theResult;
@@ -252,7 +252,7 @@ static NSString *keychainItemName;
 										 nil]
 								 forKey:[anEvent objectForKey:@"itemid"]];
 		}
-		theResult = [[NSDictionary dictionaryWithDictionary:temporaryResults] autorelease];
+		theResult = [NSDictionary dictionaryWithDictionary:temporaryResults];
 	}
 	[theCall release];
 	return theResult;

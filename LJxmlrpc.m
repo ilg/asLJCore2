@@ -117,40 +117,29 @@ static NSString *clientVersion;
 
 
 #pragma mark -
-#pragma mark deep iterating functions
+#pragma mark deep iterating function
 
-// this is a HORRIBLE kludge that sends an extra retain to everything in the whole massive datastructure
-// this is also where we take the NSData objects with the UTF8 bytes and turn them into NSStrings
-+ (void)loopThroughDictionary: (NSMutableDictionary *)theDictionary
+// this is where we take the NSData objects with the UTF8 bytes and turn them into NSStrings
++ (id)cleanseUTF8:(id)theObject
 {
-	NSDictionary *fixedDictionary = [NSDictionary dictionaryWithDictionary:theDictionary];
-	id key;
-	
-	for (key in fixedDictionary) {
-		id theObject = [theDictionary objectForKey:key];
-		[theObject retain];
-		if ([theObject isKindOfClass:[NSDictionary class]]) {
-			[LJxmlrpc loopThroughDictionary:theObject];
-		} else if ([theObject isKindOfClass:[NSArray class]]) {
-			[LJxmlrpc loopThroughArray:theObject];
-		} else if ([theObject isKindOfClass:[NSData class]]) {
-			[theDictionary setObject:[[[NSString alloc] initWithData:theObject encoding:NSUTF8StringEncoding] retain] forKey:key];
+	if ([theObject isKindOfClass:[NSData class]]) {
+		return [[[NSString alloc] initWithData:theObject encoding:NSUTF8StringEncoding] autorelease];
+	} else if ([theObject isKindOfClass:[NSDictionary class]]) {
+		NSMutableDictionary *theResult = [NSMutableDictionary dictionaryWithCapacity:[theObject count]];
+		for (id aKey in theObject) {
+			[theResult setObject:[self cleanseUTF8:[theObject objectForKey:aKey]] forKey:aKey];
 		}
-	}
-}
-+ (void)loopThroughArray: (NSMutableArray *)theArray
-{
-	NSUInteger index;
-	for (index = 0; index < [theArray count]; index++) {
-		id theObject = [theArray objectAtIndex:index];
-		[theObject retain];
-		if ([theObject isKindOfClass:[NSDictionary class]]) {
-			[LJxmlrpc loopThroughDictionary:theObject];
-		} else if ([theObject isKindOfClass:[NSArray class]]) {
-			[LJxmlrpc loopThroughArray:theObject];
-		} else if ([theObject isKindOfClass:[NSData class]]) {
-			[theArray replaceObjectAtIndex:index withObject:[[[NSString alloc] initWithData:theObject encoding:NSUTF8StringEncoding] retain]];
+		return [NSDictionary dictionaryWithDictionary:theResult];
+	} else if ([theObject isKindOfClass:[NSArray class]]) {
+		NSMutableArray *theResult = [NSMutableArray arrayWithCapacity:[theObject count]];
+		for (id anItem in theObject) {
+			[theResult addObject:[self cleanseUTF8:anItem]];
 		}
+		return [NSArray arrayWithArray:theResult];
+	} else if ([theObject respondsToSelector:@selector(copy)]) {
+		return [[theObject copy] autorelease];
+	} else {
+		return theObject;
 	}
 }
 
@@ -177,10 +166,11 @@ static NSString *clientVersion;
 	} else {
 		//NSLog(@"Parsed response: %@", [response object]);
 		
-		[self setDictionary:[response object]];
-		[self setObject:[NSNumber numberWithBool:FALSE] forKey:@"isFault"];
-		[LJxmlrpcRaw loopThroughDictionary: self];
+		NSDictionary *theResponseDict = [response object];
 		
+		[self setDictionary:[[self class] cleanseUTF8:theResponseDict]];
+		[self setObject:[NSNumber numberWithBool:FALSE] forKey:@"isFault"];
+			
 		errorHappened = FALSE;
 	}
 }
