@@ -1,6 +1,6 @@
 //
 //  LJEntry.h
-//  asLJFramework
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 5/20/09.
 //

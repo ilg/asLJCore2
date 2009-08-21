@@ -1,6 +1,6 @@
 /*
  *  LJErrors.h
- *  asLJFramework
+ *  asLJCore
  *
  *  Created by Isaac Greenspan on 8/2/09.
  *
@@ -33,8 +33,8 @@
  
  *** END LICENSE TEXT ***/
 
-#define asLJFramework_ErrorDomain @"us.2718.asLJFramework.ErrorDomain"
-#define asLJFramework_LJErrorDomain @"us.2718.asLJFramework.LJ.ErrorDomain"
+#define asLJCore_ErrorDomain @"us.2718.asLJCore.ErrorDomain"
+#define asLJCore_LJErrorDomain @"us.2718.asLJCore.LJ.ErrorDomain"
 
 
 // based on http://code.livejournal.org/trac/livejournal/browser/trunk/cgi-bin/ljprotocol.pl?rev=15527

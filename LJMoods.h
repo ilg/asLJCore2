@@ -1,6 +1,6 @@
 //
 //  LJMoods.h
-//  asLJFramework
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 1/27/09.
 //

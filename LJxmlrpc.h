@@ -1,6 +1,6 @@
 //
 //  LJxmlrpc.h
-//  asLJFramework
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 4/24/09.
 //

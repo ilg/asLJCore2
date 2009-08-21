@@ -14,13 +14,7 @@
 		719A89CD102D6CE70001F6CE /* LJMoods.m in Sources */ = {isa = PBXBuildFile; fileRef = 719A89C4102D6CE70001F6CE /* LJMoods.m */; };
 		719A89CE102D6CE70001F6CE /* LJxmlrpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 719A89C5102D6CE70001F6CE /* LJxmlrpc.h */; };
 		719A89CF102D6CE70001F6CE /* LJxmlrpc.m in Sources */ = {isa = PBXBuildFile; fileRef = 719A89C6102D6CE70001F6CE /* LJxmlrpc.m */; };
-		719F7CEA102E668B00D06772 /* asLJFrameworkLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F7CE8102E668B00D06772 /* asLJFrameworkLogger.h */; };
-		719F7CEB102E668B00D06772 /* asLJFrameworkLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F7CE9102E668B00D06772 /* asLJFrameworkLogger.m */; };
-		719F7D7A102E758B00D06772 /* asLJFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F7D78102E758B00D06772 /* asLJFramework.m */; };
-		719F7D7B102E758B00D06772 /* asLJFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F7D79102E758B00D06772 /* asLJFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		719F7F23102EA02100D06772 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 719F7F22102EA02100D06772 /* Security.framework */; };
-		719F8061102EB96500D06772 /* asLJFrameworkKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F805F102EB96500D06772 /* asLJFrameworkKeychain.h */; };
-		719F8062102EB96500D06772 /* asLJFrameworkKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F8060102EB96500D06772 /* asLJFrameworkKeychain.m */; };
 		719F80A5102EBE8300D06772 /* NSDataAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F808F102EBE8300D06772 /* NSDataAdditions.h */; };
 		719F80A6102EBE8300D06772 /* NSDataAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F8090102EBE8300D06772 /* NSDataAdditions.m */; };
 		719F80A7102EBE8300D06772 /* NSStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F8091102EBE8300D06772 /* NSStringAdditions.h */; };
@@ -42,6 +36,13 @@
 		719F80B7102EBE8300D06772 /* XMLRPCResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F80A1102EBE8300D06772 /* XMLRPCResponse.m */; };
 		719F80B8102EBE8300D06772 /* XMLRPCTreeBasedParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F80A2102EBE8300D06772 /* XMLRPCTreeBasedParser.h */; };
 		719F80B9102EBE8300D06772 /* XMLRPCTreeBasedParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F80A3102EBE8300D06772 /* XMLRPCTreeBasedParser.m */; };
+		71AD9030103E6F49003EE617 /* asLJCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 71AD902E103E6F49003EE617 /* asLJCore.h */; };
+		71AD9031103E6F49003EE617 /* asLJCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 71AD902F103E6F49003EE617 /* asLJCore.m */; };
+		71AD9036103E6F59003EE617 /* asLJCoreKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 71AD9032103E6F59003EE617 /* asLJCoreKeychain.h */; };
+		71AD9037103E6F59003EE617 /* asLJCoreKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 71AD9033103E6F59003EE617 /* asLJCoreKeychain.m */; };
+		71AD9038103E6F59003EE617 /* asLJCoreLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 71AD9034103E6F59003EE617 /* asLJCoreLogger.h */; };
+		71AD9039103E6F59003EE617 /* asLJCoreLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 71AD9035103E6F59003EE617 /* asLJCoreLogger.m */; };
+		71AD903B103E6F67003EE617 /* asLJCore_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 71AD903A103E6F67003EE617 /* asLJCore_Prefix.pch */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -51,7 +52,6 @@
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		32DBCF5E0370ADEE00C91783 /* asLJFramework_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJFramework_Prefix.pch; sourceTree = "<group>"; };
 		719A89BE102D6CE70001F6CE /* LJEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJEntry.h; sourceTree = "<group>"; };
 		719A89BF102D6CE70001F6CE /* LJEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJEntry.m; sourceTree = "<group>"; };
 		719A89C0102D6CE70001F6CE /* LJErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJErrors.h; sourceTree = "<group>"; };
@@ -59,13 +59,7 @@
 		719A89C4102D6CE70001F6CE /* LJMoods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJMoods.m; sourceTree = "<group>"; };
 		719A89C5102D6CE70001F6CE /* LJxmlrpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJxmlrpc.h; sourceTree = "<group>"; };
 		719A89C6102D6CE70001F6CE /* LJxmlrpc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJxmlrpc.m; sourceTree = "<group>"; };
-		719F7CE8102E668B00D06772 /* asLJFrameworkLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJFrameworkLogger.h; sourceTree = "<group>"; };
-		719F7CE9102E668B00D06772 /* asLJFrameworkLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJFrameworkLogger.m; sourceTree = "<group>"; };
-		719F7D78102E758B00D06772 /* asLJFramework.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJFramework.m; sourceTree = "<group>"; };
-		719F7D79102E758B00D06772 /* asLJFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJFramework.h; sourceTree = "<group>"; };
 		719F7F22102EA02100D06772 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
-		719F805F102EB96500D06772 /* asLJFrameworkKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJFrameworkKeychain.h; sourceTree = "<group>"; };
-		719F8060102EB96500D06772 /* asLJFrameworkKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJFrameworkKeychain.m; sourceTree = "<group>"; };
 		719F808E102EBE8300D06772 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		719F808F102EBE8300D06772 /* NSDataAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDataAdditions.h; sourceTree = "<group>"; };
 		719F8090102EBE8300D06772 /* NSDataAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataAdditions.m; sourceTree = "<group>"; };
@@ -88,8 +82,15 @@
 		719F80A1102EBE8300D06772 /* XMLRPCResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLRPCResponse.m; sourceTree = "<group>"; };
 		719F80A2102EBE8300D06772 /* XMLRPCTreeBasedParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLRPCTreeBasedParser.h; sourceTree = "<group>"; };
 		719F80A3102EBE8300D06772 /* XMLRPCTreeBasedParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLRPCTreeBasedParser.m; sourceTree = "<group>"; };
+		71AD902E103E6F49003EE617 /* asLJCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCore.h; sourceTree = "<group>"; };
+		71AD902F103E6F49003EE617 /* asLJCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJCore.m; sourceTree = "<group>"; };
+		71AD9032103E6F59003EE617 /* asLJCoreKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCoreKeychain.h; sourceTree = "<group>"; };
+		71AD9033103E6F59003EE617 /* asLJCoreKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJCoreKeychain.m; sourceTree = "<group>"; };
+		71AD9034103E6F59003EE617 /* asLJCoreLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCoreLogger.h; sourceTree = "<group>"; };
+		71AD9035103E6F59003EE617 /* asLJCoreLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJCoreLogger.m; sourceTree = "<group>"; };
+		71AD903A103E6F67003EE617 /* asLJCore_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCore_Prefix.pch; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8DC2EF5B0486A6940098B216 /* asLJFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = asLJFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DC2EF5B0486A6940098B216 /* asLJCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = asLJCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -109,7 +110,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DC2EF5B0486A6940098B216 /* asLJFramework.framework */,
+				8DC2EF5B0486A6940098B216 /* asLJCore.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -149,10 +150,10 @@
 		08FB77AEFE84172EC02AAC07 /* Private Classes */ = {
 			isa = PBXGroup;
 			children = (
-				719F7CE8102E668B00D06772 /* asLJFrameworkLogger.h */,
-				719F7CE9102E668B00D06772 /* asLJFrameworkLogger.m */,
-				719F805F102EB96500D06772 /* asLJFrameworkKeychain.h */,
-				719F8060102EB96500D06772 /* asLJFrameworkKeychain.m */,
+				71AD9032103E6F59003EE617 /* asLJCoreKeychain.h */,
+				71AD9033103E6F59003EE617 /* asLJCoreKeychain.m */,
+				71AD9034103E6F59003EE617 /* asLJCoreLogger.h */,
+				71AD9035103E6F59003EE617 /* asLJCoreLogger.m */,
 				719A89C3102D6CE70001F6CE /* LJMoods.h */,
 				719A89C4102D6CE70001F6CE /* LJMoods.m */,
 				719A89C5102D6CE70001F6CE /* LJxmlrpc.h */,
@@ -184,7 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				719A89C0102D6CE70001F6CE /* LJErrors.h */,
-				32DBCF5E0370ADEE00C91783 /* asLJFramework_Prefix.pch */,
+				71AD903A103E6F67003EE617 /* asLJCore_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -192,8 +193,8 @@
 		719F808C102EBDBD00D06772 /* Public Classes */ = {
 			isa = PBXGroup;
 			children = (
-				719F7D78102E758B00D06772 /* asLJFramework.m */,
-				719F7D79102E758B00D06772 /* asLJFramework.h */,
+				71AD902E103E6F49003EE617 /* asLJCore.h */,
+				71AD902F103E6F49003EE617 /* asLJCore.m */,
 				719A89BE102D6CE70001F6CE /* LJEntry.h */,
 				719A89BF102D6CE70001F6CE /* LJEntry.m */,
 			);
@@ -240,9 +241,6 @@
 				719A89C9102D6CE70001F6CE /* LJErrors.h in Headers */,
 				719A89CC102D6CE70001F6CE /* LJMoods.h in Headers */,
 				719A89CE102D6CE70001F6CE /* LJxmlrpc.h in Headers */,
-				719F7CEA102E668B00D06772 /* asLJFrameworkLogger.h in Headers */,
-				719F7D7B102E758B00D06772 /* asLJFramework.h in Headers */,
-				719F8061102EB96500D06772 /* asLJFrameworkKeychain.h in Headers */,
 				719F80A5102EBE8300D06772 /* NSDataAdditions.h in Headers */,
 				719F80A7102EBE8300D06772 /* NSStringAdditions.h in Headers */,
 				719F80A9102EBE8300D06772 /* XMLRPC.h in Headers */,
@@ -255,15 +253,19 @@
 				719F80B4102EBE8300D06772 /* XMLRPCRequest.h in Headers */,
 				719F80B6102EBE8300D06772 /* XMLRPCResponse.h in Headers */,
 				719F80B8102EBE8300D06772 /* XMLRPCTreeBasedParser.h in Headers */,
+				71AD9030103E6F49003EE617 /* asLJCore.h in Headers */,
+				71AD9036103E6F59003EE617 /* asLJCoreKeychain.h in Headers */,
+				71AD9038103E6F59003EE617 /* asLJCoreLogger.h in Headers */,
+				71AD903B103E6F67003EE617 /* asLJCore_Prefix.pch in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* asLJFramework */ = {
+		8DC2EF4F0486A6940098B216 /* asLJCore */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "asLJFramework" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "asLJCore" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -274,10 +276,10 @@
 			);
 			dependencies = (
 			);
-			name = asLJFramework;
+			name = asLJCore;
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = asLJFramework;
-			productReference = 8DC2EF5B0486A6940098B216 /* asLJFramework.framework */;
+			productReference = 8DC2EF5B0486A6940098B216 /* asLJCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -285,7 +287,7 @@
 /* Begin PBXProject section */
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "asLJFramework" */;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "asLJCore" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* asLJFramework */;
@@ -293,7 +295,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* asLJFramework */,
+				8DC2EF4F0486A6940098B216 /* asLJCore */,
 			);
 		};
 /* End PBXProject section */
@@ -317,9 +319,6 @@
 				719A89C8102D6CE70001F6CE /* LJEntry.m in Sources */,
 				719A89CD102D6CE70001F6CE /* LJMoods.m in Sources */,
 				719A89CF102D6CE70001F6CE /* LJxmlrpc.m in Sources */,
-				719F7CEB102E668B00D06772 /* asLJFrameworkLogger.m in Sources */,
-				719F7D7A102E758B00D06772 /* asLJFramework.m in Sources */,
-				719F8062102EB96500D06772 /* asLJFrameworkKeychain.m in Sources */,
 				719F80A6102EBE8300D06772 /* NSDataAdditions.m in Sources */,
 				719F80A8102EBE8300D06772 /* NSStringAdditions.m in Sources */,
 				719F80AC102EBE8300D06772 /* XMLRPCConnection.m in Sources */,
@@ -329,6 +328,9 @@
 				719F80B5102EBE8300D06772 /* XMLRPCRequest.m in Sources */,
 				719F80B7102EBE8300D06772 /* XMLRPCResponse.m in Sources */,
 				719F80B9102EBE8300D06772 /* XMLRPCTreeBasedParser.m in Sources */,
+				71AD9031103E6F49003EE617 /* asLJCore.m in Sources */,
+				71AD9037103E6F59003EE617 /* asLJCoreKeychain.m in Sources */,
+				71AD9039103E6F59003EE617 /* asLJCoreLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,10 +365,10 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = asLJFramework_Prefix.pch;
+				GCC_PREFIX_HEADER = asLJCore_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				PRODUCT_NAME = asLJFramework;
+				PRODUCT_NAME = asLJCore;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -385,10 +387,10 @@
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = asLJFramework_Prefix.pch;
+				GCC_PREFIX_HEADER = asLJCore_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				PRODUCT_NAME = asLJFramework;
+				PRODUCT_NAME = asLJCore;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -422,7 +424,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "asLJFramework" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "asLJCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,
@@ -431,7 +433,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "asLJFramework" */ = {
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "asLJCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,

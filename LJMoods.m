@@ -1,6 +1,6 @@
 //
 //  LJMoods.m
-//  asLJFramework
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 1/27/09.
 //
@@ -39,7 +39,7 @@
 
 static NSMutableDictionary *everyMood;
 
-#define USERDEFAULTS_KEY @"asLJFramework-EveryMood"
+#define USERDEFAULTS_KEY @"asLJCore-EveryMood"
 
 + (void)initialize
 {

@@ -1,6 +1,6 @@
 //
 //  LJxmlrpc.m
-//  asLJFramework
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 4/24/09.
 //
@@ -33,7 +33,7 @@
  *** END LICENSE TEXT ***/
 
 #import "LJxmlrpc.h"
-#import "asLJFrameworkKeychain.h"
+#import "asLJCoreKeychain.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <XMLRPC.h>
 #import "LJErrors.h"
@@ -95,7 +95,7 @@ static NSString *clientVersion;
 					[innerError release];
 					innerError = nil;
 				}
-				*anError = [NSError errorWithDomain:asLJFramework_ErrorDomain
+				*anError = [NSError errorWithDomain:asLJCore_ErrorDomain
 											   code:[faultCode integerValue]
 										   userInfo:[NSDictionary dictionaryWithDictionary:eDict]];
 			}
@@ -289,7 +289,7 @@ static NSString *clientVersion;
 		// set response to md5( challenge + md5([password]) )   where md5() returns the hex digest
 		NSString *serverFQDN = [[serverURL componentsSeparatedByString:@"/"] objectAtIndex:2];
 		NSString *pwdMD5 = [LJxmlrpc 
-							md5:[asLJFrameworkKeychain getPasswordByLabel:keychainItemName
+							md5:[asLJCoreKeychain getPasswordByLabel:keychainItemName
 															  withAccount:username
 															   withServer:serverFQDN]];
 		NSString *authResponse = [LJxmlrpc

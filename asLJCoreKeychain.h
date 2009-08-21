@@ -1,5 +1,8 @@
 //
-// Prefix header for all source files of the 'asLJFramework' target in the 'asLJFramework' project.
+//  asLJCoreKeychain.h
+//  asLJCore
+//
+//  Created by Isaac Greenspan on 1/22/09.
 //
 
 /*** BEGIN LICENSE TEXT ***
@@ -29,24 +32,28 @@
  
  *** END LICENSE TEXT ***/
 
-#ifdef __OBJC__
-    #import <Cocoa/Cocoa.h>
-#endif
+#import <Cocoa/Cocoa.h>
 
 
-// convert the FQDN of the server into the XML-RPC endpoint
-#define SERVER2URL(s) [NSString stringWithFormat:@"http://%@/interface/xmlrpc",s]
-
-
-// verbose logging using our logging class
-#import "asLJFrameworkLogger.h"
-#define VLOG(s...) [asLJFrameworkLogger log:s]
-
-
-// debug logging (turns into NOOP for release versions)
-#ifdef DEBUG
-	#define DLOG(s...) NSLog(@"%s:%d %@",__FILE__,__LINE__,[NSString stringWithFormat:s])
-#else
-	#define DLOG(s...)
-#endif
-
+@interface asLJCoreKeychain :  NSObject 
+{
+	
+}
++ (NSArray *)getKeysByLabel:(NSString *)theLabel;
++ (NSString *)getPasswordByLabel:(NSString *)theLabel
+					 withAccount:(NSString *)theAccount
+					  withServer:(NSString *)theServer;
++ (void)makeNewInternetKeyWithLabel:(NSString *)theLabel
+						withAccount:(NSString *)theAccount
+						 withServer:(NSString *)theServer
+					   withPassword:(NSString *)thePassword;
++ (void)deleteKeychainItemByLabel:(NSString *)theLabel
+					  withAccount:(NSString *)theAccount
+					   withServer:(NSString *)theServer;
++ (void)editKeychainItemByLabel:(NSString *)theLabel
+					withAccount:(NSString *)theAccount
+					 withServer:(NSString *)theServer
+					 setAccount:(NSString *)newAccount
+					  setServer:(NSString *)newServer
+					setPassword:(NSString *)newPassword;
+@end

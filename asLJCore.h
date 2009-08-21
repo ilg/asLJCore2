@@ -1,6 +1,6 @@
 //
-//  asLJFramework.h
-//  asLJFramework
+//  asLJCore.h
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 7/17/09.
 //
@@ -8,7 +8,7 @@
 
 
 // The license below is, to the best of my knowledge, a 2-clause "Simplified" BSD license.
-// This license applies to asLJFramework as a whole.
+// This license applies to asLJCore as a whole.
 
 /*** BEGIN LICENSE TEXT ***
  
@@ -37,7 +37,7 @@
  
  *** END LICENSE TEXT ***/
 
-/*	asLJFramework is based upon the XML-RPC Framework,
+/*	asLJCore is based upon the XML-RPC Framework,
 	Copyright (c) 2008 Eric Czarny <eczarny@gmail.com>,
 	used under its MIT license.
  */
@@ -53,7 +53,7 @@
 
 
 
-@interface asLJFramework : NSObject {
+@interface asLJCore : NSObject {
 
 }
 

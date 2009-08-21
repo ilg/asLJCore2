@@ -1,6 +1,6 @@
 //
-//  asLJFrameworkKeychain.m
-//  asLJFramework
+//  asLJCoreKeychain.m
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 1/22/09.
 //
@@ -32,9 +32,9 @@
  
  *** END LICENSE TEXT ***/
 
-#import "asLJFrameworkKeychain.h"
+#import "asLJCoreKeychain.h"
 
-@implementation asLJFrameworkKeychain
+@implementation asLJCoreKeychain
 
 + (NSArray *)getKeysByLabel:(NSString *)theLabel
 {

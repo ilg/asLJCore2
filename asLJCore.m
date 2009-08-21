@@ -1,6 +1,6 @@
 //
-//  asLJFramework.m
-//  asLJFramework
+//  asLJCore.m
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 7/17/09.
 //
@@ -32,12 +32,12 @@
  
  *** END LICENSE TEXT ***/
 
-#import "asLJFramework.h"
+#import "asLJCore.h"
 #import "LJxmlrpc.h"
 #import "LJMoods.h"
-#import "asLJFrameworkKeychain.h"
+#import "asLJCoreKeychain.h"
 
-@implementation asLJFramework
+@implementation asLJCore
 
 #pragma mark -
 #pragma mark initialization/confifguration
@@ -61,7 +61,7 @@ static NSString *keychainItemName;
 // enable/disable verbose logging
 + (void)setVerboseLogging:(BOOL)verbose
 {
-	[asLJFrameworkLogger setVerboseLogging:verbose];
+	[asLJCoreLogger setVerboseLogging:verbose];
 }
 
 
@@ -88,7 +88,7 @@ static NSString *keychainItemName;
 
 + (NSArray *)allAccounts
 {
-	NSArray *accountArray = [asLJFrameworkKeychain getKeysByLabel:keychainItemName];
+	NSArray *accountArray = [asLJCoreKeychain getKeysByLabel:keychainItemName];
 	return [NSArray arrayWithArray:accountArray];
 }
 
@@ -96,7 +96,7 @@ static NSString *keychainItemName;
 			  withUsername:(NSString *)username
 			  withPassword:(NSString *)password
 {
-	[asLJFrameworkKeychain makeNewInternetKeyWithLabel:keychainItemName
+	[asLJCoreKeychain makeNewInternetKeyWithLabel:keychainItemName
 										   withAccount:username
 											withServer:server
 										  withPassword:password];
@@ -105,7 +105,7 @@ static NSString *keychainItemName;
 + (void)deleteAccount:(NSString *)account
 {
 	NSDictionary *accountInfo = [self splitAccountString:account];
-	[asLJFrameworkKeychain deleteKeychainItemByLabel:keychainItemName
+	[asLJCoreKeychain deleteKeychainItemByLabel:keychainItemName
 										 withAccount:[accountInfo objectForKey:@"username"]
 										  withServer:[accountInfo objectForKey:@"server"]];
 }
@@ -116,7 +116,7 @@ static NSString *keychainItemName;
 		setPassword:(NSString *)password
 {
 	NSDictionary *accountInfo = [self splitAccountString:account];
-	[asLJFrameworkKeychain editKeychainItemByLabel:keychainItemName
+	[asLJCoreKeychain editKeychainItemByLabel:keychainItemName
 									   withAccount:[accountInfo objectForKey:@"username"]
 										withServer:[accountInfo objectForKey:@"server"]
 										setAccount:username

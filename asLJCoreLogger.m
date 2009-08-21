@@ -1,15 +1,15 @@
 //
-//  asLJFrameworkLogger.m
-//  asLJFramework
+//  asLJCoreLogger.m
+//  asLJCore
 //
 //  Created by Isaac Greenspan on 8/8/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import "asLJFrameworkLogger.h"
+#import "asLJCoreLogger.h"
 
 
-@implementation asLJFrameworkLogger
+@implementation asLJCoreLogger
 
 static BOOL verboseLogging = NO;
 
