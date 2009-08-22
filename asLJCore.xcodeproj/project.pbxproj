@@ -36,7 +36,7 @@
 		719F80B7102EBE8300D06772 /* XMLRPCResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F80A1102EBE8300D06772 /* XMLRPCResponse.m */; };
 		719F80B8102EBE8300D06772 /* XMLRPCTreeBasedParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 719F80A2102EBE8300D06772 /* XMLRPCTreeBasedParser.h */; };
 		719F80B9102EBE8300D06772 /* XMLRPCTreeBasedParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 719F80A3102EBE8300D06772 /* XMLRPCTreeBasedParser.m */; };
-		71AD9030103E6F49003EE617 /* asLJCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 71AD902E103E6F49003EE617 /* asLJCore.h */; };
+		71AD9030103E6F49003EE617 /* asLJCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 71AD902E103E6F49003EE617 /* asLJCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		71AD9031103E6F49003EE617 /* asLJCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 71AD902F103E6F49003EE617 /* asLJCore.m */; };
 		71AD9036103E6F59003EE617 /* asLJCoreKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 71AD9032103E6F59003EE617 /* asLJCoreKeychain.h */; };
 		71AD9037103E6F59003EE617 /* asLJCoreKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 71AD9033103E6F59003EE617 /* asLJCoreKeychain.m */; };
