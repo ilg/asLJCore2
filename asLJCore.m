@@ -350,6 +350,39 @@ static NSString *keychainItemName;
 	[self deleteEntryFor:account withJournal:journal withItemID:itemid error:NULL];
 }
 
++ (NSString *)getSessionCookieFor:(NSString *)account
+							error:(NSError **)anError
+{
+	NSString *theResult;
+	NSDictionary *accountInfo = [self splitAccountString:account];
+	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
+	NSError *myError;
+	if (![theCall call:@"sessiongenerate"
+			  withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+						  nil]
+				   atURL:SERVER2URL([accountInfo objectForKey:@"server"])
+				 forUser:[accountInfo objectForKey:@"username"]
+				   error:&myError]) {
+		// call failed
+		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		theResult = nil;
+		if (anError != NULL) *anError = [[myError copy] autorelease];
+	} else {
+		// call succeded
+		VLOG(@"Got session cookie.");
+		theResult = [NSString stringWithString:[theCall objectForKey:@"ljsession"]];
+	}
+	[theCall release];
+	return theResult;
+}
+
++ (NSString *)getSessionCookieFor:(NSString *)account
+{
+	return [self getSessionCookieFor:account error:NULL];
+}
+
+
+
 
 #pragma mark -
 #pragma mark moods

@@ -122,6 +122,10 @@
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid;
 
++ (NSString *)getSessionCookieFor:(NSString *)account
+							error:(NSError **)anError;
++ (NSString *)getSessionCookieFor:(NSString *)account;
+
 
 #pragma mark -
 #pragma mark moods
