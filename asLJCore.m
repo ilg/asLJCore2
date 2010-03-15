@@ -7,28 +7,30 @@
 
 /*** BEGIN LICENSE TEXT ***
  
- Copyright (c) 2009, Isaac Greenspan
+ Copyright (c) 2009-2010, Isaac Greenspan
  All rights reserved.
  
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
- 
- * Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Neither the name of the <organization> nor the
+ names of its contributors may be used to endorse or promote products
+ derived from this software without specific prior written permission.
  
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
  *** END LICENSE TEXT ***/
 
@@ -128,24 +130,48 @@ static NSString *keychainItemName;
 #pragma mark -
 #pragma mark server interaction
 
++ (NSDictionary *)convenientCall:(NSString *)methodName
+					  forAccount:(NSString *)account
+					  withParams:(NSDictionary *)params
+						   error:(NSError **)anError
+{
+	NSDictionary *theResult;
+	NSDictionary *accountInfo = [self splitAccountString:account];
+	NSError *myError;
+	LJxmlrpc *theCall = [LJxmlrpc newCall:methodName
+							   withParams:params
+									atURL:SERVER2URL([accountInfo objectForKey:@"server"])
+								  forUser:[accountInfo objectForKey:@"username"]
+									error:&myError];
+	if (!theCall) {
+		// call failed
+		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		theResult = nil;
+		if (anError != NULL) *anError = [[myError copy] autorelease];
+	} else {
+		theResult = [theCall getResultDictionary];
+	}
+	[theCall release];
+	return theResult;
+}
+
+
 + (NSDictionary *)loginTo:(NSString *)account
 					error:(NSError **)anError
 {
 	NSDictionary *theResult;
-	NSDictionary *accountInfo = [self splitAccountString:account];
-	LJxmlrpc *loginCall = [[LJxmlrpc alloc] init];
 	NSError *myError;
-	if (![loginCall call:@"login"
-			  withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-						  @"1",@"getpickws",
-						  @"1",@"getpickwurls",
-						  [LJMoods getHighestMoodIDForServer:[accountInfo objectForKey:@"server"]],@"getmoods",
-						  nil]
-				   atURL:SERVER2URL([accountInfo objectForKey:@"server"])
-				 forUser:[accountInfo objectForKey:@"username"]
-				   error:&myError]) {
+	NSDictionary *accountInfo = [self splitAccountString:account];
+	NSDictionary *theCall =[self convenientCall:@"login"
+									 forAccount:account
+									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+												 @"1",@"getpickws",
+												 @"1",@"getpickwurls",
+												 [LJMoods getHighestMoodIDForServer:[accountInfo objectForKey:@"server"]],@"getmoods",
+												 nil]
+										  error:&myError]; 
+	if (!theCall) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
@@ -153,7 +179,7 @@ static NSString *keychainItemName;
 		VLOG(@"... logged in.");
 		
 		// store new moods
-		NSArray *newMoods = [loginCall objectForKey:@"moods"];
+		NSArray *newMoods = [theCall objectForKey:@"moods"];
 		NSMutableArray *newMoodStrings = [NSMutableArray arrayWithCapacity:[newMoods count]];
 		NSMutableArray *newMoodIDs = [NSMutableArray arrayWithCapacity:[newMoods count]];
 		for (id theNewMood in newMoods) {
@@ -163,9 +189,8 @@ static NSString *keychainItemName;
 		[LJMoods addNewMoods:newMoodStrings
 					 withIDs:newMoodIDs
 				   forServer:[accountInfo objectForKey:@"server"]];
-		theResult = [loginCall getResultDictionary];
+		theResult = [NSDictionary dictionaryWithDictionary:theCall];
 	}
-	[loginCall release];
 	return theResult;
 }
 
@@ -180,17 +205,14 @@ static NSString *keychainItemName;
 {
 	NSDictionary *theResult;
 	NSError *myError;
-	NSDictionary *accountInfo = [self splitAccountString:account];
-	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
-	if (![theCall call:@"getdaycounts"
-			withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-						journal,@"usejournal",
-						nil]
-				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
-			   forUser:[accountInfo objectForKey:@"username"]
-				 error:&myError]) {
+	NSDictionary *theCall =[self convenientCall:@"getdaycounts"
+									 forAccount:account
+									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+												 journal,@"usejournal",
+												 nil]
+										  error:&myError]; 
+	if (!theCall) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
@@ -204,7 +226,6 @@ static NSString *keychainItemName;
 		}
 		theResult = [NSDictionary dictionaryWithDictionary:temporaryResults];
 	}
-	[theCall release];
 	return theResult;
 }
 
@@ -221,25 +242,22 @@ static NSString *keychainItemName;
 {
 	NSDictionary *theResult;
 	NSError *myError;
-	NSDictionary *accountInfo = [self splitAccountString:account];
-	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
-	if (![theCall call:@"getevents"
-			withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-						journal,@"usejournal",
-						@"day",@"selecttype",
-						[NSString stringWithFormat:@"%d",[date yearOfCommonEra]],@"year",
-						[NSString stringWithFormat:@"%d",[date monthOfYear]],@"month",
-						[NSString stringWithFormat:@"%d",[date dayOfMonth]],@"day",
-						@"mac",@"linenedings",
-						@"1",@"noprops",
-						@"1",@"prefersubject",
-						@"200",@"truncate",
-						nil]
-				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
-			   forUser:[accountInfo objectForKey:@"username"]
-				 error:&myError]) {
+	NSDictionary *theCall =[self convenientCall:@"getevents"
+									 forAccount:account
+									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+												 journal,@"usejournal",
+												 @"day",@"selecttype",
+												 [NSString stringWithFormat:@"%d",[date yearOfCommonEra]],@"year",
+												 [NSString stringWithFormat:@"%d",[date monthOfYear]],@"month",
+												 [NSString stringWithFormat:@"%d",[date dayOfMonth]],@"day",
+												 @"mac",@"linenedings",
+												 @"1",@"noprops",
+												 @"1",@"prefersubject",
+												 @"200",@"truncate",
+												 nil]
+										  error:&myError]; 
+	if (!theCall) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
@@ -260,7 +278,6 @@ static NSString *keychainItemName;
 		}
 		theResult = [NSDictionary dictionaryWithDictionary:temporaryResults];
 	}
-	[theCall release];
 	return theResult;
 }
 
@@ -277,17 +294,14 @@ static NSString *keychainItemName;
 {
 	NSArray *theResult;
 	NSError *myError;
-	NSDictionary *accountInfo = [self splitAccountString:account];
-	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
-	if (![theCall call:@"getusertags"
-			withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-						journal,@"usejournal",
-						nil]
-				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
-			   forUser:[accountInfo objectForKey:@"username"]
-				 error:&myError]) {
+	NSDictionary *theCall =[self convenientCall:@"getusertags"
+									 forAccount:account
+									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+												 journal,@"usejournal",
+												 nil]
+										  error:&myError]; 
+	if (!theCall) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
@@ -300,7 +314,6 @@ static NSString *keychainItemName;
 		}
 		theResult = [NSArray arrayWithArray:temporaryResults];
 	}
-	[theCall release];
 	return theResult;
 }
 
@@ -317,21 +330,18 @@ static NSString *keychainItemName;
 {
 	BOOL theResult;
 	NSError *myError;
-	NSDictionary *accountInfo = [self splitAccountString:account];
-	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
-	if (![theCall call:@"editevent"
-			withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-						journal,@"usejournal",
-						itemid,@"itemid",
-						@"",@"event",
-						@"",@"subject",
-						@"mac",@"linenedings",
-						nil]
-				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
-			   forUser:[accountInfo objectForKey:@"username"]
-				 error:&myError]) {
+	NSDictionary *theCall =[self convenientCall:@"editevent"
+									 forAccount:account
+									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+												 journal,@"usejournal",
+												 itemid,@"itemid",
+												 @"",@"event",
+												 @"",@"subject",
+												 @"mac",@"linenedings",
+												 nil]
+										  error:&myError]; 
+	if (!theCall) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = NO;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
@@ -339,7 +349,6 @@ static NSString *keychainItemName;
 		VLOG(@"Deleted entry with itemid=%@",itemid);
 		theResult = YES;
 	}
-	[theCall release];
 	return theResult;
 }
 
@@ -354,17 +363,14 @@ static NSString *keychainItemName;
 							error:(NSError **)anError
 {
 	NSString *theResult;
-	NSDictionary *accountInfo = [self splitAccountString:account];
-	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
 	NSError *myError;
-	if (![theCall call:@"sessiongenerate"
-			  withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-						  nil]
-				   atURL:SERVER2URL([accountInfo objectForKey:@"server"])
-				 forUser:[accountInfo objectForKey:@"username"]
-				   error:&myError]) {
+	NSDictionary *theCall = [self convenientCall:@"sessiongenerate"
+									  forAccount:account
+									  withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+												  nil]
+										   error:&myError];
+	if (!theCall) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
@@ -372,7 +378,6 @@ static NSString *keychainItemName;
 		VLOG(@"Got session cookie.");
 		theResult = [NSString stringWithString:[theCall objectForKey:@"ljsession"]];
 	}
-	[theCall release];
 	return theResult;
 }
 
@@ -386,18 +391,15 @@ static NSString *keychainItemName;
 					 error:(NSError **)anError
 {
 	NSArray *theResult;
-	NSDictionary *accountInfo = [self splitAccountString:account];
-	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
 	NSError *myError;
-	if (![theCall call:@"getfriends"
-			withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-						@"1",@"includebdays",
-						nil]
-				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
-			   forUser:[accountInfo objectForKey:@"username"]
-				 error:&myError]) {
+	NSDictionary *theCall = [self convenientCall:@"getfriends"
+									  forAccount:account
+									  withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+												  @"1",@"includebdays",
+												  nil]
+										   error:&myError];
+	if (!theCall) {
 		// call failed
-		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
 		theResult = nil;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
@@ -406,7 +408,6 @@ static NSString *keychainItemName;
 		NSArray *friends = [theCall objectForKey:@"friends"];
 		NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[friends count]];
 		for (NSDictionary *aFriend in friends) {
-#define NIL2EMPTY(s) ((s)?(s):@"")
 			[temporaryResults addObject:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
 										 NIL2EMPTY([aFriend objectForKey:@"username"]),@"username",
 										 NIL2EMPTY([aFriend objectForKey:@"fullname"]),@"fullname",
@@ -422,7 +423,6 @@ static NSString *keychainItemName;
 		}
 		theResult = [NSArray arrayWithArray:temporaryResults];
 	}
-	[theCall release];
 	return theResult;
 }
 
