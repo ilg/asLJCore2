@@ -382,6 +382,55 @@ static NSString *keychainItemName;
 }
 
 
++ (NSArray *)getFriendsFor:(NSString *)account
+					 error:(NSError **)anError
+{
+	NSArray *theResult;
+	NSDictionary *accountInfo = [self splitAccountString:account];
+	LJxmlrpc *theCall = [[LJxmlrpc alloc] init];
+	NSError *myError;
+	if (![theCall call:@"getfriends"
+			withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+						@"1",@"includebdays",
+						nil]
+				 atURL:SERVER2URL([accountInfo objectForKey:@"server"])
+			   forUser:[accountInfo objectForKey:@"username"]
+				 error:&myError]) {
+		// call failed
+		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
+		theResult = nil;
+		if (anError != NULL) *anError = [[myError copy] autorelease];
+	} else {
+		// call succeded
+		VLOG(@"Got friends.");
+		NSArray *friends = [theCall objectForKey:@"friends"];
+		NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[friends count]];
+		for (NSDictionary *aFriend in friends) {
+#define NIL2EMPTY(s) ((s)?(s):@"")
+			[temporaryResults addObject:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+										 NIL2EMPTY([aFriend objectForKey:@"username"]),@"username",
+										 NIL2EMPTY([aFriend objectForKey:@"fullname"]),@"fullname",
+										 NIL2EMPTY([aFriend objectForKey:@"identity_type"]),@"identity_type",
+										 NIL2EMPTY([aFriend objectForKey:@"identity_value"]),@"identity_value",
+										 NIL2EMPTY([aFriend objectForKey:@"identity_display"]),@"identity_display",
+										 NIL2EMPTY([aFriend objectForKey:@"type"]),@"type",
+										 NIL2EMPTY([aFriend objectForKey:@"birthday"]),@"birthday",
+										 NIL2EMPTY([aFriend objectForKey:@"fgcolor"]),@"fgcolor",
+										 NIL2EMPTY([aFriend objectForKey:@"bgcolor"]),@"bgcolor",
+										 NIL2EMPTY([aFriend objectForKey:@"groupmask"]),@"groupmask",
+										 nil]]; 
+		}
+		theResult = [NSArray arrayWithArray:temporaryResults];
+	}
+	[theCall release];
+	return theResult;
+}
+
++ (NSArray *)getFriendsFor:(NSString *)account
+{
+	return [self getFriendsFor:account error:NULL];
+}
+
 
 
 #pragma mark -

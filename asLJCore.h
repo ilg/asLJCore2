@@ -126,6 +126,10 @@
 							error:(NSError **)anError;
 + (NSString *)getSessionCookieFor:(NSString *)account;
 
++ (NSArray *)getFriendsFor:(NSString *)account
+					 error:(NSError **)anError;
++ (NSArray *)getFriendsFor:(NSString *)account;
+
 
 #pragma mark -
 #pragma mark moods
