@@ -411,6 +411,52 @@ static NSString *keychainItemName;
 	return [self getSessionCookieFor:account error:NULL];
 }
 
++ (NSString *)makeLoggedInCookieFromSessionCookie:(NSString *)sessionCookie
+{
+	return [[[sessionCookie componentsSeparatedByString:@":"]
+			 objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1,2)]]
+			componentsJoinedByString:@":"];
+}
+
++ (NSHTTPCookie *)makeSessionNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
+												forAccount:(NSString *)account
+{
+	NSString *server = [[self splitAccountString:account] objectForKey:kasLJCoreAccountServerKey];
+	NSString *cookieDomain;
+	if ([server hasPrefix:@"www."]) {
+		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
+	} else {
+		cookieDomain = [NSString stringWithFormat:@".%@",server];
+	}
+	return [NSHTTPCookie
+			cookieWithProperties:[NSDictionary dictionaryWithObjectsAndKeys:
+								  @"ljsession",NSHTTPCookieName,
+								  sessionCookie,NSHTTPCookieValue,
+								  cookieDomain,NSHTTPCookieDomain,
+								  @"/",NSHTTPCookiePath,
+								  nil]];
+}
+
++ (NSHTTPCookie *)makeLoggedInNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
+												 forAccount:(NSString *)account
+{
+	NSString *server = [[self splitAccountString:account] objectForKey:kasLJCoreAccountServerKey];
+	NSString *cookieDomain;
+	if ([server hasPrefix:@"www."]) {
+		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
+	} else {
+		cookieDomain = [NSString stringWithFormat:@".%@",server];
+	}
+	NSString *loggedInCookie = [self makeLoggedInCookieFromSessionCookie:sessionCookie];
+	return [NSHTTPCookie
+			cookieWithProperties:[NSDictionary dictionaryWithObjectsAndKeys:
+								  @"ljloggedin",NSHTTPCookieName,
+								  loggedInCookie,NSHTTPCookieValue,
+								  cookieDomain,NSHTTPCookieDomain,
+								  @"/",NSHTTPCookiePath,
+								  nil]];
+}
+
 
 + (NSArray *)getFriendsFor:(NSString *)account
 					 error:(NSError **)anError

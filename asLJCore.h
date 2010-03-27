@@ -146,6 +146,12 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
 							error:(NSError **)anError;
 + (NSString *)getSessionCookieFor:(NSString *)account;
 
++ (NSString *)makeLoggedInCookieFromSessionCookie:(NSString *)sessionCookie;
++ (NSHTTPCookie *)makeSessionNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
+												forAccount:(NSString *)account;
++ (NSHTTPCookie *)makeLoggedInNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
+												 forAccount:(NSString *)account;
+
 + (NSArray *)getFriendsFor:(NSString *)account
 					 error:(NSError **)anError;
 + (NSArray *)getFriendsFor:(NSString *)account;
