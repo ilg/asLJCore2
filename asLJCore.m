@@ -39,6 +39,20 @@
 #import "LJMoods.h"
 #import "asLJCoreKeychain.h"
 
+#pragma mark constants
+
+// for results from -getFriendsFor:error:
+NSString * const kasLJCoreFriendTypeKey = @"type";
+NSString * const kasLJCoreFriendUsernameKey = @"username";
+NSString * const kasLJCoreFriendTypePersonKey = @"";
+NSString * const kasLJCoreFriendTypeCommunityKey = @"community";
+
+// for internal use (in +splitAccountString: and the results therefrom)
+NSString * const kasLJCoreAccountUsernameKey = @"username";
+NSString * const kasLJCoreAccountServerKey = @"server";
+
+#pragma mark -
+
 @implementation asLJCore
 
 #pragma mark -
@@ -70,14 +84,14 @@ static NSString *keychainItemName;
 #pragma mark -
 #pragma mark internal utility
 
-// turn a@b into @"username" => a, @"server" => b
+// turn a@b into kasLJCoreAccountUsernameKey => a, kasLJCoreAccountServerKey => b
 + (NSDictionary *)splitAccountString:(NSString *)account
 {
 	NSArray *parts = [account componentsSeparatedByString:@"@"];
 	if ([parts count] == 2) {
 		return [NSDictionary dictionaryWithObjectsAndKeys:
-				[parts objectAtIndex:0],@"username",
-				[parts objectAtIndex:1],@"server",
+				[parts objectAtIndex:0],kasLJCoreAccountUsernameKey,
+				[parts objectAtIndex:1],kasLJCoreAccountServerKey,
 				nil];
 	} else {
 		return nil;
@@ -99,17 +113,17 @@ static NSString *keychainItemName;
 			  withPassword:(NSString *)password
 {
 	[asLJCoreKeychain makeNewInternetKeyWithLabel:keychainItemName
-										   withAccount:username
-											withServer:server
-										  withPassword:password];
+									  withAccount:username
+									   withServer:server
+									 withPassword:password];
 }
 
 + (void)deleteAccount:(NSString *)account
 {
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	[asLJCoreKeychain deleteKeychainItemByLabel:keychainItemName
-										 withAccount:[accountInfo objectForKey:@"username"]
-										  withServer:[accountInfo objectForKey:@"server"]];
+									withAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]
+									 withServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
 }
 
 + (void)editAccount:(NSString *)account
@@ -119,11 +133,11 @@ static NSString *keychainItemName;
 {
 	NSDictionary *accountInfo = [self splitAccountString:account];
 	[asLJCoreKeychain editKeychainItemByLabel:keychainItemName
-									   withAccount:[accountInfo objectForKey:@"username"]
-										withServer:[accountInfo objectForKey:@"server"]
-										setAccount:username
-										 setServer:server
-									   setPassword:password];
+								  withAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]
+								   withServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]
+								   setAccount:username
+									setServer:server
+								  setPassword:password];
 }
 
 
@@ -140,8 +154,8 @@ static NSString *keychainItemName;
 	NSError *myError;
 	LJxmlrpc *theCall = [LJxmlrpc newCall:methodName
 							   withParams:params
-									atURL:SERVER2URL([accountInfo objectForKey:@"server"])
-								  forUser:[accountInfo objectForKey:@"username"]
+									atURL:SERVER2URL([accountInfo objectForKey:kasLJCoreAccountServerKey])
+								  forUser:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]
 									error:&myError];
 	if (!theCall) {
 		// call failed
@@ -167,7 +181,7 @@ static NSString *keychainItemName;
 									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
 												 @"1",@"getpickws",
 												 @"1",@"getpickwurls",
-												 [LJMoods getHighestMoodIDForServer:[accountInfo objectForKey:@"server"]],@"getmoods",
+												 [LJMoods getHighestMoodIDForServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]],@"getmoods",
 												 nil]
 										  error:&myError]; 
 	if (!theCall) {
@@ -188,7 +202,7 @@ static NSString *keychainItemName;
 		}
 		[LJMoods addNewMoods:newMoodStrings
 					 withIDs:newMoodIDs
-				   forServer:[accountInfo objectForKey:@"server"]];
+				   forServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
 		theResult = [NSDictionary dictionaryWithDictionary:theCall];
 	}
 	return theResult;

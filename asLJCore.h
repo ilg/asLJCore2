@@ -54,6 +54,12 @@
 #import "LJErrors.h"
 
 
+extern NSString * const kasLJCoreFriendTypeKey;
+extern NSString * const kasLJCoreFriendUsernameKey;
+extern NSString * const kasLJCoreFriendTypePersonKey;
+extern NSString * const kasLJCoreFriendTypeCommunityKey;
+
+
 
 @interface asLJCore : NSObject {
 
