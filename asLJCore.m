@@ -44,7 +44,7 @@
 // for entry security levels
 NSString * const kasLJCoreLJEntryPrivateSecurity = @"private";
 NSString * const kasLJCoreLJEntryUsemaskSecurity = @"usemask";
-			// public is defined as not being one of the other constants
+NSString * const kasLJCoreLJEntryPublicSecurity = @"public"; // use for posting only
 
 // for comment screening settings
 NSString * const kasLJCoreLJCommentScreenEveryone = @"A";
