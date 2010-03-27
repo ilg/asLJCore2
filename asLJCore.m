@@ -488,7 +488,6 @@ static NSString *keychainItemName;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
-		VLOG(@"Got friends.");
 		NSArray *friends = [theCall objectForKey:@"friends"];
 		NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[friends count]];
 		for (NSDictionary *aFriend in friends) {
@@ -506,6 +505,7 @@ static NSString *keychainItemName;
 										 nil]]; 
 		}
 		theResult = [NSArray arrayWithArray:temporaryResults];
+		VLOG(@"Got %d friends",[theResult count]);
 	}
 	return theResult;
 }
