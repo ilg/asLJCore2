@@ -41,11 +41,22 @@
 
 #pragma mark constants
 
+// for entry security levels
+NSString * const kasLJCoreLJEntryPrivateSecurity = @"private";
+NSString * const kasLJCoreLJEntryUsemaskSecurity = @"usemask";
+			// public is defined as not being one of the other constants
+
+// for comment screening settings
+NSString * const kasLJCoreLJCommentScreenEveryone = @"A";
+NSString * const kasLJCoreLJCommentScreenAnonymous = @"R";
+NSString * const kasLJCoreLJCommentScreenNonFriends = @"F";
+NSString * const kasLJCoreLJCommentScreenNoOne = @"N";
+
 // for results from -getFriendsFor:error:
-NSString * const kasLJCoreFriendTypeKey = @"type";
-NSString * const kasLJCoreFriendUsernameKey = @"username";
-NSString * const kasLJCoreFriendTypePersonKey = @"";
-NSString * const kasLJCoreFriendTypeCommunityKey = @"community";
+NSString * const kasLJCoreLJFriendTypeKey = @"type";
+NSString * const kasLJCoreLJFriendUsernameKey = @"username";
+NSString * const kasLJCoreLJFriendTypePersonKey = @"";
+NSString * const kasLJCoreLJFriendTypeCommunityKey = @"community";
 
 // for internal use (in +splitAccountString: and the results therefrom)
 NSString * const kasLJCoreAccountUsernameKey = @"username";

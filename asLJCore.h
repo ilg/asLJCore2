@@ -54,10 +54,22 @@
 #import "LJErrors.h"
 
 
-extern NSString * const kasLJCoreFriendTypeKey;
-extern NSString * const kasLJCoreFriendUsernameKey;
-extern NSString * const kasLJCoreFriendTypePersonKey;
-extern NSString * const kasLJCoreFriendTypeCommunityKey;
+// for entry security levels
+extern NSString * const kasLJCoreLJEntryPrivateSecurity;
+extern NSString * const kasLJCoreLJEntryUsemaskSecurity;
+			// public is defined as not being one of the other constants
+
+// for comment screening settings
+extern NSString * const kasLJCoreLJCommentScreenEveryone;
+extern NSString * const kasLJCoreLJCommentScreenAnonymous;
+extern NSString * const kasLJCoreLJCommentScreenNonFriends;
+extern NSString * const kasLJCoreLJCommentScreenNoOne;
+
+// for results from -getFriendsFor:error:
+extern NSString * const kasLJCoreLJFriendTypeKey;
+extern NSString * const kasLJCoreLJFriendUsernameKey;
+extern NSString * const kasLJCoreLJFriendTypePersonKey;
+extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
 
 
 
