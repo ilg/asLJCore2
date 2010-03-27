@@ -54,6 +54,19 @@
 #import "LJErrors.h"
 
 
+// for results from -loginTo:error:
+extern NSString * const kasLJCoreLJLoginFullNameKey;
+extern NSString * const kasLJCoreLJLoginMessageKey;
+extern NSString * const kasLJCoreLJLoginFriendGroupsKey;
+extern NSString * const kasLJCoreLJLoginUsejournalsKey;
+extern NSString * const kasLJCoreLJLoginMoodsKey;
+extern NSString * const kasLJCoreLJLoginUserpicKeywordsKey;
+extern NSString * const kasLJCoreLJLoginUserpicURLsKey;
+extern NSString * const kasLJCoreLJLoginDefaultUserpicURLKey;
+extern NSString * const kasLJCoreLJLoginFastServerKey;
+extern NSString * const kasLJCoreLJLoginUserIDKey;
+extern NSString * const kasLJCoreLJLoginMenusKey;
+
 // for entry security levels
 extern NSString * const kasLJCoreLJEntryPrivateSecurity;
 extern NSString * const kasLJCoreLJEntryUsemaskSecurity;

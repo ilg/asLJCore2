@@ -41,6 +41,19 @@
 
 #pragma mark constants
 
+// for results from -loginTo:error:
+NSString * const kasLJCoreLJLoginFullNameKey = @"fullname";
+NSString * const kasLJCoreLJLoginMessageKey = @"message";
+NSString * const kasLJCoreLJLoginFriendGroupsKey = @"friendgroups";
+NSString * const kasLJCoreLJLoginUsejournalsKey = @"usejournals";
+NSString * const kasLJCoreLJLoginMoodsKey = @"moods";
+NSString * const kasLJCoreLJLoginUserpicKeywordsKey = @"pickws";
+NSString * const kasLJCoreLJLoginUserpicURLsKey = @"pickwurls";
+NSString * const kasLJCoreLJLoginDefaultUserpicURLKey = @"defaultpicurl";
+NSString * const kasLJCoreLJLoginFastServerKey = @"fastserver";
+NSString * const kasLJCoreLJLoginUserIDKey = @"userid";
+NSString * const kasLJCoreLJLoginMenusKey = @"menus";
+
 // for entry security levels
 NSString * const kasLJCoreLJEntryPrivateSecurity = @"private";
 NSString * const kasLJCoreLJEntryUsemaskSecurity = @"usemask";
@@ -204,7 +217,7 @@ static NSString *keychainItemName;
 		VLOG(@"... logged in.");
 		
 		// store new moods
-		NSArray *newMoods = [theCall objectForKey:@"moods"];
+		NSArray *newMoods = [theCall objectForKey:kasLJCoreLJLoginMoodsKey];
 		NSMutableArray *newMoodStrings = [NSMutableArray arrayWithCapacity:[newMoods count]];
 		NSMutableArray *newMoodIDs = [NSMutableArray arrayWithCapacity:[newMoods count]];
 		for (id theNewMood in newMoods) {
