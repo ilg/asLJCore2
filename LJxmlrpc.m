@@ -155,6 +155,7 @@ static NSString *clientVersion;
 		isFault = TRUE;
 		faultCode = [response faultCode];
 		faultString = [response faultString];
+		if (!faultString) faultString = @"";
 		
 		VLOG(@"Error returned by XMLRPC call (%@): %@",faultCode,faultString);
 		
@@ -182,6 +183,7 @@ static NSString *clientVersion;
 	isError = TRUE;
 	faultCode = [[NSNumber numberWithInteger:[error code]] retain];
 	faultString = [[error userInfo] objectForKey:NSLocalizedDescriptionKey];
+	if (!faultString) faultString = @"";
 	innerError = [error retain];
 	VLOG(@"Error with XMLRPC request (%@): %@",faultCode,faultString);
 	
