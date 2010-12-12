@@ -34,26 +34,37 @@
 
 #import "LJMoods.h"
 
+@interface LJMoods (privateInterface)
+
++ (NSString *)applicationSupportFolder;
+
+@end
+
 
 @implementation LJMoods
 
 static NSMutableDictionary *everyMood;
 
 #define USERDEFAULTS_KEY @"asLJCore-EveryMood"
+#define LJMoodsCacheFILENAME [[LJMoods applicationSupportFolder] stringByAppendingPathComponent:@"LJMoodsCache.plist"]
 
 + (void)initialize
 {
 	@synchronized(self)
 	{
 		if (!everyMood) {
-			NSData *theData = [[NSUserDefaults standardUserDefaults] dataForKey:USERDEFAULTS_KEY];
-			if (theData) {
-				everyMood = (NSMutableDictionary *)[NSUnarchiver unarchiveObjectWithData:theData];
+			NSMutableDictionary *loadedMoods = [NSMutableDictionary dictionaryWithContentsOfFile:LJMoodsCacheFILENAME];
+			if (loadedMoods) {
+				everyMood = loadedMoods;
 				[everyMood retain];
 			} else {
 				everyMood = [[NSMutableDictionary dictionary] retain];
 			}
 		}
+		// remove old-style mood cache from the application preferences
+		// (which might be the wrong thing to do, since older versions will be looking for it there,
+		//  but they can recreate it and if we don't remove it, it'll be there forever taking up space)
+		[[NSUserDefaults standardUserDefaults] removeObjectForKey:USERDEFAULTS_KEY];
 	}
 }
 
@@ -111,7 +122,34 @@ static NSInteger intSort(id num1, id num2, void *context)
 		thisServerMoods = [NSMutableDictionary dictionaryWithObjects:theIDs forKeys:theMoods];
 		[everyMood setObject:thisServerMoods forKey:theServer];
 	}
-	[[NSUserDefaults standardUserDefaults] setObject:[NSArchiver archivedDataWithRootObject:everyMood] forKey:USERDEFAULTS_KEY];
+	if ([theMoods count] > 0) {
+		// only bother to write the moods to the cache file if we actually added something to them.
+		[everyMood writeToFile:LJMoodsCacheFILENAME atomically:YES];
+	}
+}
+
+
+
++ (NSString *)applicationSupportFolder
+{
+	// based on http://stackoverflow.com/questions/359590/cocoa-equivalent-of-nets-environment-specialfolder-for-saving-preferences-setti
+	
+    // Find this framework's "Application" Support Folder, creating it if needed.
+	
+    NSString *frameworkName, *supportPath = nil;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains( NSApplicationSupportDirectory, NSUserDomainMask, YES );
+	
+    if ( [paths count] > 0)
+    {
+        frameworkName = [[NSBundle bundleForClass:[self class]] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
+        supportPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:frameworkName];
+		
+        if ( ![[NSFileManager defaultManager] fileExistsAtPath:supportPath] )
+			if ( ![[NSFileManager defaultManager] createDirectoryAtPath:supportPath attributes:nil] )
+				supportPath = nil;
+    }
+	
+    return supportPath;
 }
 
 
