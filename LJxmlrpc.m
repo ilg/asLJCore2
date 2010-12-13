@@ -298,7 +298,11 @@ static NSString *clientVersion;
 {
 	VLOG(@"Calling method %@ for %@@%@...",methodName,username,serverURL);
 	// [serverURL] is something like http://www.livejournal.com/interface/xmlrpc
-	
+
+	#ifdef DEBUG
+		NSDate *methodStart = [NSDate date];
+	#endif
+
 	// set challenge to the 'challenge' element of the result of calling 'getchallenge', no params needed
 	LJxmlrpcRaw *challengeRawCall = [[LJxmlrpcRaw alloc] init];
 	if ([challengeRawCall rawCall:@"getchallenge"
@@ -352,6 +356,12 @@ static NSString *clientVersion;
 			// main call succeeded
 			//	NSLog(@"%@",self);
 			//	NSLog(@"Done with call, returning...");
+			#ifdef DEBUG
+				NSDate *methodFinish = [NSDate date];
+				NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
+				DLOG(@"LJxmlrpc calling %@ took %.2f seconds.", methodName, executionTime);
+			#endif
+			
 			return YES;
 		} else {
 			// main call failed
