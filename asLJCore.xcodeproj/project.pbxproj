@@ -375,6 +375,7 @@
 				GCC_PREFIX_HEADER = asLJCore_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = "-DDEBUG=1";
 				PRODUCT_NAME = asLJCore;
 				WRAPPER_EXTENSION = framework;
 			};
