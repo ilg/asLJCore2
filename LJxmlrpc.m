@@ -39,6 +39,7 @@
 #import "LJErrors.h"
 
 
+
 @implementation LJxmlrpcRaw
 
 static NSString *keychainItemName;
@@ -50,10 +51,20 @@ static NSString *clientVersion;
 	keychainItemName = [[theName copy] retain];
 }
 
++ (NSString *)keychainItemName
+{
+	return [[keychainItemName copy] autorelease];
+}
+
 + (void)setClientVersion:(NSString *)theVersion
 {
 	[clientVersion release];
 	clientVersion = [[theVersion copy] retain];
+}
+
++ (NSString *)clientVersion
+{
+	return [[clientVersion copy] autorelease];
 }
 
 - (BOOL)rawCall:(NSString *)methodName
@@ -61,14 +72,8 @@ static NSString *clientVersion;
 		  atURL:(NSString *)serverURL
 		  error:(NSError **)anError
 {
-    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-	
-	[innerError release];
-	innerError = nil;
-	
 	// [serverURL] is something like http://www.livejournal.com/interface/xmlrpc
 	NSURL *URL = [NSURL URLWithString:serverURL];
-	XMLRPCConnectionManager *manager = [XMLRPCConnectionManager sharedManager];
 	XMLRPCRequest *request;
 	
 	// the actual XML-RPC method we want is LJ.XMLRPC.[methodName]
@@ -76,24 +81,41 @@ static NSString *clientVersion;
 	request = [[XMLRPCRequest alloc] initWithURL:URL];
 	[request setMethod:[NSString stringWithFormat:@"LJ.XMLRPC.%@",methodName] 
 		 withParameter:paramDict];
-	waitingForResponse = TRUE;
-	[manager spawnConnectionWithXMLRPCRequest:request
-									 delegate:self];
+	
+	NSError *myError;
+	XMLRPCResponse *response = [XMLRPCConnection sendSynchronousXMLRPCRequest:request
+																		error:&myError];
 	[request release];
-    while (waitingForResponse && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
-	if (errorHappened) {
-		// something happened in the XML-RPC call--deal with it and jump out.
+	
+	if (!response) {
+		DLOG(@"nil response.  error: %@", myError);
+		if (anError != NULL) {
+			*anError = [[myError copy] autorelease];
+		}
+		return NO;
+	} else if ([response isFault]) {
+		isFault = TRUE;
+		faultCode = [response faultCode];
+		faultString = [response faultString];
+		if (!faultString) faultString = @"";
+		
+		VLOG(@"Error returned by XMLRPC call (%@): %@",faultCode,faultString);
+		
+		[self setObject:[NSNumber numberWithBool:TRUE] forKey:@"isFault"];
+		[self setObject:faultCode forKey:@"faultCode"];
+		[self setObject:faultString forKey:@"faultString"];
+		
         if (anError != NULL) {
-			if (innerError) {
-				*anError = [[innerError copy] autorelease];
+			if (myError) {
+				*anError = [[myError copy] autorelease];
 			} else {
 				// Make and return custom domain error
 				NSMutableDictionary *eDict = [NSMutableDictionary dictionaryWithCapacity:1];
 				[eDict setObject:NSLocalizedString(faultString,@"") forKey:NSLocalizedDescriptionKey];
-				if (innerError) {
-					[eDict setObject:[[innerError copy] autorelease] forKey:NSUnderlyingErrorKey];
-					[innerError release];
-					innerError = nil;
+				if (myError) {
+					[eDict setObject:[[myError copy] autorelease] forKey:NSUnderlyingErrorKey];
+					[myError release];
+					myError = nil;
 				}
 				*anError = [NSError errorWithDomain:asLJCore_ErrorDomain
 											   code:[faultCode integerValue]
@@ -102,6 +124,13 @@ static NSString *clientVersion;
 		}
 		return NO;
 	} else {
+		//NSLog(@"Parsed response: %@", [response object]);
+		
+		NSDictionary *theResponseDict = [response object];
+		
+		[self setDictionary:[[self class] cleanseUTF8:theResponseDict]];
+		[self setObject:[NSNumber numberWithBool:FALSE] forKey:@"isFault"];
+		
 		//	NSLog(@"%@",self);
 		//	NSLog(@"Done with call(raw), returning...");
 		return YES;
@@ -141,63 +170,6 @@ static NSString *clientVersion;
 	} else {
 		return theObject;
 	}
-}
-
-
-#pragma mark -
-#pragma mark for XMLRPCConnectionDelegate Protocol
-
-- (void)request: (XMLRPCRequest *)request didReceiveResponse: (XMLRPCResponse *)response
-{
-	waitingForResponse = FALSE;
-	errorHappened = FALSE;
-	if ([response isFault]) {
-		isFault = TRUE;
-		faultCode = [response faultCode];
-		faultString = [response faultString];
-		if (!faultString) faultString = @"";
-		
-		VLOG(@"Error returned by XMLRPC call (%@): %@",faultCode,faultString);
-		
-		[self setObject:[NSNumber numberWithBool:TRUE] forKey:@"isFault"];
-		[self setObject:faultCode forKey:@"faultCode"];
-		[self setObject:faultString forKey:@"faultString"];
-		
-		errorHappened = TRUE;
-	} else {
-		//NSLog(@"Parsed response: %@", [response object]);
-		
-		NSDictionary *theResponseDict = [response object];
-		
-		[self setDictionary:[[self class] cleanseUTF8:theResponseDict]];
-		[self setObject:[NSNumber numberWithBool:FALSE] forKey:@"isFault"];
-			
-		errorHappened = FALSE;
-	}
-}
-
-- (void)request: (XMLRPCRequest *)request didFailWithError: (NSError *)error
-{
-	waitingForResponse = FALSE;
-	errorHappened = TRUE;
-	isError = TRUE;
-	faultCode = [[NSNumber numberWithInteger:[error code]] retain];
-	faultString = [[error userInfo] objectForKey:NSLocalizedDescriptionKey];
-	if (!faultString) faultString = @"";
-	innerError = [error retain];
-	VLOG(@"Error with XMLRPC request (%@): %@",faultCode,faultString);
-	
-	[self setObject:[NSNumber numberWithBool:TRUE] forKey:@"isFault"];
-	[self setObject:faultCode forKey:@"faultCode"];
-	[self setObject:faultString forKey:@"faultString"];
-}
-
-- (void)request: (XMLRPCRequest *)request didReceiveAuthenticationChallenge: (NSURLAuthenticationChallenge *)challenge
-{
-}
-
-- (void)request: (XMLRPCRequest *)request didCancelAuthenticationChallenge: (NSURLAuthenticationChallenge *)challenge
-{
 }
 
 

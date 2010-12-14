@@ -35,23 +35,25 @@
 #import <Cocoa/Cocoa.h>
 #import <XMLRPC.h>
 
-@interface LJxmlrpcRaw : NSMutableDictionary <XMLRPCConnectionDelegate> {
-	bool waitingForResponse;
-	bool errorHappened;
-	bool isError;
+@interface LJxmlrpcRaw : NSMutableDictionary {
 	bool isFault;
 	NSString *faultString;
 	NSNumber *faultCode;
-	NSError *innerError;
 	
 	NSMutableDictionary *embeddedObject;
 }
 
++ (id)cleanseUTF8:(id)theObject;
+
 // set the name under which account keychain items are stored
 + (void)setKeychainItemName:(NSString *)theName;
 
++ (NSString *)keychainItemName;
+
 // set the version string reported to the LJ-type site
 + (void)setClientVersion:(NSString *)theVersion;
+
++ (NSString *)clientVersion;
 
 
 // the workhorse
@@ -80,6 +82,8 @@
 				atURL:(NSString *)serverURL
 			  forUser:(NSString *)username
 				error:(NSError **)anError;
+
++ (NSString *)md5:(NSString *)str;
 
 - (BOOL)call:(NSString *)methodName
   withParams:(NSDictionary *)paramDict

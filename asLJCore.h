@@ -40,6 +40,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "asLJCoreAsynchronous.h"
 #import "LJEntry.h"
 #import "LJErrors.h"
 

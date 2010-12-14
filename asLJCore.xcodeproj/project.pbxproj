@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7118142112B6D1C5009E8840 /* XMLRPCEventBasedParserDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7118141F12B6D1C5009E8840 /* XMLRPCEventBasedParserDelegate.h */; };
 		7118142212B6D1C5009E8840 /* XMLRPCEventBasedParserDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7118142012B6D1C5009E8840 /* XMLRPCEventBasedParserDelegate.m */; };
+		7118148412B6E2CD009E8840 /* asLJCoreAsynchronous.h in Headers */ = {isa = PBXBuildFile; fileRef = 7118148212B6E2CD009E8840 /* asLJCoreAsynchronous.h */; };
+		7118148512B6E2CD009E8840 /* asLJCoreAsynchronous.m in Sources */ = {isa = PBXBuildFile; fileRef = 7118148312B6E2CD009E8840 /* asLJCoreAsynchronous.m */; };
 		719A89C7102D6CE70001F6CE /* LJEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 719A89BE102D6CE70001F6CE /* LJEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		719A89C8102D6CE70001F6CE /* LJEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 719A89BF102D6CE70001F6CE /* LJEntry.m */; };
 		719A89C9102D6CE70001F6CE /* LJErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 719A89C0102D6CE70001F6CE /* LJErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -54,6 +56,8 @@
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		7118141F12B6D1C5009E8840 /* XMLRPCEventBasedParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLRPCEventBasedParserDelegate.h; sourceTree = "<group>"; };
 		7118142012B6D1C5009E8840 /* XMLRPCEventBasedParserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLRPCEventBasedParserDelegate.m; sourceTree = "<group>"; };
+		7118148212B6E2CD009E8840 /* asLJCoreAsynchronous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCoreAsynchronous.h; sourceTree = "<group>"; };
+		7118148312B6E2CD009E8840 /* asLJCoreAsynchronous.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJCoreAsynchronous.m; sourceTree = "<group>"; };
 		719A89BE102D6CE70001F6CE /* LJEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJEntry.h; sourceTree = "<group>"; };
 		719A89BF102D6CE70001F6CE /* LJEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJEntry.m; sourceTree = "<group>"; };
 		719A89C0102D6CE70001F6CE /* LJErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJErrors.h; sourceTree = "<group>"; };
@@ -196,6 +200,8 @@
 				71AD902F103E6F49003EE617 /* asLJCore.m */,
 				719A89BE102D6CE70001F6CE /* LJEntry.h */,
 				719A89BF102D6CE70001F6CE /* LJEntry.m */,
+				7118148212B6E2CD009E8840 /* asLJCoreAsynchronous.h */,
+				7118148312B6E2CD009E8840 /* asLJCoreAsynchronous.m */,
 			);
 			name = "Public Classes";
 			sourceTree = "<group>";
@@ -255,6 +261,7 @@
 				71AD9038103E6F59003EE617 /* asLJCoreLogger.h in Headers */,
 				71AD903B103E6F67003EE617 /* asLJCore_Prefix.pch in Headers */,
 				7118142112B6D1C5009E8840 /* XMLRPCEventBasedParserDelegate.h in Headers */,
+				7118148412B6E2CD009E8840 /* asLJCoreAsynchronous.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,6 +343,7 @@
 				71AD9037103E6F59003EE617 /* asLJCoreKeychain.m in Sources */,
 				71AD9039103E6F59003EE617 /* asLJCoreLogger.m in Sources */,
 				7118142212B6D1C5009E8840 /* XMLRPCEventBasedParserDelegate.m in Sources */,
+				7118148512B6E2CD009E8840 /* asLJCoreAsynchronous.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
