@@ -520,8 +520,6 @@ extern NSString *keychainItemName;
 				break;
 		}
 		[result retain];
-		// FIXME: rearrange the stuff in theResponseDict into the method-specific desired response
-		
 		//	NSLog(@"%@",self);
 		//	NSLog(@"Done with call, returning...");
 		[[self target] performSelector:[self successAction]];
