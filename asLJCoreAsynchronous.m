@@ -191,10 +191,12 @@ extern NSString *keychainItemName;
 
 - (void)jumpstartForAccount:(NSString *)account
 {
-	accountInfo = [asLJCore splitAccountString:account];
+	accountInfo = [[asLJCore splitAccountString:account]
+				   retain];
 	url = [NSURL
 		   URLWithString:SERVER2URL([accountInfo
 									 objectForKey:kasLJCoreAccountServerKey])];
+	[url retain];
 	paramDict = [NSMutableDictionary dictionary];
 	[paramDict retain];
 }
@@ -374,6 +376,10 @@ extern NSString *keychainItemName;
 
 - (void)start
 {
+	VLOG(@"Calling method %@ for %@@%@...",
+		 [self methodNameForIndex:methodIndex],
+		 [accountInfo objectForKey:kasLJCoreAccountUsernameKey],
+		 [url absoluteString]);
 	getChallengeObject = [asLJCoreAsynchronous jumpstartWithTarget:self
 													 successAction:@selector(gotChallenge)
 													   errorAction:@selector(challengeError)];
