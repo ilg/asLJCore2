@@ -36,7 +36,7 @@
 
 @interface LJMoods (privateInterface)
 
-+ (NSString *)applicationSupportFolder;
++ (NSString *)cacheFolder;
 
 @end
 
@@ -46,7 +46,7 @@
 static NSMutableDictionary *everyMood;
 
 #define USERDEFAULTS_KEY @"asLJCore-EveryMood"
-#define LJMoodsCacheFILENAME [[LJMoods applicationSupportFolder] stringByAppendingPathComponent:@"LJMoodsCache.plist"]
+#define LJMoodsCacheFILENAME [[LJMoods cacheFolder] stringByAppendingPathComponent:@"LJMoodsCache.plist"]
 
 + (void)initialize
 {
@@ -130,26 +130,27 @@ static NSInteger intSort(id num1, id num2, void *context)
 
 
 
-+ (NSString *)applicationSupportFolder
++ (NSString *)cacheFolder
 {
-	// based on http://stackoverflow.com/questions/359590/cocoa-equivalent-of-nets-environment-specialfolder-for-saving-preferences-setti
+	// based on http://cocoawithlove.com/2009/07/temporary-files-and-folders-in-cocoa.html
 	
-    // Find this framework's "Application" Support Folder, creating it if needed.
+    // Find this framework's cache folder, creating it if needed.
 	
-    NSString *frameworkName, *supportPath = nil;
-    NSArray *paths = NSSearchPathForDirectoriesInDomains( NSApplicationSupportDirectory, NSUserDomainMask, YES );
+    NSString *cachePath = nil;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains( NSCachesDirectory, NSUserDomainMask, YES );
 	
     if ( [paths count] > 0)
     {
-        frameworkName = [[NSBundle bundleForClass:[self class]] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
-        supportPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:frameworkName];
+		NSString *bundleName = [[[NSBundle bundleForClass:[self class]] infoDictionary]
+								objectForKey:(NSString *)kCFBundleIdentifierKey];
+        cachePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:bundleName];
 		
-        if ( ![[NSFileManager defaultManager] fileExistsAtPath:supportPath] )
-			if ( ![[NSFileManager defaultManager] createDirectoryAtPath:supportPath attributes:nil] )
-				supportPath = nil;
+        if ( ![[NSFileManager defaultManager] fileExistsAtPath:cachePath] )
+			if ( ![[NSFileManager defaultManager] createDirectoryAtPath:cachePath attributes:nil] )
+				cachePath = nil;
     }
 	
-    return supportPath;
+    return cachePath;
 }
 
 
