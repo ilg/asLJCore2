@@ -33,7 +33,7 @@
 //
 
 /*	asLJCore is based upon the XML-RPC Framework,
-	Copyright (c) 2008 Eric Czarny <eczarny@gmail.com>,
+	Copyright (c) 2010 Eric Czarny <eczarny@gmail.com>,
 	used under its MIT license.
  */
 
