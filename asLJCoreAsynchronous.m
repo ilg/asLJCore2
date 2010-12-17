@@ -379,6 +379,7 @@ extern NSString *keychainItemName;
 	methodIndex = kasLJCoreAsynchronousMethodIndexEntryPost;
 	paramDict = [NSMutableDictionary dictionaryWithDictionary:[theEntry getEntryAsDictionary]];
 	[paramDict setObject:@"mac" forKey:@"lineendings"];
+	[paramDict retain];
 }
 
 
@@ -434,9 +435,6 @@ extern NSString *keychainItemName;
 	[connectionIdentifier retain];
 	
 	[request release];
-	
-	[paramDict release];
-	paramDict = nil;
 }
 
 - (void)challengeError
@@ -484,6 +482,9 @@ extern NSString *keychainItemName;
 	[[[XMLRPCConnectionManager sharedManager] connectionForIdentifier:connectionIdentifier] cancel];
 	[connectionIdentifier release];
 	connectionIdentifier = nil;
+	
+	[paramDict release];
+	paramDict = nil;
 }
 
 
@@ -627,6 +628,7 @@ extern NSString *keychainItemName;
 							 forKey:@"min"];
 				
 				result = [[LJPastEntry alloc] init];
+				DLOG(@"%@",paramDict);
 				[result setItemid:[paramDict objectForKey:@"itemid"]];
 				[result setUsejournal:[paramDict objectForKey:@"usejournal"]];
 				[result setAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]];
@@ -649,6 +651,9 @@ extern NSString *keychainItemName;
 		//	NSLog(@"Done with call, returning...");
 		[[self target] performSelector:[self successAction]];
 	}
+	
+	[paramDict release];
+	paramDict = nil;
 }
 
 - (void)request: (XMLRPCRequest *)request didFailWithError: (NSError *)error
@@ -662,6 +667,9 @@ extern NSString *keychainItemName;
 	faultCode = 0;
 	faultString = @"";
 	[[self target] performSelector:[self errorAction]];
+	
+	[paramDict release];
+	paramDict = nil;
 }
 
 - (BOOL)request: (XMLRPCRequest *)request canAuthenticateAgainstProtectionSpace: (NSURLProtectionSpace *)protectionSpace
