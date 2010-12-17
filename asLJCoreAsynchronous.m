@@ -152,6 +152,50 @@ extern NSString *keychainItemName;
 	return async;
 }
 
++ (asLJCoreAsynchronous *)getLJPastEntryWithItemid:(NSNumber *)theItemid
+										forJournal:(NSString *)theJournal
+										forAccount:(NSString *)theAccount
+										fromServer:(NSString *)theServer
+											target:(id)targetObject
+									 successAction:(SEL)successActionSelector
+									   errorAction:(SEL)errorActionSelector
+{
+	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
+															  successAction:successActionSelector
+																errorAction:errorActionSelector];
+	[async getLJPastEntryWithItemid:theItemid
+						 forJournal:theJournal
+						 forAccount:theAccount
+						 fromServer:theServer];
+	[async start];
+	return async;
+}
+
++ (asLJCoreAsynchronous *)saveLJPastEntry:(LJPastEntry *)theEntry
+								   target:(id)targetObject
+							successAction:(SEL)successActionSelector
+							  errorAction:(SEL)errorActionSelector
+{
+	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
+															  successAction:successActionSelector
+																errorAction:errorActionSelector];
+	[async saveLJPastEntry:theEntry];
+	[async start];
+	return async;
+}
+
++ (asLJCoreAsynchronous *)postLJNewEntry:(LJNewEntry *)theEntry
+								  target:(id)targetObject
+						   successAction:(SEL)successActionSelector
+							 errorAction:(SEL)errorActionSelector
+{
+	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
+															  successAction:successActionSelector
+																errorAction:errorActionSelector];
+	[async postLJNewEntry:theEntry];
+	[async start];
+	return async;
+}
 
 #pragma mark -
 #pragma mark setup methods
@@ -182,6 +226,15 @@ extern NSString *keychainItemName;
 			break;
 		case kasLJCoreAsynchronousMethodIndexGetFriends:
 			return @"LJ.XMLRPC.getfriends";
+			break;
+		case kasLJCoreAsynchronousMethodIndexEntryPost:
+			return @"LJ.XMLRPC.postevent";
+			break;
+		case kasLJCoreAsynchronousMethodIndexEntryEdit:
+			return @"LJ.XMLRPC.editevent";
+			break;
+		case kasLJCoreAsynchronousMethodIndexEntryGet:
+			return @"LJ.XMLRPC.getevents";
 			break;
 		default:
 			return nil;
@@ -287,6 +340,45 @@ extern NSString *keychainItemName;
 				 @"1",@"includebdays",
 				 nil];
 	[paramDict retain];
+}
+
+- (void)getLJPastEntryWithItemid:(NSNumber *)theItemid
+					  forJournal:(NSString *)theJournal
+					  forAccount:(NSString *)theAccount
+					  fromServer:(NSString *)theServer
+{
+	[self jumpstartForAccount:[NSString stringWithFormat:@"%@@%@",
+							   theAccount, theServer]];
+	methodIndex = kasLJCoreAsynchronousMethodIndexEntryGet;
+	paramDict = [NSMutableDictionary dictionaryWithObjectsAndKeys: // (value, key); end with nil
+				 @"one",@"selecttype",
+				 theJournal,@"usejournal",
+				 theItemid,@"itemid",
+				 @"mac",@"lineendings",
+				 nil];
+	[paramDict retain];
+}
+
+- (void)saveLJPastEntry:(LJPastEntry *)theEntry
+{
+	[self jumpstartForAccount:[NSString stringWithFormat:@"%@@%@",
+							   [theEntry account],
+							   [theEntry server]]];
+	methodIndex = kasLJCoreAsynchronousMethodIndexEntryEdit;
+	paramDict = [NSMutableDictionary dictionaryWithDictionary:[theEntry getEntryAsDictionary]];
+	[paramDict setObject:@"mac" forKey:@"lineendings"];
+	[paramDict setObject:[theEntry itemid] forKey:@"itemid"];
+	[paramDict retain];
+}
+
+- (void)postLJNewEntry:(LJNewEntry *)theEntry
+{
+	[self jumpstartForAccount:[NSString stringWithFormat:@"%@@%@",
+							   [theEntry account],
+							   [theEntry server]]];
+	methodIndex = kasLJCoreAsynchronousMethodIndexEntryPost;
+	paramDict = [NSMutableDictionary dictionaryWithDictionary:[theEntry getEntryAsDictionary]];
+	[paramDict setObject:@"mac" forKey:@"lineendings"];
 }
 
 
@@ -513,6 +605,39 @@ extern NSString *keychainItemName;
 				}
 				result = [NSArray arrayWithArray:temporaryResults];
 				VLOG(@"Got %d friends",[result count]);
+			}
+				break;
+			case kasLJCoreAsynchronousMethodIndexEntryGet:
+			{
+				// extract the one event we want and its metadata "props"
+				NSMutableDictionary *theEvent = [NSMutableDictionary dictionaryWithDictionary:
+												 [[theResponseDict objectForKey:@"events"] lastObject]];
+				
+				// parse out the eventtime
+				NSString *eventtime = [theEvent objectForKey:@"eventtime"];  // "YYYY-MM-DD hh:mm:00"
+				[theEvent setObject:[eventtime substringWithRange:NSMakeRange(0, 4)]
+							 forKey:@"year"];
+				[theEvent setObject:[eventtime substringWithRange:NSMakeRange(5, 2)]
+							 forKey:@"mon"];
+				[theEvent setObject:[eventtime substringWithRange:NSMakeRange(8, 2)]
+							 forKey:@"day"];
+				[theEvent setObject:[eventtime substringWithRange:NSMakeRange(11, 2)]
+							 forKey:@"hour"];
+				[theEvent setObject:[eventtime substringWithRange:NSMakeRange(14, 2)]
+							 forKey:@"min"];
+				
+				LJPastEntry *theEntry = [[LJPastEntry alloc] init];
+				[theEntry setItemid:[paramDict objectForKey:@"itemid"]];
+				[theEntry setUsejournal:[paramDict objectForKey:@"usejournal"]];
+				[theEntry setAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]];
+				[theEntry setServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
+				[theEntry setEntryFromDictionary:theEvent];
+			}
+				break;
+			case kasLJCoreAsynchronousMethodIndexEntryEdit: // same as ...Post
+			case kasLJCoreAsynchronousMethodIndexEntryPost:
+			{
+				result = [NSString stringWithString:[theResponseDict objectForKey:@"url"]];
 			}
 				break;
 			default:

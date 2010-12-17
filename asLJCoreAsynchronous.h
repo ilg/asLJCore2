@@ -10,6 +10,9 @@
 #import "XMLRPC/XMLRPCConnectionDelegate.h"
 #import "XMLRPC/XMLRPCRequest.h"
 
+@class LJPastEntry;
+@class LJNewEntry;
+
 typedef enum {
 	kasLJCoreAsynchronousMethodIndexGetChallenge,
 	kasLJCoreAsynchronousMethodIndexLogin,
@@ -18,7 +21,12 @@ typedef enum {
 	kasLJCoreAsynchronousMethodIndexGetUserTags,
 	kasLJCoreAsynchronousMethodIndexDeleteEvent,
 	kasLJCoreAsynchronousMethodIndexSessionGenerate,
-	kasLJCoreAsynchronousMethodIndexGetFriends
+	kasLJCoreAsynchronousMethodIndexGetFriends,
+	
+	// for LJEntry:
+	kasLJCoreAsynchronousMethodIndexEntryPost,
+	kasLJCoreAsynchronousMethodIndexEntryEdit,
+	kasLJCoreAsynchronousMethodIndexEntryGet,
 } asLJCoreAsynchronousMethodType;
 
 @interface asLJCoreAsynchronous : NSObject <XMLRPCConnectionDelegate> {
@@ -91,6 +99,24 @@ typedef enum {
 						  successAction:(SEL)successActionSelector
 							errorAction:(SEL)errorActionSelector;
 
++ (asLJCoreAsynchronous *)getLJPastEntryWithItemid:(NSNumber *)theItemid
+										forJournal:(NSString *)theJournal
+										forAccount:(NSString *)theAccount
+										fromServer:(NSString *)theServer
+											target:(id)targetObject
+									 successAction:(SEL)successActionSelector
+									   errorAction:(SEL)errorActionSelector;
+
++ (asLJCoreAsynchronous *)saveLJPastEntry:(LJPastEntry *)theEntry
+								   target:(id)targetObject
+							successAction:(SEL)successActionSelector
+							  errorAction:(SEL)errorActionSelector;
+
++ (asLJCoreAsynchronous *)postLJNewEntry:(LJNewEntry *)theEntry
+								  target:(id)targetObject
+						   successAction:(SEL)successActionSelector
+							 errorAction:(SEL)errorActionSelector;
+
 
 #pragma mark -
 #pragma mark setup methods
@@ -114,6 +140,15 @@ typedef enum {
 - (void)getSessionCookieFor:(NSString *)account;
 
 - (void)getFriendsFor:(NSString *)account;
+
+- (void)getLJPastEntryWithItemid:(NSNumber *)theItemid
+					  forJournal:(NSString *)theJournal
+					  forAccount:(NSString *)theAccount
+					  fromServer:(NSString *)theServer;
+
+- (void)saveLJPastEntry:(LJPastEntry *)theEntry;
+
+- (void)postLJNewEntry:(LJNewEntry *)theEntry;
 
 
 #pragma mark -
