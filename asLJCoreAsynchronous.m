@@ -626,12 +626,12 @@ extern NSString *keychainItemName;
 				[theEvent setObject:[eventtime substringWithRange:NSMakeRange(14, 2)]
 							 forKey:@"min"];
 				
-				LJPastEntry *theEntry = [[LJPastEntry alloc] init];
-				[theEntry setItemid:[paramDict objectForKey:@"itemid"]];
-				[theEntry setUsejournal:[paramDict objectForKey:@"usejournal"]];
-				[theEntry setAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]];
-				[theEntry setServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
-				[theEntry setEntryFromDictionary:theEvent];
+				result = [[LJPastEntry alloc] init];
+				[result setItemid:[paramDict objectForKey:@"itemid"]];
+				[result setUsejournal:[paramDict objectForKey:@"usejournal"]];
+				[result setAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]];
+				[result setServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
+				[result setEntryFromDictionary:theEvent];
 			}
 				break;
 			case kasLJCoreAsynchronousMethodIndexEntryEdit: // same as ...Post
