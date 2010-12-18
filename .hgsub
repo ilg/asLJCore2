@@ -1,1 +1,1 @@
-XMLRPC = git+ssh://git@github.com:ilg/xmlrpc.git
+XMLRPC = ssh://hg@bitbucket.org/ilg/xmlrpc.git.fork
