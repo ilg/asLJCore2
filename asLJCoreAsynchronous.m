@@ -628,7 +628,6 @@ extern NSString *keychainItemName;
 							 forKey:@"min"];
 				
 				result = [[LJPastEntry alloc] init];
-				DLOG(@"%@",paramDict);
 				[result setItemid:[paramDict objectForKey:@"itemid"]];
 				[result setUsejournal:[paramDict objectForKey:@"usejournal"]];
 				[result setAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]];
