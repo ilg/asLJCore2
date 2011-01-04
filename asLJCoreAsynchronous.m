@@ -386,57 +386,6 @@ extern NSString *keychainItemName;
 #pragma mark -
 #pragma mark challenge callbacks and starter
 
-- (void)gotChallenge
-{
-	NSString *authChallenge = [getChallengeObject result];
-	
-	// set response to md5( challenge + md5([password]) )   where md5() returns the hex digest
-	NSString *serverFQDN = [accountInfo objectForKey:kasLJCoreAccountServerKey];
-	NSString *pwdMD5 = [LJxmlrpc 
-						md5:[asLJCoreKeychain getPasswordByLabel:[LJxmlrpc keychainItemName]
-													 withAccount:[accountInfo
-																  objectForKey:kasLJCoreAccountUsernameKey]
-													  withServer:serverFQDN]];
-	NSString *authResponse = [LJxmlrpc
-							  md5:[NSString
-								   stringWithFormat:@"%@%@",
-								   authChallenge,
-								   pwdMD5
-								   ]
-							  ];
-	[getChallengeObject release];
-	/*
-	 to [paramDict], we need to add the things that every request should include:
-	 'auth_method': 'challenge'
-	 'auth_challenge': [challenge]
-	 'auth_response': [response]
-	 'username': [username]
-	 'ver': 1  -- protocol version
-	 'clientversion': [pull 'LJversionString' from user defaults]
-	 */
-	[paramDict addEntriesFromDictionary:[NSDictionary
-										 dictionaryWithObjectsAndKeys:
-										 @"challenge",@"auth_method",
-										 authChallenge,@"auth_challenge",
-										 authResponse,@"auth_response",
-										 [accountInfo objectForKey:kasLJCoreAccountUsernameKey],@"username",
-										 @"1",@"ver",
-										 [LJxmlrpc clientVersion],@"clientversion",
-										 nil
-										 ]];
-	
-	XMLRPCRequest *request = [[XMLRPCRequest alloc] initWithURL:url];
-	[request setMethod:[self methodNameForIndex:methodIndex]
-		 withParameter:paramDict];
-
-	connectionIdentifier = [[XMLRPCConnectionManager sharedManager]
-							spawnConnectionWithXMLRPCRequest:request
-							delegate:self];
-	[connectionIdentifier retain];
-	
-	[request release];
-}
-
 - (void)challengeError
 {
 	// FIXME: this is all fake
@@ -445,6 +394,63 @@ extern NSString *keychainItemName;
 	faultString = @"";
 	
 	[[self target] performSelector:[self errorAction]];
+}
+
+- (void)gotChallenge
+{
+	NSString *authChallenge = [getChallengeObject result];
+	[getChallengeObject release];
+	
+	if (!authChallenge) {
+		// something went wrong and though we got a valid XML-RPC response, it didn't contain the challenge as expected
+		// TODO: may need to set some error info in here
+		[self challengeError];
+	} else {
+		// set response to md5( challenge + md5([password]) )   where md5() returns the hex digest
+		NSString *serverFQDN = [accountInfo objectForKey:kasLJCoreAccountServerKey];
+		NSString *pwdMD5 = [LJxmlrpc 
+							md5:[asLJCoreKeychain getPasswordByLabel:[LJxmlrpc keychainItemName]
+														 withAccount:[accountInfo
+																	  objectForKey:kasLJCoreAccountUsernameKey]
+														  withServer:serverFQDN]];
+		NSString *authResponse = [LJxmlrpc
+								  md5:[NSString
+									   stringWithFormat:@"%@%@",
+									   authChallenge,
+									   pwdMD5
+									   ]
+								  ];
+		/*
+		 to [paramDict], we need to add the things that every request should include:
+		 'auth_method': 'challenge'
+		 'auth_challenge': [challenge]
+		 'auth_response': [response]
+		 'username': [username]
+		 'ver': 1  -- protocol version
+		 'clientversion': [pull 'LJversionString' from user defaults]
+		 */
+		[paramDict addEntriesFromDictionary:[NSDictionary
+											 dictionaryWithObjectsAndKeys:
+											 @"challenge",@"auth_method",
+											 authChallenge,@"auth_challenge",
+											 authResponse,@"auth_response",
+											 [accountInfo objectForKey:kasLJCoreAccountUsernameKey],@"username",
+											 @"1",@"ver",
+											 [LJxmlrpc clientVersion],@"clientversion",
+											 nil
+											 ]];
+		
+		XMLRPCRequest *request = [[XMLRPCRequest alloc] initWithURL:url];
+		[request setMethod:[self methodNameForIndex:methodIndex]
+			 withParameter:paramDict];
+		
+		connectionIdentifier = [[XMLRPCConnectionManager sharedManager]
+								spawnConnectionWithXMLRPCRequest:request
+								delegate:self];
+		[connectionIdentifier retain];
+		
+		[request release];
+	}
 }
 
 - (void)getChallenge:(NSString *)server
