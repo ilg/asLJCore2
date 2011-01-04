@@ -280,7 +280,8 @@ static NSString *clientVersion;
 	if ([challengeRawCall rawCall:@"getchallenge"
 					   withParams:nil
 							atURL:serverURL
-							error:anError]) {
+							error:anError]
+		&& [challengeRawCall objectForKey:@"challenge"]) {
 		// getchallenge call succeeded
 		NSString *authChallenge = [NSString stringWithString:[challengeRawCall objectForKey:@"challenge"]];
 		[challengeRawCall release];
