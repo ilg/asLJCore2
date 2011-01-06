@@ -491,6 +491,8 @@ extern NSString *keychainItemName;
 	
 	[paramDict release];
 	paramDict = nil;
+	
+	[self setTarget:nil];
 }
 
 
