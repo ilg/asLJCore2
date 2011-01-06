@@ -17,11 +17,15 @@
 extern NSString * const kasLJCoreAccountUsernameKey;
 extern NSString * const kasLJCoreAccountServerKey;
 
-@interface asLJCore (privateInterface)
-
+@interface asLJCore ()
 + (NSDictionary *)splitAccountString:(NSString *)account;
-
 @end
+
+@interface asLJCoreAsynchronous ()
+@property (retain) asLJCoreAsynchronous *challengeGettingObject;
+@end
+
+
 
 extern NSString *keychainItemName;
 
@@ -33,6 +37,7 @@ extern NSString *keychainItemName;
 @synthesize target;
 @synthesize successAction;
 @synthesize errorAction;
+@synthesize challengeGettingObject;
 
 
 #pragma mark -
@@ -398,8 +403,8 @@ extern NSString *keychainItemName;
 
 - (void)gotChallenge
 {
-	NSString *authChallenge = [getChallengeObject result];
-	[getChallengeObject release];
+	NSString *authChallenge = [[self challengeGettingObject] result];
+	[self setChallengeGettingObject:nil];
 	
 	if (!authChallenge) {
 		// something went wrong and though we got a valid XML-RPC response, it didn't contain the challenge as expected
@@ -476,15 +481,16 @@ extern NSString *keychainItemName;
 		 [self methodNameForIndex:methodIndex],
 		 [accountInfo objectForKey:kasLJCoreAccountUsernameKey],
 		 [url absoluteString]);
-	getChallengeObject = [asLJCoreAsynchronous jumpstartWithTarget:self
-													 successAction:@selector(gotChallenge)
-													   errorAction:@selector(challengeError)];
-	[getChallengeObject retain];
-	[getChallengeObject getChallenge:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
+	[self setChallengeGettingObject:[asLJCoreAsynchronous jumpstartWithTarget:self
+																successAction:@selector(gotChallenge)
+																  errorAction:@selector(challengeError)]];
+	[[self challengeGettingObject] getChallenge:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
 }
 
 - (void)cancel
 {
+	[[self challengeGettingObject] cancel];
+	
 	[[[XMLRPCConnectionManager sharedManager] connectionForIdentifier:connectionIdentifier] cancel];
 	[connectionIdentifier release];
 	connectionIdentifier = nil;

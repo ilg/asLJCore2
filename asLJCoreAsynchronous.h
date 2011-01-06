@@ -46,7 +46,7 @@ typedef enum {
 	asLJCoreAsynchronousMethodType methodIndex;
 	NSMutableDictionary *paramDict;
 	
-	asLJCoreAsynchronous *getChallengeObject;
+	asLJCoreAsynchronous *challengeGettingObject;
 }
 
 @property (retain) id result;
