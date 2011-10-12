@@ -554,7 +554,18 @@ extern NSString *keychainItemName;
 		
 		switch (methodIndex) {
 			case kasLJCoreAsynchronousMethodIndexGetChallenge:
-				result = [NSString stringWithString:[theResponseDict objectForKey:@"challenge"]];
+			{
+				NSString *challenge = [theResponseDict objectForKey:@"challenge"];
+				if (challenge) {
+					result = [NSString stringWithString:challenge];
+				} else {
+					result = nil;
+					isFault = TRUE;
+					faultCode = [NSNumber numberWithInt:0];
+					faultString = @"GetChallenge failed.";
+					VLOG(@"GetChallenge failed (response dictionary: %@)", theResponseDict);
+				}
+			}
 				break;
 			case kasLJCoreAsynchronousMethodIndexLogin:
 			{
@@ -622,8 +633,17 @@ extern NSString *keychainItemName;
 				break;
 			case kasLJCoreAsynchronousMethodIndexSessionGenerate:
 			{
-				VLOG(@"Got session cookie.");
-				result = [NSString stringWithString:[theResponseDict objectForKey:@"ljsession"]];
+				NSString *ljsession = [theResponseDict objectForKey:@"ljsession"];
+				if (ljsession) {
+					result = [NSString stringWithString:ljsession];
+					VLOG(@"Got session cookie.");
+				} else {
+					result = nil;
+					isFault = TRUE;
+					faultCode = [NSNumber numberWithInt:0];
+					faultString = @"Failed to get session cookie.";
+					VLOG(@"Failed to get session cookie (response dictionary: %@)", theResponseDict);
+				}
 			}
 				break;
 			case kasLJCoreAsynchronousMethodIndexGetFriends:
@@ -682,13 +702,23 @@ extern NSString *keychainItemName;
 			}
 				break;
 			default:
+			{
 				result = nil;
+				isFault = TRUE;
+				faultCode = [NSNumber numberWithInt:0];
+				faultString = @"Unknown method index in [asLJCoreAsynchronous request:didReceiveResponse:].";
+				VLOG(@"Unknown method index in [asLJCoreAsynchronous request:didReceiveResponse:].");
+			}
 				break;
 		}
 		[result retain];
 		//	NSLog(@"%@",self);
 		//	NSLog(@"Done with call, returning...");
-		[[self target] performSelector:[self successAction]];
+		if (isFault) {
+			[[self target] performSelector:[self errorAction]];
+		} else {
+			[[self target] performSelector:[self successAction]];
+		}
 	}
 	
 	[paramDict release];
