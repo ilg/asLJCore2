@@ -49,6 +49,11 @@ extern NSString * const kasLJCoreAccountServerKey;
 
 @interface asLJCoreAsynchronous ()
 @property (retain) asLJCoreAsynchronous *challengeGettingObject;
+@property bool isFault;
+@property (retain) NSString *faultString;
+@property (retain) NSNumber *faultCode;
+- (void)setFaultWithCode:(NSNumber *)code
+				  string:(NSString *)string;
 @end
 
 
@@ -64,6 +69,10 @@ extern NSString *keychainItemName;
 @synthesize successAction;
 @synthesize errorAction;
 @synthesize challengeGettingObject;
+
+@synthesize isFault;
+@synthesize faultString;
+@synthesize faultCode;
 
 
 #pragma mark -
@@ -420,9 +429,8 @@ extern NSString *keychainItemName;
 - (void)challengeError
 {
 	// FIXME: this is all fake
-	isFault = TRUE;
-	faultCode = 0;
-	faultString = @"";
+	[self setFaultWithCode:nil
+					string:nil];
 	
 	[[self target] performSelector:[self errorAction]];
 }
@@ -528,6 +536,18 @@ extern NSString *keychainItemName;
 }
 
 
+#pragma mark -
+#pragma mark convenience setter methods
+
+- (void)setFaultWithCode:(NSNumber *)code
+				  string:(NSString *)string
+{
+	if (!code) code = [NSNumber numberWithInt:0];
+	string = NIL2EMPTY(string);
+	[self setIsFault:YES];
+	[self setFaultCode:code];
+	[self setFaultString:string];
+}
 
 #pragma mark -
 #pragma mark XMLRPCConnectionDelegate methods
@@ -538,9 +558,8 @@ extern NSString *keychainItemName;
 	if ([response isFault]) {
 		result = nil;
 		
-		isFault = TRUE;
-		faultCode = [response faultCode];
-		faultString = NIL2EMPTY([response faultString]);
+		[self setFaultWithCode:[response faultCode]
+						string:[response faultString]];
 		
 		VLOG(@"Error returned by XMLRPC call (%@): %@",faultCode,faultString);
 		[[self target] performSelector:[self errorAction]];
@@ -550,7 +569,7 @@ extern NSString *keychainItemName;
 		NSDictionary *theResponseDict = [LJxmlrpc cleanseUTF8:[NSDictionary
 															   dictionaryWithDictionary:[response object]]];
 		
-		isFault = FALSE;
+		[self setIsFault:NO];
 		
 		switch (methodIndex) {
 			case kasLJCoreAsynchronousMethodIndexGetChallenge:
@@ -560,9 +579,8 @@ extern NSString *keychainItemName;
 					result = [NSString stringWithString:challenge];
 				} else {
 					result = nil;
-					isFault = TRUE;
-					faultCode = [NSNumber numberWithInt:0];
-					faultString = @"GetChallenge failed.";
+					[self setFaultWithCode:nil
+									string:@"GetChallenge failed."];
 					VLOG(@"GetChallenge failed (response dictionary: %@)", theResponseDict);
 				}
 			}
@@ -639,9 +657,8 @@ extern NSString *keychainItemName;
 					VLOG(@"Got session cookie.");
 				} else {
 					result = nil;
-					isFault = TRUE;
-					faultCode = [NSNumber numberWithInt:0];
-					faultString = @"Failed to get session cookie.";
+					[self setFaultWithCode:nil
+									string:@"Failed to get session cookie."];
 					VLOG(@"Failed to get session cookie (response dictionary: %@)", theResponseDict);
 				}
 			}
@@ -704,9 +721,8 @@ extern NSString *keychainItemName;
 			default:
 			{
 				result = nil;
-				isFault = TRUE;
-				faultCode = [NSNumber numberWithInt:0];
-				faultString = @"Unknown method index in [asLJCoreAsynchronous request:didReceiveResponse:].";
+				[self setFaultWithCode:nil
+								string:@"Unknown method index in [asLJCoreAsynchronous request:didReceiveResponse:]."];
 				VLOG(@"Unknown method index in [asLJCoreAsynchronous request:didReceiveResponse:].");
 			}
 				break;
@@ -714,7 +730,7 @@ extern NSString *keychainItemName;
 		[result retain];
 		//	NSLog(@"%@",self);
 		//	NSLog(@"Done with call, returning...");
-		if (isFault) {
+		if ([self isFault]) {
 			[[self target] performSelector:[self errorAction]];
 		} else {
 			[[self target] performSelector:[self successAction]];
@@ -732,9 +748,8 @@ extern NSString *keychainItemName;
 	result = nil;
 	
 	// FIXME: this is all fake
-	isFault = TRUE;
-	faultCode = 0;
-	faultString = @"";
+	[self setFaultWithCode:nil
+					string:nil];
 	[[self target] performSelector:[self errorAction]];
 	
 	[paramDict release];

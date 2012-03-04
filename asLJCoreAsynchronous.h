@@ -80,6 +80,10 @@ typedef enum {
 @property SEL successAction;
 @property SEL errorAction;
 
+@property (readonly) bool isFault;
+@property (readonly,retain) NSString *faultString;
+@property (readonly,retain) NSNumber *faultCode;
+
 
 #pragma mark -
 #pragma mark convenience creator methods
