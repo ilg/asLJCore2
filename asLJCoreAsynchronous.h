@@ -1,6 +1,6 @@
 /*********************************************************************************
  
- © Copyright 2009-2011, Isaac Greenspan
+ © Copyright 2009-2012, Isaac Greenspan
  
  Permission is hereby granted, free of charge, to any person
  obtaining a copy of this software and associated documentation
