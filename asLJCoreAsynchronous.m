@@ -715,7 +715,12 @@ extern NSString *keychainItemName;
 			case kasLJCoreAsynchronousMethodIndexEntryEdit: // same as ...Post
 			case kasLJCoreAsynchronousMethodIndexEntryPost:
 			{
-				result = [NSString stringWithString:[theResponseDict objectForKey:@"url"]];
+				NSString *postURL = [theResponseDict objectForKey:@"url"];
+				if (postURL) {
+					result = [NSString stringWithString:postURL];
+				} else {
+					result = nil;
+				}
 			}
 				break;
 			default:
