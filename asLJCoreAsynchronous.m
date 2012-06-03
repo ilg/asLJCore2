@@ -238,6 +238,20 @@ extern NSString *keychainItemName;
 }
 
 #pragma mark -
+#pragma mark dealloc
+
+- (void) dealloc {
+	// release retained properties
+	[result release];
+	[target release];
+	[faultString release];
+	[faultCode release];
+	[challengeGettingObject release];
+	
+	[super dealloc];
+}
+
+#pragma mark -
 #pragma mark setup methods
 
 - (NSString *)methodNameForIndex:(asLJCoreAsynchronousMethodType)method

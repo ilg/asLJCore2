@@ -54,6 +54,35 @@
 	return self;
 }
 
+- (void) dealloc {
+	// release retained properties
+	[account release];
+	[server release];
+	[event release];
+	[subject release];
+	[security release];
+	[allowmask release];
+	[year release];
+	[mon release];
+	[day release];
+	[hour release];
+	[min release];
+	[usejournal release];
+	[current_location release];
+	[current_mood release];
+	[current_moodid release];
+	[current_music release];
+	[opt_backdated release];
+	[picture_keyword release];
+	[taglist release];
+	[opt_nocomments release];
+	[opt_noemail release];
+	[opt_screening release];
+	[opt_preformatted release];
+	
+	[super dealloc];
+}
+
 - (NSDictionary *) getEntryAsDictionary;
 {
 	// build the metadata "props" dictionary
@@ -148,6 +177,13 @@
 @implementation LJPastEntry
 
 @synthesize itemid;
+
+- (void) dealloc {
+	// release retained properties
+	[itemid release];
+	
+	[super dealloc];
+}
 
 - (LJPastEntry *) initPastItemid:(NSNumber *)theItemid
 					  forJournal:(NSString *)theJournal
