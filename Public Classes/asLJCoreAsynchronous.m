@@ -55,6 +55,28 @@ extern NSString * const kasLJCoreAccountServerKey;
 @property (retain) NSNumber *faultCode;
 - (void)setFaultWithCode:(NSNumber *)code
 				  string:(NSString *)string;
+#pragma mark setup methods
+- (void)loginTo:(NSString *)account;
+- (void)getDayCountsFor:(NSString *)account
+			withJournal:(NSString *)journal;
+- (void)getEntriesFor:(NSString *)account
+		  withJournal:(NSString *)journal
+			   onDate:(NSCalendarDate *)date;
+- (void)getTagsFor:(NSString *)account
+	   withJournal:(NSString *)journal;
+- (void)deleteEntryFor:(NSString *)account
+		   withJournal:(NSString *)journal
+			withItemID:(NSString *)itemid;
+- (void)getSessionCookieFor:(NSString *)account;
+- (void)getFriendsFor:(NSString *)account;
+- (void)getLJPastEntryWithItemid:(NSNumber *)theItemid
+					  forJournal:(NSString *)theJournal
+					  forAccount:(NSString *)theAccount
+					  fromServer:(NSString *)theServer;
+- (void)saveLJPastEntry:(LJPastEntry *)theEntry;
+- (void)postLJNewEntry:(LJNewEntry *)theEntry;
+#pragma mark actions
+- (void)start;
 @end
 
 
