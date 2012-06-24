@@ -34,10 +34,9 @@
 
 #import "LJxmlrpc.h"
 #import "asLJCoreKeychain.h"
-#import <CommonCrypto/CommonDigest.h>
 #import <XMLRPC.h>
 #import "LJErrors.h"
-
+#import "NSString+MD5.h"
 
 
 @implementation LJxmlrpcRaw
@@ -225,23 +224,6 @@ static NSString *clientVersion;
 
 @implementation LJxmlrpc
 
-+ (NSString *)md5:(NSString *)str
-{
-	const char *cStr = [str UTF8String];
-	if (!cStr) {
-		return @"";
-	} else {
-		unsigned char result[CC_MD5_DIGEST_LENGTH];
-		CC_MD5( cStr, strlen(cStr), result );
-		return [NSString stringWithFormat:
-				@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-				result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7],
-				result[8], result[9], result[10], result[11], result[12], result[13], result[14], result[15]
-				];
-	}
-} 
-
-
 + (LJxmlrpc *)newCall:(NSString *)methodName
 		   withParams:(NSDictionary *)paramDict
 				atURL:(NSString *)serverURL
@@ -288,17 +270,11 @@ static NSString *clientVersion;
 		
 		// set response to md5( challenge + md5([password]) )   where md5() returns the hex digest
 		NSString *serverFQDN = [[serverURL componentsSeparatedByString:@"/"] objectAtIndex:2];
-		NSString *pwdMD5 = [LJxmlrpc 
-							md5:[asLJCoreKeychain getPasswordByLabel:keychainItemName
-															  withAccount:username
-															   withServer:serverFQDN]];
-		NSString *authResponse = [LJxmlrpc
-								  md5:[NSString
-									   stringWithFormat:@"%@%@",
-									   authChallenge,
-									   pwdMD5
-									   ]
-								  ];
+		NSString *pwdMD5 = [[asLJCoreKeychain getPasswordByLabel:keychainItemName
+                                                     withAccount:username
+                                                      withServer:serverFQDN] md5];
+		NSString *authResponse = [NSString md5WithFormat:@"%@%@",
+                                  authChallenge, pwdMD5];
 		
 		/*
 		 to [paramDict], we need to add the things that every request should include:

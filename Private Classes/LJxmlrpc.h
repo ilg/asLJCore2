@@ -83,8 +83,6 @@
 			  forUser:(NSString *)username
 				error:(NSError **)anError;
 
-+ (NSString *)md5:(NSString *)str;
-
 - (BOOL)call:(NSString *)methodName
   withParams:(NSDictionary *)paramDict
 	   atURL:(NSString *)serverURL

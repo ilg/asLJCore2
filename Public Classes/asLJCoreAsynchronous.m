@@ -37,6 +37,7 @@
 #import "asLJCoreKeychain.h"
 #import "LJxmlrpc.h"
 #import "LJMoods.h"
+#import "NSString+MD5.h"
 
 
 // for internal use (in +splitAccountString: and the results therefrom)
@@ -461,18 +462,13 @@ extern NSString *keychainItemName;
 	} else {
 		// set response to md5( challenge + md5([password]) )   where md5() returns the hex digest
 		NSString *serverFQDN = [accountInfo objectForKey:kasLJCoreAccountServerKey];
-		NSString *pwdMD5 = [LJxmlrpc 
-							md5:[asLJCoreKeychain getPasswordByLabel:[LJxmlrpc keychainItemName]
-														 withAccount:[accountInfo
-																	  objectForKey:kasLJCoreAccountUsernameKey]
-														  withServer:serverFQDN]];
-		NSString *authResponse = [LJxmlrpc
-								  md5:[NSString
-									   stringWithFormat:@"%@%@",
-									   authChallenge,
-									   pwdMD5
-									   ]
-								  ];
+		NSString *pwdMD5 = [[asLJCoreKeychain getPasswordByLabel:[LJxmlrpc keychainItemName]
+                                                     withAccount:[accountInfo
+                                                                  objectForKey:kasLJCoreAccountUsernameKey]
+                                                      withServer:serverFQDN]
+                            md5];
+		NSString *authResponse = [NSString md5WithFormat:@"%@%@",
+                                  authChallenge, pwdMD5];
 		/*
 		 to [paramDict], we need to add the things that every request should include:
 		 'auth_method': 'challenge'
