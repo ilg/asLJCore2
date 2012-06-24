@@ -146,7 +146,7 @@ static NSInteger intSort(id num1, id num2, void *context)
         cachePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:bundleName];
 		
         if ( ![[NSFileManager defaultManager] fileExistsAtPath:cachePath] )
-			if ( ![[NSFileManager defaultManager] createDirectoryAtPath:cachePath attributes:nil] )
+			if ( ![[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:NULL] )
 				cachePath = nil;
     }
 	
