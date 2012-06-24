@@ -35,6 +35,7 @@
 #import "asLJCore.h"
 #import "LJxmlrpc.h"
 #import "LJMoods.h"
+#import "LJaccount.h"
 #import "asLJCoreKeychain.h"
 
 #pragma mark constants
@@ -69,10 +70,6 @@ NSString * const kasLJCoreLJFriendUsernameKey = @"username";
 NSString * const kasLJCoreLJFriendTypePersonKey = @"";
 NSString * const kasLJCoreLJFriendTypeCommunityKey = @"community";
 
-// for internal use (in +splitAccountString: and the results therefrom)
-NSString * const kasLJCoreAccountUsernameKey = @"username";
-NSString * const kasLJCoreAccountServerKey = @"server";
-
 #pragma mark -
 
 @implementation asLJCore
@@ -104,24 +101,6 @@ static NSString *keychainItemName;
 
 
 #pragma mark -
-#pragma mark internal utility
-
-// turn a@b into kasLJCoreAccountUsernameKey => a, kasLJCoreAccountServerKey => b
-+ (NSDictionary *)splitAccountString:(NSString *)account
-{
-	NSArray *parts = [account componentsSeparatedByString:@"@"];
-	if ([parts count] == 2) {
-		return [NSDictionary dictionaryWithObjectsAndKeys:
-				[parts objectAtIndex:0],kasLJCoreAccountUsernameKey,
-				[parts objectAtIndex:1],kasLJCoreAccountServerKey,
-				nil];
-	} else {
-		return nil;
-	}
-}
-
-
-#pragma mark -
 #pragma mark account-handling
 
 + (NSArray *)allAccounts
@@ -140,23 +119,23 @@ static NSString *keychainItemName;
 									 withPassword:password];
 }
 
-+ (void)deleteAccount:(NSString *)account
++ (void)deleteAccount:(NSString *)accountString
 {
-	NSDictionary *accountInfo = [self splitAccountString:account];
+    LJaccount *account = [LJaccount accountFromString:accountString];
 	[asLJCoreKeychain deleteKeychainItemByLabel:keychainItemName
-									withAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]
-									 withServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
+									withAccount:[account username]
+									 withServer:[account server]];
 }
 
-+ (void)editAccount:(NSString *)account
++ (void)editAccount:(NSString *)accountString
 		  setServer:(NSString *)server
 		setUsername:(NSString *)username
 		setPassword:(NSString *)password
 {
-	NSDictionary *accountInfo = [self splitAccountString:account];
+    LJaccount *account = [LJaccount accountFromString:accountString];
 	[asLJCoreKeychain editKeychainItemByLabel:keychainItemName
-								  withAccount:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]
-								   withServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]
+								  withAccount:[account username]
+								   withServer:[account server]
 								   setAccount:username
 									setServer:server
 								  setPassword:password];
@@ -167,12 +146,12 @@ static NSString *keychainItemName;
 #pragma mark server interaction
 
 + (NSDictionary *)convenientCall:(NSString *)methodName
-					  forAccount:(NSString *)account
+					  forAccount:(NSString *)accountString
 					  withParams:(NSDictionary *)params
 						   error:(NSError **)anError
 {
 	NSDictionary *theResult;
-	NSDictionary *accountInfo = [self splitAccountString:account];
+    LJaccount *account = [LJaccount accountFromString:accountString];
 	NSError *myError;
 	LJxmlrpc *theCall = [LJxmlrpc newCall:methodName
 							   withParams:params
@@ -192,18 +171,18 @@ static NSString *keychainItemName;
 }
 
 
-+ (NSDictionary *)loginTo:(NSString *)account
++ (NSDictionary *)loginTo:(NSString *)accountString
 					error:(NSError **)anError
 {
 	NSDictionary *theResult;
 	NSError *myError;
-	NSDictionary *accountInfo = [self splitAccountString:account];
+    LJaccount *account = [LJaccount accountFromString:accountString];
 	NSDictionary *theCall =[self convenientCall:@"login"
-									 forAccount:account
+									 forAccount:accountString
 									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
 												 @"1",@"getpickws",
 												 @"1",@"getpickwurls",
-												 [LJMoods getHighestMoodIDForServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]],@"getmoods",
+												 [LJMoods getHighestMoodIDForServer:[account server]],@"getmoods",
 												 nil]
 										  error:&myError]; 
 	if (!theCall) {
@@ -224,7 +203,7 @@ static NSString *keychainItemName;
 		}
 		[LJMoods addNewMoods:newMoodStrings
 					 withIDs:newMoodIDs
-				   forServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]];
+				   forServer:[account server]];
 		theResult = [NSDictionary dictionaryWithDictionary:theCall];
 	}
 	return theResult;
@@ -432,7 +411,7 @@ static NSString *keychainItemName;
 + (NSHTTPCookie *)makeSessionNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
 												forAccount:(NSString *)account
 {
-	NSString *server = [[self splitAccountString:account] objectForKey:kasLJCoreAccountServerKey];
+	NSString *server = [[LJaccount accountFromString:account] server];
 	NSString *cookieDomain;
 	if ([server hasPrefix:@"www."]) {
 		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
@@ -451,7 +430,7 @@ static NSString *keychainItemName;
 + (NSHTTPCookie *)makeLoggedInNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
 												 forAccount:(NSString *)account
 {
-	NSString *server = [[self splitAccountString:account] objectForKey:kasLJCoreAccountServerKey];
+	NSString *server = [[LJaccount accountFromString:account] server];
 	NSString *cookieDomain;
 	if ([server hasPrefix:@"www."]) {
 		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];

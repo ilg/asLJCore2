@@ -37,16 +37,11 @@
 #import "asLJCoreKeychain.h"
 #import "LJxmlrpc.h"
 #import "LJMoods.h"
+#import "LJaccount.h"
 #import "NSString+MD5.h"
 
 
-// for internal use (in +splitAccountString: and the results therefrom)
-extern NSString * const kasLJCoreAccountUsernameKey;
-extern NSString * const kasLJCoreAccountServerKey;
 
-@interface asLJCore ()
-+ (NSDictionary *)splitAccountString:(NSString *)account;
-@end
 
 @interface asLJCoreAsynchronous () {
 	id target;
@@ -71,19 +66,19 @@ extern NSString * const kasLJCoreAccountServerKey;
 - (void)setFaultWithCode:(NSNumber *)code
 				  string:(NSString *)string;
 #pragma mark setup methods
-- (void)loginTo:(NSString *)account;
-- (void)getDayCountsFor:(NSString *)account
+- (void)loginTo:(LJaccount *)account;
+- (void)getDayCountsFor:(LJaccount *)account
 			withJournal:(NSString *)journal;
-- (void)getEntriesFor:(NSString *)account
+- (void)getEntriesFor:(LJaccount *)account
 		  withJournal:(NSString *)journal
 			   onDate:(NSCalendarDate *)date;
-- (void)getTagsFor:(NSString *)account
+- (void)getTagsFor:(LJaccount *)account
 	   withJournal:(NSString *)journal;
-- (void)deleteEntryFor:(NSString *)account
+- (void)deleteEntryFor:(LJaccount *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid;
-- (void)getSessionCookieFor:(NSString *)account;
-- (void)getFriendsFor:(NSString *)account;
+- (void)getSessionCookieFor:(LJaccount *)account;
+- (void)getFriendsFor:(LJaccount *)account;
 - (void)getLJPastEntryWithItemid:(NSNumber *)theItemid
 					  forJournal:(NSString *)theJournal
 					  forAccount:(NSString *)theAccount
@@ -135,8 +130,8 @@ extern NSString *keychainItemName;
 	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
 															  successAction:successActionSelector
 																errorAction:errorActionSelector];
-	[async loginTo:account];
 	[async start];
+	[async loginTo:[LJaccount accountFromString:account]];
 	return async;
 }
 
@@ -149,7 +144,7 @@ extern NSString *keychainItemName;
 	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
 															  successAction:successActionSelector
 																errorAction:errorActionSelector];
-	[async getDayCountsFor:account
+	[async getDayCountsFor:[LJaccount accountFromString:account]
 			   withJournal:journal];
 	[async start];
 	return async;
@@ -165,7 +160,7 @@ extern NSString *keychainItemName;
 	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
 															  successAction:successActionSelector
 																errorAction:errorActionSelector];
-	[async getEntriesFor:account
+	[async getEntriesFor:[LJaccount accountFromString:account]
 			 withJournal:journal
 				  onDate:date];
 	[async start];
@@ -181,7 +176,7 @@ extern NSString *keychainItemName;
 	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
 															  successAction:successActionSelector
 																errorAction:errorActionSelector];
-	[async getTagsFor:account
+	[async getTagsFor:[LJaccount accountFromString:account]
 		  withJournal:journal];
 	[async start];
 	return async;
@@ -197,7 +192,7 @@ extern NSString *keychainItemName;
 	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
 															  successAction:successActionSelector
 																errorAction:errorActionSelector];
-	[async deleteEntryFor:account
+	[async deleteEntryFor:[LJaccount accountFromString:account]
 			  withJournal:journal
 			   withItemID:itemid];
 	[async start];
@@ -212,8 +207,8 @@ extern NSString *keychainItemName;
 	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
 															  successAction:successActionSelector
 																errorAction:errorActionSelector];
-	[async getSessionCookieFor:account];
 	[async start];
+	[async getSessionCookieFor:[LJaccount accountFromString:account]];
 	return async;
 }
 
@@ -225,8 +220,8 @@ extern NSString *keychainItemName;
 	asLJCoreAsynchronous *async = [asLJCoreAsynchronous jumpstartWithTarget:targetObject
 															  successAction:successActionSelector
 																errorAction:errorActionSelector];
-	[async getFriendsFor:account];
 	[async start];
+	[async getFriendsFor:[LJaccount accountFromString:account]];
 	return async;
 }
 
@@ -336,8 +331,6 @@ extern NSString *keychainItemName;
 
 - (void)jumpstartForAccount:(NSString *)account
 {
-	accountInfo = [[asLJCore splitAccountString:account]
-				   retain];
 	url = [NSURL
 		   URLWithString:SERVER2URL([accountInfo
 									 objectForKey:kasLJCoreAccountServerKey])];
@@ -346,7 +339,6 @@ extern NSString *keychainItemName;
 	[paramDict retain];
 }
 
-- (void)loginTo:(NSString *)account
 {
 	[self jumpstartForAccount:account];
 	methodIndex = kasLJCoreAsynchronousMethodIndexLogin;
@@ -356,9 +348,10 @@ extern NSString *keychainItemName;
 				 [LJMoods getHighestMoodIDForServer:[accountInfo objectForKey:kasLJCoreAccountServerKey]],@"getmoods",
 				 nil];
 	[paramDict retain];
+- (void)loginTo:(LJaccount *)account
 }
 
-- (void)getDayCountsFor:(NSString *)account
+- (void)getDayCountsFor:(LJaccount *)account
 			withJournal:(NSString *)journal
 {
 	[self jumpstartForAccount:account];
@@ -369,7 +362,7 @@ extern NSString *keychainItemName;
 	[paramDict retain];
 }
 
-- (void)getEntriesFor:(NSString *)account
+- (void)getEntriesFor:(LJaccount *)account
 		  withJournal:(NSString *)journal
 			   onDate:(NSCalendarDate *)date
 {
@@ -389,7 +382,7 @@ extern NSString *keychainItemName;
 	[paramDict retain];
 }
 
-- (void)getTagsFor:(NSString *)account
+- (void)getTagsFor:(LJaccount *)account
 	   withJournal:(NSString *)journal
 {
 	[self jumpstartForAccount:account];
@@ -400,7 +393,7 @@ extern NSString *keychainItemName;
 	[paramDict retain];
 }
 
-- (void)deleteEntryFor:(NSString *)account
+- (void)deleteEntryFor:(LJaccount *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid
 {
