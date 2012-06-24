@@ -57,28 +57,13 @@ typedef enum {
 
 @interface asLJCoreAsynchronous : NSObject <XMLRPCConnectionDelegate> {
 	id result;
-	id target;
-	SEL successAction;
-	SEL errorAction;
 	
 	bool isFault;
 	NSString *faultString;
 	NSNumber *faultCode;
-
-	@protected
-	NSString *connectionIdentifier;
-	NSDictionary *accountInfo;
-	NSURL *url;
-	asLJCoreAsynchronousMethodType methodIndex;
-	NSMutableDictionary *paramDict;
-	
-	asLJCoreAsynchronous *challengeGettingObject;
 }
 
-@property (retain) id result;
-@property (retain) id target;
-@property SEL successAction;
-@property SEL errorAction;
+@property (readonly,retain) id result;
 
 @property (readonly) bool isFault;
 @property (readonly,retain) NSString *faultString;

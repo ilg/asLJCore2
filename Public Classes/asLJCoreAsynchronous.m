@@ -48,7 +48,22 @@ extern NSString * const kasLJCoreAccountServerKey;
 + (NSDictionary *)splitAccountString:(NSString *)account;
 @end
 
-@interface asLJCoreAsynchronous ()
+@interface asLJCoreAsynchronous () {
+	id target;
+	SEL successAction;
+	SEL errorAction;
+@protected
+	NSString *connectionIdentifier;
+	NSDictionary *accountInfo;
+	NSURL *url;
+	asLJCoreAsynchronousMethodType methodIndex;
+	NSMutableDictionary *paramDict;
+	
+	asLJCoreAsynchronous *challengeGettingObject;
+}
+@property (retain) id target;
+@property SEL successAction;
+@property SEL errorAction;
 @property (retain) asLJCoreAsynchronous *challengeGettingObject;
 @property bool isFault;
 @property (retain) NSString *faultString;
