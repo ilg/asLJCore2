@@ -72,6 +72,30 @@ static NSString *clientVersion;
 	return [[clientVersion copy] autorelease];
 }
 
+// this is where we take the NSData objects with the UTF8 bytes and turn them into NSStrings
++ (id)cleanseUTF8:(id)theObject
+{
+	if ([theObject isKindOfClass:[NSData class]]) {
+		return [[[NSString alloc] initWithData:theObject encoding:NSUTF8StringEncoding] autorelease];
+	} else if ([theObject isKindOfClass:[NSDictionary class]]) {
+		NSMutableDictionary *theResult = [NSMutableDictionary dictionaryWithCapacity:[theObject count]];
+		for (id aKey in theObject) {
+			[theResult setObject:[self cleanseUTF8:[theObject objectForKey:aKey]] forKey:aKey];
+		}
+		return [NSDictionary dictionaryWithDictionary:theResult];
+	} else if ([theObject isKindOfClass:[NSArray class]]) {
+		NSMutableArray *theResult = [NSMutableArray arrayWithCapacity:[theObject count]];
+		for (id anItem in theObject) {
+			[theResult addObject:[self cleanseUTF8:anItem]];
+		}
+		return [NSArray arrayWithArray:theResult];
+	} else if ([theObject respondsToSelector:@selector(copy)]) {
+		return [[theObject copy] autorelease];
+	} else {
+		return theObject;
+	}
+}
+
 + (NSDictionary *)rawSynchronousCallMethod:(NSString *)methodName
                             withParameters:(NSDictionary *)parameters
                                      atUrl:(NSString *)serverURL
@@ -99,7 +123,7 @@ static NSString *clientVersion;
         }
         return nil;
     } else {
-        return (NSDictionary *)CFDictionaryGetValue(result, kWSMethodInvocationResult);
+        return [self cleanseUTF8:(NSDictionary *)CFDictionaryGetValue(result, kWSMethodInvocationResult)];
     }
 }
 
