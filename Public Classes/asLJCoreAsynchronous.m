@@ -338,8 +338,7 @@ extern NSString *keychainItemName;
                                  atUrl:SERVER2URL([account server])
                                forUser:[account username]
                                success:^(NSDictionary *result) {
-                                   successBlock_(result);
-                                   [self successBlock](result);
+                                   [self success:result];
                                }
                                failure:^(NSError *error) {
                                    [self failure:error];
@@ -369,7 +368,6 @@ extern NSString *keychainItemName;
                                        withIDs:newMoodIDs
                                      forServer:[account server]];
                           [self setResult:result];
-                          [self success:[self result]];
                       }];
 }
 
@@ -390,7 +388,6 @@ extern NSString *keychainItemName;
                                                    forKey:[theDayCount objectForKey:@"date"]];
                           }
                           [self setResult:[NSDictionary dictionaryWithDictionary:temporaryResults]];
-                          [self success:[self result]];
                       }];
 }
 
@@ -427,7 +424,6 @@ extern NSString *keychainItemName;
                                                    forKey:[anEvent objectForKey:@"itemid"]];
                           }
                           [self setResult:[NSDictionary dictionaryWithDictionary:temporaryResults]];
-                          [self success:[self result]];
                       }];
 }
 
@@ -447,7 +443,6 @@ extern NSString *keychainItemName;
                               [temporaryResults addObject:[aTag objectForKey:@"name"]];
                           }
                           [self setResult:[NSArray arrayWithArray:temporaryResults]];
-                          [self success:[self result]];
                       }];
 }
 
@@ -467,7 +462,6 @@ extern NSString *keychainItemName;
                       success:^(NSDictionary *result) {
                           VLOG(@"... entry deleted.");
                           [self setResult:[NSNumber numberWithBool:YES]];
-                          [self success:[self result]];
                       }];
 }
 
@@ -478,17 +472,16 @@ extern NSString *keychainItemName;
                    parameters:[NSDictionary dictionary]
                       success:^(NSDictionary *result) {
                           NSString *ljsession = [result objectForKey:@"ljsession"];
-                          if (ljsession) {
-                              [self setResult:[NSString stringWithString:ljsession]];
-                              VLOG(@"Got session cookie.");
-                              [self success:[self result]];
-                          } else {
+                          if (!ljsession) {
                               [self setResult:nil];
                               [self setFaultWithCode:nil
                                               string:@"Failed to get session cookie."];
                               VLOG(@"Failed to get session cookie (response dictionary: %@)", result);
                               [self failure:nil];  // FIXME: use a proper NSError here
+                              return;
                           }
+                          [self setResult:[NSString stringWithString:ljsession]];
+                          VLOG(@"Got session cookie.");
                       }];
 }
 
@@ -518,7 +511,6 @@ extern NSString *keychainItemName;
                           }
                           [self setResult:[NSArray arrayWithArray:temporaryResults]];
                           VLOG(@"Got %d friends",[[self result] count]);
-                          [self success:[self result]];
                       }];
 }
 
@@ -562,7 +554,6 @@ extern NSString *keychainItemName;
                           [entry setEntryFromDictionary:theEvent];
                           [self setResult:entry];
                           [entry release];
-                          [self success:[self result]];
                       }];
 }
 
@@ -582,7 +573,6 @@ extern NSString *keychainItemName;
                           } else {
                               [self setResult:nil];
                           }
-                          [self success:[self result]];
                       }];
 }
 
@@ -601,7 +591,6 @@ extern NSString *keychainItemName;
                           } else {
                               [self setResult:nil];
                           }
-                          [self success:[self result]];
                       }];
 }
 
