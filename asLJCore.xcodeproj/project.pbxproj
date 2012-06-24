@@ -10,18 +10,18 @@
 		719F7F23102EA02100D06772 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 719F7F22102EA02100D06772 /* Security.framework */; };
 		71E6745C15969C8300729D2C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71E6745B15969C8300729D2C /* CoreServices.framework */; };
 		71E6747015969D8C00729D2C /* asLJCore_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 71E6745E15969D8C00729D2C /* asLJCore_Prefix.pch */; };
-		71E6747115969D8C00729D2C /* LJErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6745F15969D8C00729D2C /* LJErrors.h */; };
+		71E6747115969D8C00729D2C /* LJErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6745F15969D8C00729D2C /* LJErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		71E6747215969D8C00729D2C /* asLJCoreKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746115969D8C00729D2C /* asLJCoreKeychain.h */; };
 		71E6747315969D8C00729D2C /* asLJCoreKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746215969D8C00729D2C /* asLJCoreKeychain.m */; };
 		71E6747415969D8C00729D2C /* asLJCoreLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746315969D8C00729D2C /* asLJCoreLogger.h */; };
 		71E6747515969D8C00729D2C /* asLJCoreLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746415969D8C00729D2C /* asLJCoreLogger.m */; };
 		71E6747615969D8C00729D2C /* LJMoods.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746515969D8C00729D2C /* LJMoods.h */; };
 		71E6747715969D8C00729D2C /* LJMoods.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746615969D8C00729D2C /* LJMoods.m */; };
-		71E6747A15969D8C00729D2C /* asLJCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746A15969D8C00729D2C /* asLJCore.h */; };
+		71E6747A15969D8C00729D2C /* asLJCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746A15969D8C00729D2C /* asLJCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		71E6747B15969D8C00729D2C /* asLJCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746B15969D8C00729D2C /* asLJCore.m */; };
-		71E6747C15969D8C00729D2C /* asLJCoreAsynchronous.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746C15969D8C00729D2C /* asLJCoreAsynchronous.h */; };
+		71E6747C15969D8C00729D2C /* asLJCoreAsynchronous.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746C15969D8C00729D2C /* asLJCoreAsynchronous.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		71E6747D15969D8C00729D2C /* asLJCoreAsynchronous.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746D15969D8C00729D2C /* asLJCoreAsynchronous.m */; };
-		71E6747E15969D8C00729D2C /* LJEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746E15969D8C00729D2C /* LJEntry.h */; };
+		71E6747E15969D8C00729D2C /* LJEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746E15969D8C00729D2C /* LJEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		71E6747F15969D8C00729D2C /* LJEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746F15969D8C00729D2C /* LJEntry.m */; };
 		71E6748215969D9F00729D2C /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6748015969D9F00729D2C /* NSString+MD5.h */; };
 		71E6748315969D9F00729D2C /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6748115969D9F00729D2C /* NSString+MD5.m */; };
@@ -186,14 +186,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				71E6747015969D8C00729D2C /* asLJCore_Prefix.pch in Headers */,
-				71E6747115969D8C00729D2C /* LJErrors.h in Headers */,
-				71E6747215969D8C00729D2C /* asLJCoreKeychain.h in Headers */,
-				71E6747415969D8C00729D2C /* asLJCoreLogger.h in Headers */,
-				71E6747615969D8C00729D2C /* LJMoods.h in Headers */,
 				71E6747A15969D8C00729D2C /* asLJCore.h in Headers */,
 				71E6747C15969D8C00729D2C /* asLJCoreAsynchronous.h in Headers */,
 				71E6747E15969D8C00729D2C /* LJEntry.h in Headers */,
+				71E6747115969D8C00729D2C /* LJErrors.h in Headers */,
+				71E6747015969D8C00729D2C /* asLJCore_Prefix.pch in Headers */,
+				71E6747215969D8C00729D2C /* asLJCoreKeychain.h in Headers */,
+				71E6747415969D8C00729D2C /* asLJCoreLogger.h in Headers */,
+				71E6747615969D8C00729D2C /* LJMoods.h in Headers */,
 				71E6748215969D9F00729D2C /* NSString+MD5.h in Headers */,
 				71E674861596A53600729D2C /* LJxmlrpc2.h in Headers */,
 				71E6748A1596B3AC00729D2C /* LJaccount.h in Headers */,
