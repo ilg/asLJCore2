@@ -33,7 +33,7 @@
 //
 
 #import "asLJCore.h"
-#import "LJxmlrpc.h"
+#import "LJxmlrpc2.h"
 #import "LJMoods.h"
 #import "LJaccount.h"
 #import "asLJCoreKeychain.h"
@@ -84,13 +84,13 @@ static NSString *keychainItemName;
 {
 	[keychainItemName release];
 	keychainItemName = [[theName copy] retain];
-	[LJxmlrpc setKeychainItemName:theName];
+	[LJxmlrpc2 setKeychainItemName:theName];
 }
 
 // set the version string reported to the LJ-type site
 + (void)setClientVersion:(NSString *)theVersion
 {
-	[LJxmlrpc setClientVersion:theVersion];
+	[LJxmlrpc2 setClientVersion:theVersion];
 }
 
 // enable/disable verbose logging
@@ -150,24 +150,20 @@ static NSString *keychainItemName;
 					  withParams:(NSDictionary *)params
 						   error:(NSError **)anError
 {
-	NSDictionary *theResult;
     LJaccount *account = [LJaccount accountFromString:accountString];
 	NSError *myError;
-	LJxmlrpc *theCall = [LJxmlrpc newCall:methodName
-							   withParams:params
-									atURL:SERVER2URL([accountInfo objectForKey:kasLJCoreAccountServerKey])
-								  forUser:[accountInfo objectForKey:kasLJCoreAccountUsernameKey]
-									error:&myError];
-	if (!theCall) {
+    NSDictionary *callResult = [LJxmlrpc2 synchronousCallMethod:methodName
+                                                 withParameters:params
+                                                          atUrl:SERVER2URL([account server])
+                                                        forUser:[account username]
+                                                          error:&myError];
+	if (!callResult) {
 		// call failed
 		VLOG(@"Fault (%d): %@", [myError code], [[myError userInfo] objectForKey:NSLocalizedDescriptionKey]);
-		theResult = nil;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
-	} else {
-		theResult = [theCall getResultDictionary];
+        return nil;
 	}
-	[theCall release];
-	return theResult;
+	return callResult;
 }
 
 

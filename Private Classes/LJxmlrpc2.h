@@ -26,24 +26,15 @@
  *********************************************************************************/
 
 //
-//  LJxmlrpc.h
+//  LJxmlrpc2.h
 //  asLJCore
 //
-//  Created by Isaac Greenspan on 4/24/09.
+//  Created by Isaac Greenspan on 6/23/12.
 //
 
-#import <Cocoa/Cocoa.h>
-#import <XMLRPC.h>
+#import <Foundation/Foundation.h>
 
-@interface LJxmlrpcRaw : NSMutableDictionary {
-	bool isFault;
-	NSString *faultString;
-	NSNumber *faultCode;
-	
-	NSMutableDictionary *embeddedObject;
-}
-
-+ (id)cleanseUTF8:(id)theObject;
+@interface LJxmlrpc2 : NSObject
 
 // set the name under which account keychain items are stored
 + (void)setKeychainItemName:(NSString *)theName;
@@ -56,41 +47,21 @@
 + (NSString *)clientVersion;
 
 
-// the workhorse
-- (void)rawCall:(NSString *)methodName
-	 withParams:(NSDictionary *)paramDict
-		  atURL:(NSString *)serverURL;
+// The actual methods to make the XML-RPC calls
++ (NSDictionary *)synchronousCallMethod:(NSString *)methodName
+                         withParameters:(NSDictionary *)parameters
+                                  atUrl:(NSString *)serverURL
+                                forUser:(NSString *)username
+                                  error:(NSError **)error;
 
-// primitive methods for NSDictionary/NSMutableDictionary subclassing
-- (id)init;
-- (NSUInteger)count;
-- (id)objectForKey:(id)aKey;
-- (NSEnumerator *)keyEnumerator;
-- (void)setObject:(id)anObject forKey:(id)aKey;
-- (void)removeObjectForKey:(id)aKey;
++ (LJxmlrpc2 *)asynchronousCallMethod:(NSString *)methodName
+                       withParameters:(NSDictionary *)parameters
+                                atUrl:(NSString *)serverURL
+                              forUser:(NSString *)username
+                              success:(void(^)(NSDictionary *result))successBlock_
+                              failure:(void(^)(NSError *error))failureBlock_;
 
-// to allow wrapper functions more easily
-- (NSDictionary *)getResultDictionary;
-
-@end
-
-@interface LJxmlrpc : LJxmlrpcRaw {
-}
-
-+ (LJxmlrpc *)newCall:(NSString *)methodName
-		   withParams:(NSDictionary *)paramDict
-				atURL:(NSString *)serverURL
-			  forUser:(NSString *)username
-				error:(NSError **)anError;
-
-- (BOOL)call:(NSString *)methodName
-  withParams:(NSDictionary *)paramDict
-	   atURL:(NSString *)serverURL
-	 forUser:(NSString *)username
-	   error:(NSError **)anError;
-- (void)call:(NSString *)methodName
-  withParams:(NSDictionary *)paramDict
-	   atURL:(NSString *)serverURL
-	 forUser:(NSString *)username;
+// Cancel a call in progress
+- (void)cancel;
 
 @end

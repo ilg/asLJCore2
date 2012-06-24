@@ -33,7 +33,7 @@
 //
 
 #import "LJEntry.h"
-#import "LJxmlrpc.h"
+#import "LJxmlrpc2.h"
 
 @implementation LJEntry
 
@@ -201,20 +201,18 @@
 		
 		// do the LJ call to load the entry and set the rest of the properties
 		NSError *myError;
-		LJxmlrpc *theLJCall = [[LJxmlrpc alloc] init];
-		if (![theLJCall call:@"getevents"
-				  withParams:[NSDictionary dictionaryWithObjectsAndKeys: // (value, key); end with nil
-							  @"one",@"selecttype",
-							  usejournal,@"usejournal",
-							  itemid,@"itemid",
-							  @"mac",@"lineendings",
-							  nil
-							  ]
-					   atURL:SERVER2URL(server)
-					 forUser:account
-					   error:&myError]) {
+        NSDictionary *callResult = [LJxmlrpc2 synchronousCallMethod:@"getevents"
+                                                     withParameters:[NSDictionary dictionaryWithObjectsAndKeys: // (value, key); end with nil
+                                                                     @"one",@"selecttype",
+                                                                     usejournal,@"usejournal",
+                                                                     itemid,@"itemid",
+                                                                     @"mac",@"lineendings",
+                                                                     nil]
+                                                              atUrl:SERVER2URL(server)
+                                                            forUser:account
+                                                              error:&myError];
+		if (!callResult) {
 			// call failed
-			[theLJCall release];
 			isFault = TRUE;
 			faultString = [[myError userInfo] objectForKey:NSLocalizedDescriptionKey];
 			faultCode = [NSNumber numberWithInteger:[myError code]];
@@ -222,28 +220,26 @@
 			self = nil;
 			if (anError != NULL) *anError = [[myError copy] autorelease];
 			return nil;
-		} else {
-			// call succeded
-			
-			// extract the one event we want and its metadata "props"
-			NSMutableDictionary *theEvent = [NSMutableDictionary dictionaryWithDictionary:[[theLJCall objectForKey:@"events"] lastObject]];
-			[theLJCall release];
-			
-			// parse out the eventtime
-			NSString *eventtime = [theEvent objectForKey:@"eventtime"];  // "YYYY-MM-DD hh:mm:ss", but ss is always 00
-			[theEvent setObject:[eventtime substringWithRange:NSMakeRange(0, 4)]
-						 forKey:@"year"];
-			[theEvent setObject:[eventtime substringWithRange:NSMakeRange(5, 2)]
-						 forKey:@"mon"];
-			[theEvent setObject:[eventtime substringWithRange:NSMakeRange(8, 2)]
-						 forKey:@"day"];
-			[theEvent setObject:[eventtime substringWithRange:NSMakeRange(11, 2)]
-						 forKey:@"hour"];
-			[theEvent setObject:[eventtime substringWithRange:NSMakeRange(14, 2)]
-						 forKey:@"min"];
-			
-			[self setEntryFromDictionary:theEvent];
-		}
+        }
+        // call succeded
+        
+        // extract the one event we want and its metadata "props"
+        NSMutableDictionary *theEvent = [NSMutableDictionary dictionaryWithDictionary:[[callResult objectForKey:@"events"] lastObject]];
+        
+        // parse out the eventtime
+        NSString *eventtime = [theEvent objectForKey:@"eventtime"];  // "YYYY-MM-DD hh:mm:ss", but ss is always 00
+        [theEvent setObject:[eventtime substringWithRange:NSMakeRange(0, 4)]
+                     forKey:@"year"];
+        [theEvent setObject:[eventtime substringWithRange:NSMakeRange(5, 2)]
+                     forKey:@"mon"];
+        [theEvent setObject:[eventtime substringWithRange:NSMakeRange(8, 2)]
+                     forKey:@"day"];
+        [theEvent setObject:[eventtime substringWithRange:NSMakeRange(11, 2)]
+                     forKey:@"hour"];
+        [theEvent setObject:[eventtime substringWithRange:NSMakeRange(14, 2)]
+                     forKey:@"min"];
+        
+        [self setEntryFromDictionary:theEvent];
 	}
 	
 	return self;
@@ -260,31 +256,28 @@
 - (BOOL) saveEntryError:(NSError **)anError
 {
 	// do the LJ call to save the entry, return TRUE for success, FALSE for failure
-	LJxmlrpc *theLJCall = [[LJxmlrpc alloc] init];
 	
 	NSError *myError;
 	NSMutableDictionary *theParams = [NSMutableDictionary dictionaryWithDictionary:[self getEntryAsDictionary]];
 	[theParams setObject:@"mac" forKey:@"lineendings"];
 	[theParams setObject:itemid forKey:@"itemid"];
-	if (![theLJCall call:@"editevent"
-			  withParams:theParams
-				   atURL:SERVER2URL(server)
-				 forUser:account
-				   error:&myError]) {
+    NSDictionary *callResult = [LJxmlrpc2 synchronousCallMethod:@"editevent"
+                                                 withParameters:theParams
+                                                          atUrl:SERVER2URL(server)
+                                                        forUser:account
+                                                          error:&myError];
+	if (!callResult) {
 		// call failed
-		[theLJCall release];
 		isFault = TRUE;
 		faultString = [[myError userInfo] objectForKey:NSLocalizedDescriptionKey];
 		faultCode = [NSNumber numberWithInteger:[myError code]];
 		VLOG(@"Fault (%@): %@", faultCode, faultString);
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 		return FALSE;
-	} else {
-		// call succeded
-		entryURL = [[theLJCall objectForKey:@"url"] copy];
-		[theLJCall release];
-		return TRUE;
-	}
+    }
+    // call succeded
+    entryURL = [[callResult objectForKey:@"url"] copy];
+    return TRUE;
 }
 
 - (BOOL) saveEntry
@@ -301,30 +294,27 @@
 - (BOOL) postEntryError:(NSError **)anError
 {
 	// do the LJ call to post the entry, return TRUE for success, FALSE for failure
-	LJxmlrpc *theLJCall = [[LJxmlrpc alloc] init];
 	
 	NSError *myError;
 	NSMutableDictionary *theParams = [NSMutableDictionary dictionaryWithDictionary:[self getEntryAsDictionary]];
 	[theParams setObject:@"mac" forKey:@"lineendings"];
-	if (![theLJCall call:@"postevent"
-			  withParams:theParams
-				   atURL:SERVER2URL(server)
-				 forUser:account
-				   error:&myError]) {
+    NSDictionary *callResult = [LJxmlrpc2 synchronousCallMethod:@"postevent"
+                                                 withParameters:theParams
+                                                          atUrl:SERVER2URL(server)
+                                                        forUser:account
+                                                          error:&myError];
+	if (!callResult) {
 		// call failed
-		[theLJCall release];
 		isFault = TRUE;
 		faultString = [[myError userInfo] objectForKey:NSLocalizedDescriptionKey];
 		faultCode = [NSNumber numberWithInteger:[myError code]];
 		VLOG(@"Fault (%@): %@", faultCode, faultString);
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 		return FALSE;
-	} else {
-		// call succeded
-		entryURL = [[theLJCall objectForKey:@"url"] copy];
-		[theLJCall release];
-		return TRUE;
 	}
+    // call succeded
+    entryURL = [[callResult objectForKey:@"url"] copy];
+    return TRUE;
 }
 
 - (BOOL) postEntry

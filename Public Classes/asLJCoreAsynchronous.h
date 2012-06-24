@@ -33,8 +33,6 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "XMLRPC/XMLRPCConnectionDelegate.h"
-#import "XMLRPC/XMLRPCRequest.h"
 
 @class LJPastEntry;
 @class LJNewEntry;
@@ -55,12 +53,7 @@ typedef enum {
 	kasLJCoreAsynchronousMethodIndexEntryGet,
 } asLJCoreAsynchronousMethodType;
 
-@interface asLJCoreAsynchronous : NSObject <XMLRPCConnectionDelegate> {
-	id result;
-	
-	bool isFault;
-	NSString *faultString;
-	NSNumber *faultCode;
+@interface asLJCoreAsynchronous : NSObject {
 }
 
 @property (readonly,retain) id result;
