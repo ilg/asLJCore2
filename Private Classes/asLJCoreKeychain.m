@@ -94,11 +94,11 @@
 				[theResults addObject:[NSString stringWithFormat:@"%@@%@",account,server]];
 				[account release];
 				[server release];
+                SecKeychainItemFreeAttributesAndData(attrList, passwordBytes);
 			} else {
 //				NSLog(@"Error extracting infomation from keychain item");
 			}
 			
-			SecKeychainItemFreeAttributesAndData(attrList, passwordBytes);
 			if (itemRef) CFRelease(itemRef);
 		}
 	}
@@ -187,11 +187,11 @@
 												  length:passwordLength
 												encoding:NSUTF8StringEncoding]
 						 autorelease];
+            SecKeychainItemFreeAttributesAndData(attrList, passwordBytes);
 		} else {
 			//				NSLog(@"Error extracting infomation from keychain item");
 		}
 		
-		SecKeychainItemFreeAttributesAndData(attrList, passwordBytes);
 		CFRelease(itemRef);
 	}
 	return theResult;
