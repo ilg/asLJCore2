@@ -36,6 +36,7 @@
 
 @class LJPastEntry;
 @class LJNewEntry;
+@class LJxmlrpc2;
 
 typedef enum {
 	kasLJCoreAsynchronousMethodIndexGetChallenge,
@@ -54,6 +55,14 @@ typedef enum {
 } asLJCoreAsynchronousMethodType;
 
 @interface asLJCoreAsynchronous : NSObject {
+    @private
+    void(^_successBlock)(NSDictionary *result);
+    void(^_failureBlock)(NSError *error);
+    LJxmlrpc2 *_currentCall;
+    id _result;
+    bool _isFault;
+    NSString *_faultString;
+    NSNumber *_faultCode;
 }
 
 @property (readonly,retain) id result;

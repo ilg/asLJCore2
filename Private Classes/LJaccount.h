@@ -34,7 +34,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface LJaccount : NSObject
+@interface LJaccount : NSObject {
+    @private
+    NSString *_username;
+    NSString *_server;
+}
 
 @property (readonly, retain) NSString *username;
 @property (readonly, retain) NSString *server;

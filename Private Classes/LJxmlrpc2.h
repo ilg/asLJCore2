@@ -34,7 +34,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface LJxmlrpc2 : NSObject
+@interface LJxmlrpc2 : NSObject {
+@private
+    BOOL cancelled;
+}
 
 // set the name under which account keychain items are stored
 + (void)setKeychainItemName:(NSString *)theName;

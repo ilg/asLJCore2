@@ -36,10 +36,7 @@
 #import "asLJCoreKeychain.h"
 #import "NSString+MD5.h"
 
-@interface LJxmlrpc2 () {
-@private
-    BOOL cancelled;
-}
+@interface LJxmlrpc2 ()
 @property BOOL cancelled;
 @end
 
