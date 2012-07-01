@@ -26,25 +26,60 @@
  *********************************************************************************/
 
 //
-//  LJaccount.h
+//  LJaccount.m
 //  asLJCore
 //
 //  Created by Isaac Greenspan on 6/23/12.
 //
 
-#import <Foundation/Foundation.h>
+#import "LJAccount.h"
 
-@interface LJaccount : NSObject {
-    @private
-    NSString *_username;
-    NSString *_server;
+@interface LJAccount ()
+@property (retain) NSString *username;
+@property (retain) NSString *server;
+@end
+
+@implementation LJAccount
+
+@synthesize username = _username;
+@synthesize server = _server;
+
+- (LJAccount *)initFromString:(NSString *)accountString {
+    self = [super init];
+    if (self) {
+        NSArray *parts = [accountString componentsSeparatedByString:@"@"];
+        if ([parts count] == 2) {
+            [self setUsername:[parts objectAtIndex:0]];
+            [self setServer:[parts objectAtIndex:1]];
+        } else {
+            self = nil;
+        }
+    }
+    return self;
 }
 
-@property (readonly, retain) NSString *username;
-@property (readonly, retain) NSString *server;
+- (LJAccount *)initWithUsername:(NSString *)username
+                       atServer:(NSString *)server
+{
+    self = [super init];
+    if (self) {
+        [self setUsername:username];
+        [self setServer:server];
+    }
+    return self;
+}
 
-+ (LJaccount *)accountFromString:(NSString *)accountString;
-+ (LJaccount *)accountWithUsername:(NSString *)username
-                          atServer:(NSString *)server;
+
++ (LJAccount *)accountFromString:(NSString *)accountString {
+    return [[[self alloc] initFromString:accountString] autorelease];
+}
+
++ (LJAccount *)accountWithUsername:(NSString *)username
+                          atServer:(NSString *)server
+{
+    return [[[self alloc] initWithUsername:username
+                                  atServer:server]
+            autorelease];
+}
 
 @end
