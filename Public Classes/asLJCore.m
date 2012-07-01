@@ -35,7 +35,6 @@
 #import "asLJCore.h"
 #import "LJxmlrpc2.h"
 #import "LJMoods.h"
-#import "LJaccount.h"
 #import "asLJCoreKeychain.h"
 
 #pragma mark constants
@@ -121,7 +120,7 @@ static NSString *keychainItemName;
 
 + (void)deleteAccount:(NSString *)accountString
 {
-    LJaccount *account = [LJaccount accountFromString:accountString];
+    LJAccount *account = [LJAccount accountFromString:accountString];
 	[asLJCoreKeychain deleteKeychainItemByLabel:keychainItemName
 									withAccount:[account username]
 									 withServer:[account server]];
@@ -132,7 +131,7 @@ static NSString *keychainItemName;
 		setUsername:(NSString *)username
 		setPassword:(NSString *)password
 {
-    LJaccount *account = [LJaccount accountFromString:accountString];
+    LJAccount *account = [LJAccount accountFromString:accountString];
 	[asLJCoreKeychain editKeychainItemByLabel:keychainItemName
 								  withAccount:[account username]
 								   withServer:[account server]
@@ -142,15 +141,15 @@ static NSString *keychainItemName;
 }
 
 
-#pragma mark -
-#pragma mark server interaction
+#pragma mark - server interaction
+#pragma mark internal/convenience
 
 + (NSDictionary *)convenientCall:(NSString *)methodName
 					  forAccount:(NSString *)accountString
 					  withParams:(NSDictionary *)params
 						   error:(NSError **)anError
 {
-    LJaccount *account = [LJaccount accountFromString:accountString];
+    LJAccount *account = [LJAccount accountFromString:accountString];
 	NSError *myError;
     NSDictionary *callResult = [LJxmlrpc2 synchronousCallMethod:methodName
                                                  withParameters:params
@@ -166,20 +165,76 @@ static NSString *keychainItemName;
 	return callResult;
 }
 
+#pragma mark login
+
++ (NSDictionary *)parametersForLoginTo:(LJAccount *)account
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            // (value,key), nil to end
+            kLJXmlRpcParameterYes, kLJXmlRpcParameterGetPicKwsKey,
+            kLJXmlRpcParameterYes, kLJXmlRpcParameterGetPicKwUrlsKey,
+            [LJMoods getHighestMoodIDForServer:[account server]], kLJXmlRpcParameterGetMoodsKey,
+            nil];
+}
++ (NSDictionary *)processResult:(NSDictionary *)result
+                    fromLoginTo:(LJAccount *)account
+{
+    VLOG(@"... logged in.");
+    NSArray *newMoods = [result objectForKey:kasLJCoreLJLoginMoodsKey];
+    NSMutableArray *newMoodStrings = [NSMutableArray arrayWithCapacity:[newMoods count]];
+    NSMutableArray *newMoodIDs = [NSMutableArray arrayWithCapacity:[newMoods count]];
+    for (id theNewMood in newMoods) {
+        [newMoodStrings addObject:[theNewMood objectForKey:@"name"]];
+        [newMoodIDs addObject:[theNewMood objectForKey:@"id"]];
+    }
+    [LJMoods addNewMoods:newMoodStrings
+                 withIDs:newMoodIDs
+               forServer:[account server]];
+    return result;
+}
++ (id<LJCancelable>)loginTo:(LJAccount *)account
+                  onSuccess:(void(^)(NSString *fullName,
+                                     NSString *message,
+                                     NSArray *friendGroups,
+                                     NSArray *useJournals,
+                                     NSArray *picKeywords,
+                                     NSArray *picUrls,
+                                     NSString *defaultPicUrl)
+                             )successBlock
+                    onError:(void(^)(NSError *error))failureBlock
+{
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodLogin
+            withParameters:[self parametersForLoginTo:account]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                [self processResult:result
+                        fromLoginTo:account];
+                successBlock(
+                             [result objectForKey:kasLJCoreLJLoginFullNameKey],
+                             [result objectForKey:kasLJCoreLJLoginMessageKey],
+                             [result objectForKey:kasLJCoreLJLoginFriendGroupsKey],
+                             [result objectForKey:kasLJCoreLJLoginUsejournalsKey],
+                             [result objectForKey:kasLJCoreLJLoginUserpicKeywordsKey],
+                             [result objectForKey:kasLJCoreLJLoginUserpicURLsKey],
+                             [result objectForKey:kasLJCoreLJLoginDefaultUserpicURLKey]
+                             );
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
 
 + (NSDictionary *)loginTo:(NSString *)accountString
 					error:(NSError **)anError
 {
 	NSDictionary *theResult;
 	NSError *myError;
-    LJaccount *account = [LJaccount accountFromString:accountString];
-	NSDictionary *theCall =[self convenientCall:@"login"
+    LJAccount *account = [LJAccount accountFromString:accountString];
+	NSDictionary *theCall =[self convenientCall:kLJXmlRpcMethodLogin
 									 forAccount:accountString
-									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-												 @"1",@"getpickws",
-												 @"1",@"getpickwurls",
-												 [LJMoods getHighestMoodIDForServer:[account server]],@"getmoods",
-												 nil]
+									 withParams:[self parametersForLoginTo:account]
 										  error:&myError]; 
 	if (!theCall) {
 		// call failed
@@ -187,20 +242,8 @@ static NSString *keychainItemName;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
-		VLOG(@"... logged in.");
-		
-		// store new moods
-		NSArray *newMoods = [theCall objectForKey:kasLJCoreLJLoginMoodsKey];
-		NSMutableArray *newMoodStrings = [NSMutableArray arrayWithCapacity:[newMoods count]];
-		NSMutableArray *newMoodIDs = [NSMutableArray arrayWithCapacity:[newMoods count]];
-		for (id theNewMood in newMoods) {
-			[newMoodStrings addObject:[theNewMood objectForKey:@"name"]];
-			[newMoodIDs addObject:[theNewMood objectForKey:@"id"]];
-		}
-		[LJMoods addNewMoods:newMoodStrings
-					 withIDs:newMoodIDs
-				   forServer:[account server]];
-		theResult = [NSDictionary dictionaryWithDictionary:theCall];
+		theResult = [self processResult:[NSDictionary dictionaryWithDictionary:theCall]
+                            fromLoginTo:account];
 	}
 	return theResult;
 }
@@ -210,17 +253,51 @@ static NSString *keychainItemName;
 	return [self loginTo:account error:NULL];
 }
 
+#pragma mark getDayCounts
+
++ (NSDictionary *)parametersForGetDayCountsForJournal:(NSString *)journal
+{
+    return [NSDictionary dictionaryWithObject:journal
+                                       forKey:kLJXmlRpcParameterUsejournalKey];
+}
++ (NSDictionary *)processGetDayCountsResult:(NSDictionary *)result
+{
+    NSArray *dayCountArray = [result objectForKey:@"daycounts"];
+    VLOG(@"Got counts for %d days", [dayCountArray count]);
+    NSMutableDictionary *temporaryResults = [NSMutableDictionary dictionaryWithCapacity:[dayCountArray count]];
+    for (id theDayCount in dayCountArray) {
+        [temporaryResults setObject:[theDayCount objectForKey:@"count"]
+                             forKey:[theDayCount objectForKey:@"date"]];
+    }
+    return [NSDictionary dictionaryWithDictionary:temporaryResults];
+}
++ (id<LJCancelable>)getDayCountsFor:(LJAccount *)account
+                        withJournal:(NSString *)journal
+                          onSuccess:(void(^)(NSDictionary *dayCounts))successBlock
+                            onError:(void(^)(NSError *error))failureBlock
+{
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodGetDayCounts
+            withParameters:[self parametersForGetDayCountsForJournal:journal]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                successBlock([self processGetDayCountsResult:result]);
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
+
 + (NSDictionary *)getDayCountsFor:(NSString *)account
 					  withJournal:(NSString *)journal
 							error:(NSError **)anError
 {
 	NSDictionary *theResult;
 	NSError *myError;
-	NSDictionary *theCall =[self convenientCall:@"getdaycounts"
+	NSDictionary *theCall =[self convenientCall:kLJXmlRpcMethodGetDayCounts
 									 forAccount:account
-									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-												 journal,@"usejournal",
-												 nil]
+									 withParams:[self parametersForGetDayCountsForJournal:journal]
 										  error:&myError]; 
 	if (!theCall) {
 		// call failed
@@ -228,14 +305,7 @@ static NSString *keychainItemName;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
-		NSArray *dayCountArray = [theCall objectForKey:@"daycounts"];
-		VLOG(@"Got counts for %d days",[dayCountArray count]);
-		NSMutableDictionary *temporaryResults = [NSMutableDictionary dictionaryWithCapacity:[dayCountArray count]];
-		for (id theDayCount in dayCountArray) {
-			[temporaryResults setObject:[theDayCount objectForKey:@"count"]
-								 forKey:[theDayCount objectForKey:@"date"]];
-		}
-		theResult = [NSDictionary dictionaryWithDictionary:temporaryResults];
+		theResult = [self processGetDayCountsResult:theCall];
 	}
 	return theResult;
 }
@@ -246,6 +316,62 @@ static NSString *keychainItemName;
 	return [self getDayCountsFor:account withJournal:journal error:NULL];
 }
 
+#pragma mark getEntries
+
++ (NSDictionary *)parametersForGetEntriesForJournal:(NSString *)journal
+                                             onDate:(NSCalendarDate *)date
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            // (value,key), nil to end
+            journal, kLJXmlRpcParameterUsejournalKey,
+            kLJXmlRpcParameterDaySelectType, kLJXmlRpcParameterSelectTypeKey,
+            [NSString stringWithFormat:@"%d",[date yearOfCommonEra]], kLJXmlRpcParameterYearKey,
+            [NSString stringWithFormat:@"%d",[date monthOfYear]], kLJXmlRpcParameterMonthKey,
+            [NSString stringWithFormat:@"%d",[date dayOfMonth]], kLJXmlRpcParameterDayKey,
+            kLJXmlRpcParameterMacLineEndings, kLJXmlRpcParameterLineEndingsKey,
+            kLJXmlRpcParameterYes, kLJXmlRpcParameterNoPropsKey,
+            kLJXmlRpcParameterYes, kLJXmlRpcParameterPreferSubjectKey,
+            @"200", kLJXmlRpcParameterTruncateKey,
+            nil];
+}
++ (NSDictionary *)processGetEntriesResult:(NSDictionary *)result
+{
+    NSArray *eventArray = [result objectForKey:@"events"];
+    VLOG(@"Got %d events",[eventArray count]);
+    NSMutableDictionary *temporaryResults = [NSMutableDictionary dictionaryWithCapacity:[eventArray count]];
+    for (id anEvent in eventArray) {
+        [temporaryResults setObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                     [NSString stringWithFormat:@"[%@] %@",
+                                      [[[anEvent objectForKey:@"eventtime"] 
+                                        componentsSeparatedByString:@" "] lastObject],
+                                      [anEvent objectForKey:@"event"]],
+                                     @"title",
+                                     [anEvent objectForKey:@"url"],@"url",
+                                     nil]
+                             forKey:[anEvent objectForKey:@"itemid"]];
+    }
+    return [NSDictionary dictionaryWithDictionary:temporaryResults];
+}
++ (id<LJCancelable>)getEntriesFor:(LJAccount *)account
+                      withJournal:(NSString *)journal
+                           onDate:(NSCalendarDate *)date
+                        onSuccess:(void(^)(NSDictionary *entries))successBlock
+                          onError:(void(^)(NSError *error))failureBlock
+{
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodGetEvents
+            withParameters:[self parametersForGetEntriesForJournal:journal
+                                                            onDate:date]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                successBlock([self processGetEntriesResult:result]);
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
+
 + (NSDictionary *)getEntriesFor:(NSString *)account
 					withJournal:(NSString *)journal
 						 onDate:(NSCalendarDate *)date
@@ -253,19 +379,10 @@ static NSString *keychainItemName;
 {
 	NSDictionary *theResult;
 	NSError *myError;
-	NSDictionary *theCall =[self convenientCall:@"getevents"
+	NSDictionary *theCall =[self convenientCall:kLJXmlRpcMethodGetEvents
 									 forAccount:account
-									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-												 journal,@"usejournal",
-												 @"day",@"selecttype",
-												 [NSString stringWithFormat:@"%d",[date yearOfCommonEra]],@"year",
-												 [NSString stringWithFormat:@"%d",[date monthOfYear]],@"month",
-												 [NSString stringWithFormat:@"%d",[date dayOfMonth]],@"day",
-												 @"mac",@"linenedings",
-												 @"1",@"noprops",
-												 @"1",@"prefersubject",
-												 @"200",@"truncate",
-												 nil]
+									 withParams:[self parametersForGetEntriesForJournal:journal
+                                                                                 onDate:date]
 										  error:&myError]; 
 	if (!theCall) {
 		// call failed
@@ -273,21 +390,7 @@ static NSString *keychainItemName;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
-		NSArray *eventArray = [theCall objectForKey:@"events"];
-		VLOG(@"Got %d events",[eventArray count]);
-		NSMutableDictionary *temporaryResults = [NSMutableDictionary dictionaryWithCapacity:[eventArray count]];
-		for (id anEvent in eventArray) {
-			[temporaryResults setObject:[NSDictionary dictionaryWithObjectsAndKeys:
-										 [NSString stringWithFormat:@"[%@] %@",
-										  [[[anEvent objectForKey:@"eventtime"] 
-											componentsSeparatedByString:@" "] lastObject],
-										  [anEvent objectForKey:@"event"]],
-										 @"title",
-										 [anEvent objectForKey:@"url"],@"url",
-										 nil]
-								 forKey:[anEvent objectForKey:@"itemid"]];
-		}
-		theResult = [NSDictionary dictionaryWithDictionary:temporaryResults];
+		theResult = [self processGetEntriesResult:theCall];
 	}
 	return theResult;
 }
@@ -299,17 +402,50 @@ static NSString *keychainItemName;
 	return [self getEntriesFor:account withJournal:journal onDate:date error:NULL];
 }
 
+#pragma mark getTags
+
++ (NSDictionary *)parametersForGetTagsForJournal:(NSString *)journal
+{
+    return [NSDictionary dictionaryWithObject:journal
+                                       forKey:kLJXmlRpcParameterUsejournalKey];
+}
++ (NSArray *)processGetTagsResult:(NSDictionary *)result
+{
+    NSArray *tagsArray = [result objectForKey:@"tags"];
+    VLOG(@"Got %d tags",[tagsArray count]);
+    NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[tagsArray count]];
+    for (id aTag in tagsArray) {
+        [temporaryResults addObject:[aTag objectForKey:@"name"]];
+    }
+    return [NSArray arrayWithArray:temporaryResults];
+}
++ (id<LJCancelable>)getTagsFor:(LJAccount *)account
+                   withJournal:(NSString *)journal
+                     onSuccess:(void(^)(NSArray *tags))successBlock
+                       onError:(void(^)(NSError *error))failureBlock
+{
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodGetUserTags
+            withParameters:[self parametersForGetTagsForJournal:journal]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                successBlock([self processGetTagsResult:result]);
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
+
 + (NSArray *)getTagsFor:(NSString *)account
 			withJournal:(NSString *)journal
 				  error:(NSError **)anError
 {
 	NSArray *theResult;
 	NSError *myError;
-	NSDictionary *theCall =[self convenientCall:@"getusertags"
+	NSDictionary *theCall =[self convenientCall:kLJXmlRpcMethodGetUserTags
 									 forAccount:account
-									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-												 journal,@"usejournal",
-												 nil]
+									 withParams:[self parametersForGetTagsForJournal:journal]
 										  error:&myError]; 
 	if (!theCall) {
 		// call failed
@@ -317,13 +453,7 @@ static NSString *keychainItemName;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
-		NSArray *tagsArray = [theCall objectForKey:@"tags"];
-		VLOG(@"Got %d tags",[tagsArray count]);
-		NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[tagsArray count]];
-		for (id aTag in tagsArray) {
-			[temporaryResults addObject:[aTag objectForKey:@"name"]];
-		}
-		theResult = [NSArray arrayWithArray:temporaryResults];
+        theResult = [self processGetTagsResult:theCall];
 	}
 	return theResult;
 }
@@ -334,6 +464,41 @@ static NSString *keychainItemName;
 	return [self getTagsFor:account withJournal:journal error:NULL];
 }
 
+#pragma mark deleteEntry
+
++ (NSDictionary *)parametersForDeleteEntryForJournal:(NSString *)journal
+                                          withItemId:(NSString *)itemId
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            // (value,key), nil to end
+            journal, kLJXmlRpcParameterUsejournalKey,
+            itemId, kLJXmlRpcParameterItemIdKey,
+            kLJXmlRpcParameterEmpty, kLJXmlRpcParameterEventKey,
+            kLJXmlRpcParameterEmpty, kLJXmlRpcParameterSubjectKey,
+            kLJXmlRpcParameterMacLineEndings, kLJXmlRpcParameterLineEndingsKey,
+            nil];
+}
++ (id<LJCancelable>)deleteEntryFor:(LJAccount *)account
+                       withJournal:(NSString *)journal
+                        withItemID:(NSString *)itemid
+                         onSuccess:(void(^)())successBlock
+                           onError:(void(^)(NSError *error))failureBlock
+{
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodEditEvent
+            withParameters:[self parametersForDeleteEntryForJournal:journal
+                                                         withItemId:itemid]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                VLOG(@"Deleted entry with itemid=%@",itemid);
+                successBlock();
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
+
 + (BOOL)deleteEntryFor:(NSString *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid
@@ -341,15 +506,10 @@ static NSString *keychainItemName;
 {
 	BOOL theResult;
 	NSError *myError;
-	NSDictionary *theCall =[self convenientCall:@"editevent"
+	NSDictionary *theCall =[self convenientCall:kLJXmlRpcMethodEditEvent
 									 forAccount:account
-									 withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-												 journal,@"usejournal",
-												 itemid,@"itemid",
-												 @"",@"event",
-												 @"",@"subject",
-												 @"mac",@"linenedings",
-												 nil]
+									 withParams:[self parametersForDeleteEntryForJournal:journal
+                                                                              withItemId:itemid]
 										  error:&myError]; 
 	if (!theCall) {
 		// call failed
@@ -370,15 +530,38 @@ static NSString *keychainItemName;
 	[self deleteEntryFor:account withJournal:journal withItemID:itemid error:NULL];
 }
 
+#pragma mark getSessionCookie
+
++ (NSString *)processGetSessionCookieResult:(NSDictionary *)result
+{
+    VLOG(@"Got session cookie.");
+    return [NSString stringWithString:[result objectForKey:@"ljsession"]];
+}
++ (id<LJCancelable>)getSessionCookieFor:(LJAccount *)account
+                              onSuccess:(void(^)(NSString *sessionCookie))successBlock
+                                onError:(void(^)(NSError *error))failureBlock
+{
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodSessionGenerate
+            withParameters:kLJXmlRpcNoParameters
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                successBlock([self processGetSessionCookieResult:result]);
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
+
 + (NSString *)getSessionCookieFor:(NSString *)account
 							error:(NSError **)anError
 {
 	NSString *theResult;
 	NSError *myError;
-	NSDictionary *theCall = [self convenientCall:@"sessiongenerate"
+	NSDictionary *theCall = [self convenientCall:kLJXmlRpcMethodSessionGenerate
 									  forAccount:account
-									  withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-												  nil]
+									  withParams:kLJXmlRpcNoParameters
 										   error:&myError];
 	if (!theCall) {
 		// call failed
@@ -386,8 +569,7 @@ static NSString *keychainItemName;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
-		VLOG(@"Got session cookie.");
-		theResult = [NSString stringWithString:[theCall objectForKey:@"ljsession"]];
+		theResult = [self processGetSessionCookieResult:theCall];
 	}
 	return theResult;
 }
@@ -407,7 +589,7 @@ static NSString *keychainItemName;
 + (NSHTTPCookie *)makeSessionNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
 												forAccount:(NSString *)account
 {
-	NSString *server = [[LJaccount accountFromString:account] server];
+	NSString *server = [[LJAccount accountFromString:account] server];
 	NSString *cookieDomain;
 	if ([server hasPrefix:@"www."]) {
 		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
@@ -426,7 +608,7 @@ static NSString *keychainItemName;
 + (NSHTTPCookie *)makeLoggedInNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
 												 forAccount:(NSString *)account
 {
-	NSString *server = [[LJaccount accountFromString:account] server];
+	NSString *server = [[LJAccount accountFromString:account] server];
 	NSString *cookieDomain;
 	if ([server hasPrefix:@"www."]) {
 		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
@@ -444,16 +626,59 @@ static NSString *keychainItemName;
 }
 
 
+#pragma mark getFriends
+
++ (NSDictionary *)parametersForGetFriends
+{
+    return [NSDictionary dictionaryWithObject:kLJXmlRpcParameterYes
+                                       forKey:kLJXmlRpcParameterIncludeBDaysKey];
+}
++ (NSArray *)processGetFriendsResult:(NSDictionary *)result
+{
+    NSArray *friends = [result objectForKey:@"friends"];
+    VLOG(@"Got %d friends", [friends count]);
+    NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[friends count]];
+    for (NSDictionary *aFriend in friends) {
+        [temporaryResults addObject:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
+                                     NIL2EMPTY([aFriend objectForKey:@"username"]),@"username",
+                                     NIL2EMPTY([aFriend objectForKey:@"fullname"]),@"fullname",
+                                     NIL2EMPTY([aFriend objectForKey:@"identity_type"]),@"identity_type",
+                                     NIL2EMPTY([aFriend objectForKey:@"identity_value"]),@"identity_value",
+                                     NIL2EMPTY([aFriend objectForKey:@"identity_display"]),@"identity_display",
+                                     NIL2EMPTY([aFriend objectForKey:@"type"]),@"type",
+                                     NIL2EMPTY([aFriend objectForKey:@"birthday"]),@"birthday",
+                                     NIL2EMPTY([aFriend objectForKey:@"fgcolor"]),@"fgcolor",
+                                     NIL2EMPTY([aFriend objectForKey:@"bgcolor"]),@"bgcolor",
+                                     NIL2EMPTY([aFriend objectForKey:@"groupmask"]),@"groupmask",
+                                     nil]]; 
+    }
+    return [NSArray arrayWithArray:temporaryResults];
+}
++ (id<LJCancelable>)getFriendsFor:(LJAccount *)account
+                        onSuccess:(void(^)(NSArray *friends))successBlock
+                          onError:(void(^)(NSError *error))failureBlock
+{
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodGetFriends
+            withParameters:[self parametersForGetFriends]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                successBlock([self processGetFriendsResult:result]);
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
+
 + (NSArray *)getFriendsFor:(NSString *)account
 					 error:(NSError **)anError
 {
 	NSArray *theResult;
 	NSError *myError;
-	NSDictionary *theCall = [self convenientCall:@"getfriends"
+	NSDictionary *theCall = [self convenientCall:kLJXmlRpcMethodGetFriends
 									  forAccount:account
-									  withParams:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-												  @"1",@"includebdays",
-												  nil]
+									  withParams:[self parametersForGetFriends]
 										   error:&myError];
 	if (!theCall) {
 		// call failed
@@ -461,24 +686,7 @@ static NSString *keychainItemName;
 		if (anError != NULL) *anError = [[myError copy] autorelease];
 	} else {
 		// call succeded
-		NSArray *friends = [theCall objectForKey:@"friends"];
-		NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[friends count]];
-		for (NSDictionary *aFriend in friends) {
-			[temporaryResults addObject:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-										 NIL2EMPTY([aFriend objectForKey:@"username"]),@"username",
-										 NIL2EMPTY([aFriend objectForKey:@"fullname"]),@"fullname",
-										 NIL2EMPTY([aFriend objectForKey:@"identity_type"]),@"identity_type",
-										 NIL2EMPTY([aFriend objectForKey:@"identity_value"]),@"identity_value",
-										 NIL2EMPTY([aFriend objectForKey:@"identity_display"]),@"identity_display",
-										 NIL2EMPTY([aFriend objectForKey:@"type"]),@"type",
-										 NIL2EMPTY([aFriend objectForKey:@"birthday"]),@"birthday",
-										 NIL2EMPTY([aFriend objectForKey:@"fgcolor"]),@"fgcolor",
-										 NIL2EMPTY([aFriend objectForKey:@"bgcolor"]),@"bgcolor",
-										 NIL2EMPTY([aFriend objectForKey:@"groupmask"]),@"groupmask",
-										 nil]]; 
-		}
-		theResult = [NSArray arrayWithArray:temporaryResults];
-		VLOG(@"Got %d friends",[theResult count]);
+		theResult = [self processGetFriendsResult:theCall];
 	}
 	return theResult;
 }
@@ -488,7 +696,122 @@ static NSString *keychainItemName;
 	return [self getFriendsFor:account error:NULL];
 }
 
+#pragma mark getLJPastEntry
++ (id<LJCancelable>)getLJPastEntryWithItemid:(NSNumber *)itemId
+                                  forJournal:(NSString *)journal
+                                  forAccount:(LJAccount *)account
+                                   onSuccess:(void(^)(LJPastEntry *theEntry))successBlock
+                                     onError:(void(^)(NSError *error))failureBlock
+{
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodGetEvents
+            withParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+                            // (value, key); end with nil
+                            kLJXmlRpcParameterOneSelectType, kLJXmlRpcParameterSelectTypeKey,
+                            journal, kLJXmlRpcParameterUsejournalKey,
+                            itemId, kLJXmlRpcParameterItemIdKey,
+                            kLJXmlRpcParameterMacLineEndings, kLJXmlRpcParameterLineEndingsKey,
+                            nil]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                // extract the one event we want and its metadata "props"
+                NSMutableDictionary *theEvent = [NSMutableDictionary dictionaryWithDictionary:
+                                                 [[result objectForKey:@"events"] lastObject]];
+                
+                // parse out the eventtime
+                NSString *eventtime = [theEvent objectForKey:@"eventtime"];  // "YYYY-MM-DD hh:mm:00"
+                [theEvent setObject:[eventtime substringWithRange:NSMakeRange(0, 4)]
+                             forKey:@"year"];
+                [theEvent setObject:[eventtime substringWithRange:NSMakeRange(5, 2)]
+                             forKey:@"mon"];
+                [theEvent setObject:[eventtime substringWithRange:NSMakeRange(8, 2)]
+                             forKey:@"day"];
+                [theEvent setObject:[eventtime substringWithRange:NSMakeRange(11, 2)]
+                             forKey:@"hour"];
+                [theEvent setObject:[eventtime substringWithRange:NSMakeRange(14, 2)]
+                             forKey:@"min"];
+                
+                LJPastEntry *entry = [[LJPastEntry alloc] init];
+                [entry setItemid:itemId];
+                [entry setUsejournal:journal];
+                [entry setAccount:[account username]];
+                [entry setServer:[account server]];
+                [entry setEntryFromDictionary:theEvent];
+                successBlock([entry autorelease]);
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
 
+#pragma mark saveLJPastEntry
+
++ (NSDictionary *)parametersForSaveLJPastEntry:(LJPastEntry *)theEntry
+{
+	NSMutableDictionary *paramDict = [NSMutableDictionary dictionaryWithDictionary:
+                                      [theEntry getEntryAsDictionary]];
+	[paramDict setObject:kLJXmlRpcParameterMacLineEndings
+                  forKey:kLJXmlRpcParameterLineEndingsKey];
+	[paramDict setObject:[theEntry itemid]
+                  forKey:kLJXmlRpcParameterItemIdKey];
+    return paramDict;
+}
++ (id<LJCancelable>)saveLJPastEntry:(LJPastEntry *)theEntry
+                          onSuccess:(void(^)(NSString *postUrl))successBlock
+                            onError:(void(^)(NSError *error))failureBlock
+{
+    LJAccount *account = [LJAccount accountWithUsername:[theEntry account]
+                                               atServer:[theEntry server]];
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodEditEvent
+            withParameters:[self parametersForSaveLJPastEntry:theEntry]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                NSString *postUrl = [result objectForKey:@"url"];
+                if (postUrl) {
+                    postUrl = [NSString stringWithString:postUrl];
+                }
+                successBlock(postUrl);
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
+
+#pragma mark postLJNewEntry
+
++ (NSDictionary *)parametersForPostLJNewEntry:(LJNewEntry *)theEntry
+{
+	NSMutableDictionary *paramDict = [NSMutableDictionary dictionaryWithDictionary:
+                                      [theEntry getEntryAsDictionary]];
+	[paramDict setObject:kLJXmlRpcParameterMacLineEndings
+                  forKey:kLJXmlRpcParameterLineEndingsKey];
+    return paramDict;
+}
++ (id<LJCancelable>)postLJNewEntry:(LJNewEntry *)theEntry
+                         onSuccess:(void(^)(NSString *postUrl))successBlock
+                           onError:(void(^)(NSError *error))failureBlock
+{
+    LJAccount *account = [LJAccount accountWithUsername:[theEntry account]
+                                               atServer:[theEntry server]];
+    return [LJxmlrpc2
+            asynchronousCallMethod:kLJXmlRpcMethodPostEvent
+            withParameters:[self parametersForPostLJNewEntry:theEntry]
+            atUrl:SERVER2URL([account server])
+            forUser:[account username]
+            success:^(NSDictionary *result) {
+                NSString *postUrl = [result objectForKey:@"url"];
+                if (postUrl) {
+                    postUrl = [NSString stringWithString:postUrl];
+                }
+                successBlock(postUrl);
+            }
+            failure:^(NSError *error) {
+                failureBlock(error);
+            }];
+}
 
 #pragma mark -
 #pragma mark moods
