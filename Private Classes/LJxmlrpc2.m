@@ -36,6 +36,56 @@
 #import "asLJCoreKeychain.h"
 #import "NSString+MD5.h"
 
+#pragma mark LJ XML-RPC client/server protocol constants
+
+// method names
+NSString * const kLJXmlRpcMethodCheckFriends = @"checkfriends";
+NSString * const kLJXmlRpcMethodConsoleCommand = @"consolecommand";
+NSString * const kLJXmlRpcMethodEditEvent = @"editevent";
+NSString * const kLJXmlRpcMethodEditFriendGroups = @"editfriendgroups";
+NSString * const kLJXmlRpcMethodEditFriends = @"editfriends";
+NSString * const kLJXmlRpcMethodFriendOf = @"friendof";
+NSString * const kLJXmlRpcMethodGetChallenge = @"getchallenge";
+NSString * const kLJXmlRpcMethodGetDayCounts = @"getdaycounts";
+NSString * const kLJXmlRpcMethodGetEvents = @"getevents";
+NSString * const kLJXmlRpcMethodGetFriends = @"getfriends";
+NSString * const kLJXmlRpcMethodGetFriendGroups = @"getfriendgroups";
+NSString * const kLJXmlRpcMethodGetUserTags = @"getusertags";
+NSString * const kLJXmlRpcMethodLogin = @"login";
+NSString * const kLJXmlRpcMethodPostEvent = @"postevent";
+NSString * const kLJXmlRpcMethodSessionExpire = @"sessionexpire";
+NSString * const kLJXmlRpcMethodSessionGenerate = @"sessiongenerate";
+NSString * const kLJXmlRpcMethodSyncItems = @"syncitems";
+
+// parameter dictionary keys
+NSString * const kLJXmlRpcParameterGetPicKwsKey = @"getpickws";
+NSString * const kLJXmlRpcParameterGetPicKwUrlsKey = @"getpickwurls";
+NSString * const kLJXmlRpcParameterGetMoodsKey = @"getmoods";
+NSString * const kLJXmlRpcParameterUsejournalKey = @"usejournal";
+NSString * const kLJXmlRpcParameterSelectTypeKey = @"selecttype";
+NSString * const kLJXmlRpcParameterYearKey = @"year";
+NSString * const kLJXmlRpcParameterMonthKey = @"month";
+NSString * const kLJXmlRpcParameterDayKey = @"day";
+NSString * const kLJXmlRpcParameterLineEndingsKey = @"lineendings";
+NSString * const kLJXmlRpcParameterNoPropsKey = @"noprops";
+NSString * const kLJXmlRpcParameterPreferSubjectKey = @"prefersubject";
+NSString * const kLJXmlRpcParameterTruncateKey = @"truncate";
+NSString * const kLJXmlRpcParameterItemIdKey = @"itemid";
+NSString * const kLJXmlRpcParameterEventKey = @"event";
+NSString * const kLJXmlRpcParameterSubjectKey = @"subject";
+NSString * const kLJXmlRpcParameterIncludeBDaysKey = @"includebdays";
+
+// parameter dictionary values
+NSString * const kLJXmlRpcParameterYes = @"1";
+NSString * const kLJXmlRpcParameterNo = @"0";
+NSString * const kLJXmlRpcParameterEmpty = @"";
+NSString * const kLJXmlRpcParameterMacLineEndings = @"mac";
+NSString * const kLJXmlRpcParameterDaySelectType = @"day";
+NSString * const kLJXmlRpcParameterOneSelectType = @"one";
+
+// result dictionary keys
+
+
 @interface LJxmlrpc2 ()
 @property BOOL cancelled;
 @end

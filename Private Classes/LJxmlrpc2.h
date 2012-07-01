@@ -33,8 +33,59 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "LJCancelable.h"
 
-@interface LJxmlrpc2 : NSObject {
+
+#pragma mark LJ XML-RPC client/server protocol constants
+
+// method names
+extern NSString * const kLJXmlRpcMethodCheckFriends;
+extern NSString * const kLJXmlRpcMethodConsoleCommand;
+extern NSString * const kLJXmlRpcMethodEditEvent;
+extern NSString * const kLJXmlRpcMethodEditFriendGroups;
+extern NSString * const kLJXmlRpcMethodEditFriends;
+extern NSString * const kLJXmlRpcMethodFriendOf;
+extern NSString * const kLJXmlRpcMethodGetChallenge;
+extern NSString * const kLJXmlRpcMethodGetDayCounts;
+extern NSString * const kLJXmlRpcMethodGetEvents;
+extern NSString * const kLJXmlRpcMethodGetFriends;
+extern NSString * const kLJXmlRpcMethodGetFriendGroups;
+extern NSString * const kLJXmlRpcMethodGetUserTags;
+extern NSString * const kLJXmlRpcMethodLogin;
+extern NSString * const kLJXmlRpcMethodPostEvent;
+extern NSString * const kLJXmlRpcMethodSessionExpire;
+extern NSString * const kLJXmlRpcMethodSessionGenerate;
+extern NSString * const kLJXmlRpcMethodSyncItems;
+
+#define kLJXmlRpcNoParameters [NSDictionary dictionary]
+
+// parameter dictionary keys
+extern NSString * const kLJXmlRpcParameterGetPicKwsKey;
+extern NSString * const kLJXmlRpcParameterGetPicKwUrlsKey;
+extern NSString * const kLJXmlRpcParameterGetMoodsKey;
+extern NSString * const kLJXmlRpcParameterUsejournalKey;
+extern NSString * const kLJXmlRpcParameterSelectTypeKey;
+extern NSString * const kLJXmlRpcParameterYearKey;
+extern NSString * const kLJXmlRpcParameterMonthKey;
+extern NSString * const kLJXmlRpcParameterDayKey;
+extern NSString * const kLJXmlRpcParameterLineEndingsKey;
+extern NSString * const kLJXmlRpcParameterNoPropsKey;
+extern NSString * const kLJXmlRpcParameterPreferSubjectKey;
+extern NSString * const kLJXmlRpcParameterTruncateKey;
+extern NSString * const kLJXmlRpcParameterItemIdKey;
+extern NSString * const kLJXmlRpcParameterEventKey;
+extern NSString * const kLJXmlRpcParameterSubjectKey;
+extern NSString * const kLJXmlRpcParameterIncludeBDaysKey;
+
+// parameter dictionary values
+extern NSString * const kLJXmlRpcParameterYes;
+extern NSString * const kLJXmlRpcParameterNo;
+extern NSString * const kLJXmlRpcParameterEmpty;
+extern NSString * const kLJXmlRpcParameterMacLineEndings;
+extern NSString * const kLJXmlRpcParameterDaySelectType;
+extern NSString * const kLJXmlRpcParameterOneSelectType;
+
+@interface LJxmlrpc2 : NSObject <LJCancelable> {
 @private
     BOOL cancelled;
 }
@@ -63,8 +114,5 @@
                               forUser:(NSString *)username
                               success:(void(^)(NSDictionary *result))successBlock_
                               failure:(void(^)(NSError *error))failureBlock_;
-
-// Cancel a call in progress
-- (void)cancel;
 
 @end
