@@ -23,8 +23,6 @@
 		71E6747115969D8C00729D2C /* LJErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6745F15969D8C00729D2C /* LJErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		71E6747A15969D8C00729D2C /* asLJCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746A15969D8C00729D2C /* asLJCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		71E6747B15969D8C00729D2C /* asLJCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746B15969D8C00729D2C /* asLJCore.m */; };
-		71E6747C15969D8C00729D2C /* asLJCoreAsynchronous.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746C15969D8C00729D2C /* asLJCoreAsynchronous.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		71E6747D15969D8C00729D2C /* asLJCoreAsynchronous.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746D15969D8C00729D2C /* asLJCoreAsynchronous.m */; };
 		71E6747E15969D8C00729D2C /* LJEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6746E15969D8C00729D2C /* LJEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		71E6747F15969D8C00729D2C /* LJEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E6746F15969D8C00729D2C /* LJEntry.m */; };
 		71E6748215969D9F00729D2C /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E6748015969D9F00729D2C /* NSString+MD5.h */; };
@@ -48,15 +46,13 @@
 		710199E415A0DCEC00B8030E /* LJxmlrpc2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJxmlrpc2.m; sourceTree = "<group>"; };
 		710199EF15A0DD0900B8030E /* asLJCore_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCore_Prefix.pch; sourceTree = "<group>"; };
 		710199FF15A0EFD900B8030E /* LJCall.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LJCall.h; sourceTree = "<group>"; };
-		719A033715A0F35700D43163 /* LJAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJAccount.h; sourceTree = "<group>"; };
-		719A033815A0F35700D43163 /* LJAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJAccount.m; sourceTree = "<group>"; };
+		719A033715A0F35700D43163 /* LJAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LJAccount.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		719A033815A0F35700D43163 /* LJAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = LJAccount.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		719F7F22102EA02100D06772 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		71E6745B15969C8300729D2C /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		71E6745F15969D8C00729D2C /* LJErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJErrors.h; sourceTree = "<group>"; };
-		71E6746A15969D8C00729D2C /* asLJCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCore.h; sourceTree = "<group>"; };
-		71E6746B15969D8C00729D2C /* asLJCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJCore.m; sourceTree = "<group>"; };
-		71E6746C15969D8C00729D2C /* asLJCoreAsynchronous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCoreAsynchronous.h; sourceTree = "<group>"; };
-		71E6746D15969D8C00729D2C /* asLJCoreAsynchronous.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = asLJCoreAsynchronous.m; sourceTree = "<group>"; };
+		71E6746A15969D8C00729D2C /* asLJCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = asLJCore.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		71E6746B15969D8C00729D2C /* asLJCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = asLJCore.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		71E6746E15969D8C00729D2C /* LJEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJEntry.h; sourceTree = "<group>"; };
 		71E6746F15969D8C00729D2C /* LJEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJEntry.m; sourceTree = "<group>"; };
 		71E6748015969D9F00729D2C /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
@@ -170,8 +166,6 @@
 			children = (
 				71E6746A15969D8C00729D2C /* asLJCore.h */,
 				71E6746B15969D8C00729D2C /* asLJCore.m */,
-				71E6746C15969D8C00729D2C /* asLJCoreAsynchronous.h */,
-				71E6746D15969D8C00729D2C /* asLJCoreAsynchronous.m */,
 				719A033715A0F35700D43163 /* LJAccount.h */,
 				719A033815A0F35700D43163 /* LJAccount.m */,
 				710199FF15A0EFD900B8030E /* LJCall.h */,
@@ -189,7 +183,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				71E6747A15969D8C00729D2C /* asLJCore.h in Headers */,
-				71E6747C15969D8C00729D2C /* asLJCoreAsynchronous.h in Headers */,
 				719A033915A0F35700D43163 /* LJAccount.h in Headers */,
 				71019A0015A0EFE300B8030E /* LJCall.h in Headers */,
 				71E6747E15969D8C00729D2C /* LJEntry.h in Headers */,
@@ -269,7 +262,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				71E6747B15969D8C00729D2C /* asLJCore.m in Sources */,
-				71E6747D15969D8C00729D2C /* asLJCoreAsynchronous.m in Sources */,
 				71E6747F15969D8C00729D2C /* LJEntry.m in Sources */,
 				71E6748315969D9F00729D2C /* NSString+MD5.m in Sources */,
 				710199E615A0DCEC00B8030E /* asLJCoreKeychain.m in Sources */,

@@ -35,7 +35,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "asLJCoreAsynchronous.h"
 #import "LJAccount.h"
 #import "LJCall.h"
 #import "LJEntry.h"
