@@ -98,9 +98,9 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
 			  withUsername:(NSString *)username
 			  withPassword:(NSString *)password;
 
-+ (void)deleteAccount:(NSString *)account;
++ (void)deleteAccount:(LJAccount *)account;
 
-+ (void)editAccount:(NSString *)account
++ (void)editAccount:(LJAccount *)account
 		  setServer:(NSString *)server
 		setUsername:(NSString *)username
 		setPassword:(NSString *)password;
@@ -119,18 +119,18 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
                            NSString *defaultPicUrl)
                    )successBlock
           onError:(void(^)(NSError *error))failureBlock;
-+ (NSDictionary *)loginTo:(NSString *)account
++ (NSDictionary *)loginTo:(LJAccount *)account
 					error:(NSError **)anError;
-+ (NSDictionary *)loginTo:(NSString *)account;
++ (NSDictionary *)loginTo:(LJAccount *)account;
 
 + (LJCall)getDayCountsFor:(LJAccount *)account
               withJournal:(NSString *)journal
                 onSuccess:(void(^)(NSDictionary *dayCounts))successBlock
                   onError:(void(^)(NSError *error))failureBlock;
-+ (NSDictionary *)getDayCountsFor:(NSString *)account
++ (NSDictionary *)getDayCountsFor:(LJAccount *)account
 					  withJournal:(NSString *)journal
 							error:(NSError **)anError;
-+ (NSDictionary *)getDayCountsFor:(NSString *)account
++ (NSDictionary *)getDayCountsFor:(LJAccount *)account
 					  withJournal:(NSString *)journal;
 
 + (LJCall)getEntriesFor:(LJAccount *)account
@@ -138,11 +138,11 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
                  onDate:(NSCalendarDate *)date
               onSuccess:(void(^)(NSDictionary *entries))successBlock
                 onError:(void(^)(NSError *error))failureBlock;
-+ (NSDictionary *)getEntriesFor:(NSString *)account
++ (NSDictionary *)getEntriesFor:(LJAccount *)account
 					withJournal:(NSString *)journal
 						 onDate:(NSCalendarDate *)date
 						  error:(NSError **)anError;
-+ (NSDictionary *)getEntriesFor:(NSString *)account
++ (NSDictionary *)getEntriesFor:(LJAccount *)account
 					withJournal:(NSString *)journal
 						 onDate:(NSCalendarDate *)date;
 
@@ -150,10 +150,10 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
          withJournal:(NSString *)journal
            onSuccess:(void(^)(NSArray *tags))successBlock
              onError:(void(^)(NSError *error))failureBlock;
-+ (NSArray *)getTagsFor:(NSString *)account
++ (NSArray *)getTagsFor:(LJAccount *)account
 			withJournal:(NSString *)journal
 				  error:(NSError **)anError;
-+ (NSArray *)getTagsFor:(NSString *)account
++ (NSArray *)getTagsFor:(LJAccount *)account
 			withJournal:(NSString *)journal;
 
 + (LJCall)deleteEntryFor:(LJAccount *)account
@@ -161,33 +161,33 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
               withItemID:(NSString *)itemid
                onSuccess:(void(^)())successBlock
                  onError:(void(^)(NSError *error))failureBlock;
-+ (BOOL)deleteEntryFor:(NSString *)account
++ (BOOL)deleteEntryFor:(LJAccount *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid
 				 error:(NSError **)anError;
-+ (void)deleteEntryFor:(NSString *)account
++ (void)deleteEntryFor:(LJAccount *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid;
 
 + (LJCall)getSessionCookieFor:(LJAccount *)account
                     onSuccess:(void(^)(NSString *sessionCookie))successBlock
                       onError:(void(^)(NSError *error))failureBlock;
-+ (NSString *)getSessionCookieFor:(NSString *)account
++ (NSString *)getSessionCookieFor:(LJAccount *)account
 							error:(NSError **)anError;
-+ (NSString *)getSessionCookieFor:(NSString *)account;
++ (NSString *)getSessionCookieFor:(LJAccount *)account;
 
 + (NSString *)makeLoggedInCookieFromSessionCookie:(NSString *)sessionCookie;
 + (NSHTTPCookie *)makeSessionNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
-												forAccount:(NSString *)account;
+												forAccount:(LJAccount *)account;
 + (NSHTTPCookie *)makeLoggedInNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
-												 forAccount:(NSString *)account;
+												 forAccount:(LJAccount *)account;
 
 + (LJCall)getFriendsFor:(LJAccount *)account
               onSuccess:(void(^)(NSArray *friends))successBlock
                 onError:(void(^)(NSError *error))failureBlock;
-+ (NSArray *)getFriendsFor:(NSString *)account
++ (NSArray *)getFriendsFor:(LJAccount *)account
 					 error:(NSError **)anError;
-+ (NSArray *)getFriendsFor:(NSString *)account;
++ (NSArray *)getFriendsFor:(LJAccount *)account;
 
 + (LJCall)getLJPastEntryWithItemid:(NSNumber *)theItemid
                         forJournal:(NSString *)theJournal

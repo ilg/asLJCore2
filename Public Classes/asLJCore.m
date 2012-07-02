@@ -118,20 +118,18 @@ static NSString *keychainItemName;
 									 withPassword:password];
 }
 
-+ (void)deleteAccount:(NSString *)accountString
++ (void)deleteAccount:(LJAccount *)account
 {
-    LJAccount *account = [LJAccount accountFromString:accountString];
 	[asLJCoreKeychain deleteKeychainItemByLabel:keychainItemName
 									withAccount:[account username]
 									 withServer:[account server]];
 }
 
-+ (void)editAccount:(NSString *)accountString
++ (void)editAccount:(LJAccount *)account
 		  setServer:(NSString *)server
 		setUsername:(NSString *)username
 		setPassword:(NSString *)password
 {
-    LJAccount *account = [LJAccount accountFromString:accountString];
 	[asLJCoreKeychain editKeychainItemByLabel:keychainItemName
 								  withAccount:[account username]
 								   withServer:[account server]
@@ -145,11 +143,10 @@ static NSString *keychainItemName;
 #pragma mark internal/convenience
 
 + (NSDictionary *)convenientCall:(NSString *)methodName
-					  forAccount:(NSString *)accountString
+					  forAccount:(LJAccount *)account
 					  withParams:(NSDictionary *)params
 						   error:(NSError **)anError
 {
-    LJAccount *account = [LJAccount accountFromString:accountString];
 	NSError *myError;
     NSDictionary *callResult = [LJxmlrpc2 synchronousCallMethod:methodName
                                                  withParameters:params
@@ -226,14 +223,13 @@ static NSString *keychainItemName;
             }];
 }
 
-+ (NSDictionary *)loginTo:(NSString *)accountString
++ (NSDictionary *)loginTo:(LJAccount *)account
 					error:(NSError **)anError
 {
 	NSDictionary *theResult;
 	NSError *myError;
-    LJAccount *account = [LJAccount accountFromString:accountString];
 	NSDictionary *theCall =[self convenientCall:kLJXmlRpcMethodLogin
-									 forAccount:accountString
+									 forAccount:account
 									 withParams:[self parametersForLoginTo:account]
 										  error:&myError]; 
 	if (!theCall) {
@@ -248,7 +244,7 @@ static NSString *keychainItemName;
 	return theResult;
 }
 
-+ (NSDictionary *)loginTo:(NSString *)account
++ (NSDictionary *)loginTo:(LJAccount *)account
 {
 	return [self loginTo:account error:NULL];
 }
@@ -289,7 +285,7 @@ static NSString *keychainItemName;
             }];
 }
 
-+ (NSDictionary *)getDayCountsFor:(NSString *)account
++ (NSDictionary *)getDayCountsFor:(LJAccount *)account
 					  withJournal:(NSString *)journal
 							error:(NSError **)anError
 {
@@ -310,7 +306,7 @@ static NSString *keychainItemName;
 	return theResult;
 }
 
-+ (NSDictionary *)getDayCountsFor:(NSString *)account
++ (NSDictionary *)getDayCountsFor:(LJAccount *)account
 					  withJournal:(NSString *)journal
 {
 	return [self getDayCountsFor:account withJournal:journal error:NULL];
@@ -372,7 +368,7 @@ static NSString *keychainItemName;
             }];
 }
 
-+ (NSDictionary *)getEntriesFor:(NSString *)account
++ (NSDictionary *)getEntriesFor:(LJAccount *)account
 					withJournal:(NSString *)journal
 						 onDate:(NSCalendarDate *)date
 						  error:(NSError **)anError
@@ -395,7 +391,7 @@ static NSString *keychainItemName;
 	return theResult;
 }
 
-+ (NSDictionary *)getEntriesFor:(NSString *)account
++ (NSDictionary *)getEntriesFor:(LJAccount *)account
 					withJournal:(NSString *)journal
 						 onDate:(NSCalendarDate *)date
 {
@@ -437,7 +433,7 @@ static NSString *keychainItemName;
             }];
 }
 
-+ (NSArray *)getTagsFor:(NSString *)account
++ (NSArray *)getTagsFor:(LJAccount *)account
 			withJournal:(NSString *)journal
 				  error:(NSError **)anError
 {
@@ -458,7 +454,7 @@ static NSString *keychainItemName;
 	return theResult;
 }
 
-+ (NSArray *)getTagsFor:(NSString *)account
++ (NSArray *)getTagsFor:(LJAccount *)account
 			withJournal:(NSString *)journal
 {
 	return [self getTagsFor:account withJournal:journal error:NULL];
@@ -499,7 +495,7 @@ static NSString *keychainItemName;
             }];
 }
 
-+ (BOOL)deleteEntryFor:(NSString *)account
++ (BOOL)deleteEntryFor:(LJAccount *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid
 				 error:(NSError **)anError
@@ -523,7 +519,7 @@ static NSString *keychainItemName;
 	return theResult;
 }
 
-+ (void)deleteEntryFor:(NSString *)account
++ (void)deleteEntryFor:(LJAccount *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid
 {
@@ -554,7 +550,7 @@ static NSString *keychainItemName;
             }];
 }
 
-+ (NSString *)getSessionCookieFor:(NSString *)account
++ (NSString *)getSessionCookieFor:(LJAccount *)account
 							error:(NSError **)anError
 {
 	NSString *theResult;
@@ -574,7 +570,7 @@ static NSString *keychainItemName;
 	return theResult;
 }
 
-+ (NSString *)getSessionCookieFor:(NSString *)account
++ (NSString *)getSessionCookieFor:(LJAccount *)account
 {
 	return [self getSessionCookieFor:account error:NULL];
 }
@@ -587,9 +583,9 @@ static NSString *keychainItemName;
 }
 
 + (NSHTTPCookie *)makeSessionNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
-												forAccount:(NSString *)account
+												forAccount:(LJAccount *)account
 {
-	NSString *server = [[LJAccount accountFromString:account] server];
+	NSString *server = [account server];
 	NSString *cookieDomain;
 	if ([server hasPrefix:@"www."]) {
 		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
@@ -606,9 +602,9 @@ static NSString *keychainItemName;
 }
 
 + (NSHTTPCookie *)makeLoggedInNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
-												 forAccount:(NSString *)account
+												 forAccount:(LJAccount *)account
 {
-	NSString *server = [[LJAccount accountFromString:account] server];
+	NSString *server = [account server];
 	NSString *cookieDomain;
 	if ([server hasPrefix:@"www."]) {
 		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
@@ -671,7 +667,7 @@ static NSString *keychainItemName;
             }];
 }
 
-+ (NSArray *)getFriendsFor:(NSString *)account
++ (NSArray *)getFriendsFor:(LJAccount *)account
 					 error:(NSError **)anError
 {
 	NSArray *theResult;
@@ -691,7 +687,7 @@ static NSString *keychainItemName;
 	return theResult;
 }
 
-+ (NSArray *)getFriendsFor:(NSString *)account
++ (NSArray *)getFriendsFor:(LJAccount *)account
 {
 	return [self getFriendsFor:account error:NULL];
 }
