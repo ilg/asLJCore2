@@ -33,6 +33,7 @@
 //
 
 #import "LJxmlrpc2.h"
+#import "LJErrors.h"
 #import "asLJCoreKeychain.h"
 #import "NSString+MD5.h"
 
@@ -56,6 +57,8 @@ NSString * const kLJXmlRpcMethodPostEvent = @"postevent";
 NSString * const kLJXmlRpcMethodSessionExpire = @"sessionexpire";
 NSString * const kLJXmlRpcMethodSessionGenerate = @"sessiongenerate";
 NSString * const kLJXmlRpcMethodSyncItems = @"syncitems";
+// internal use only, so not in the header:
+NSString * const kLJXmlRpcMethodNamespacePrefix = @"LJ.XMLRPC.";
 
 // parameter dictionary keys
 NSString * const kLJXmlRpcParameterGetPicKwsKey = @"getpickws";
@@ -74,6 +77,14 @@ NSString * const kLJXmlRpcParameterItemIdKey = @"itemid";
 NSString * const kLJXmlRpcParameterEventKey = @"event";
 NSString * const kLJXmlRpcParameterSubjectKey = @"subject";
 NSString * const kLJXmlRpcParameterIncludeBDaysKey = @"includebdays";
+// internal use only, so not in the header:
+NSString * const kLJXmlRpcParameterAuthMethodKey = @"auth_method";
+NSString * const kLJXmlRpcParameterAuthChallengeKey = @"auth_challenge";
+NSString * const kLJXmlRpcParameterAuthResponseKey = @"auth_response";
+NSString * const kLJXmlRpcParameterUsernameKey = @"username";
+NSString * const kLJXmlRpcParameterProtocolVersionKey = @"ver";
+NSString * const kLJXmlRpcParameterClientVersionKey = @"clientversion";
+NSString * const kLJXmlRpcParameterDictionaryKey = @"param";
 
 // parameter dictionary values
 NSString * const kLJXmlRpcParameterYes = @"1";
@@ -82,8 +93,37 @@ NSString * const kLJXmlRpcParameterEmpty = @"";
 NSString * const kLJXmlRpcParameterMacLineEndings = @"mac";
 NSString * const kLJXmlRpcParameterDaySelectType = @"day";
 NSString * const kLJXmlRpcParameterOneSelectType = @"one";
+// internal use only, so not in the header:
+NSString * const kLJXmlRpcParameterAuthMethodChallenge = @"challenge";
+NSString * const kLJXmlRpcParameterProtocolVersion1 = @"1";
 
 // result dictionary keys
+NSString * const kLJXmlRpcResultMoodStringKey = @"name";
+NSString * const kLJXmlRpcResultMoodIdKey = @"id";
+NSString * const kLJXmlRpcResultDayCountsKey = @"daycounts";
+NSString * const kLJXmlRpcResultDayCountsDateKey = @"date";
+NSString * const kLJXmlRpcResultDayCountsCountKey = @"count";
+NSString * const kLJXmlRpcResultEventsKey = @"events";
+NSString * const kLJXmlRpcResultEventsEventTimeKey = @"eventtime";
+NSString * const kLJXmlRpcResultEventsEventKey = @"event";
+NSString * const kLJXmlRpcResultEventsUrlKey = @"url";
+NSString * const kLJXmlRpcResultEventsItemIdKey = @"itemid";
+NSString * const kLJXmlRpcResultTagsKey = @"tags";
+NSString * const kLJXmlRpcResultTagNameKey = @"name";
+NSString * const kLJXmlRpcResultSessionKey = @"ljsession";
+NSString * const kLJXmlRpcResultFriendsKey = @"friends";
+NSString * const kLJXmlRpcResultFriendUsernameKey = @"username";
+NSString * const kLJXmlRpcResultFriendFullNameKey = @"fullname";
+NSString * const kLJXmlRpcResultFriendIdentityTypeKey = @"identity_type";
+NSString * const kLJXmlRpcResultFriendIdentityValueKey = @"identity_value";
+NSString * const kLJXmlRpcResultFriendIdentityDisplayKey = @"identity_display";
+NSString * const kLJXmlRpcResultFriendTypeKey = @"type";
+NSString * const kLJXmlRpcResultFriendBirthdayKey = @"birthday";
+NSString * const kLJXmlRpcResultFriendFGColorKey = @"fgcolor";
+NSString * const kLJXmlRpcResultFriendBGColorKey = @"bgcolor";
+NSString * const kLJXmlRpcResultFriendGroupMaskKey = @"groupmask";
+// internal use only, so not in the header:
+NSString * const kLJXmlRpcResultChallenge = @"challenge";
 
 
 @interface LJxmlrpc2 ()
@@ -152,7 +192,7 @@ static NSString *clientVersion;
 	VLOG(@"Calling method %@ for %@@%@...", methodName, username, serverURL);
 	// [serverURL] is something like http://www.livejournal.com/interface/xmlrpc
     
-    NSString *method = [NSString stringWithFormat:@"LJ.XMLRPC.%@", methodName];
+    NSString *method = [kLJXmlRpcMethodNamespacePrefix stringByAppendingString:methodName];
     
     WSMethodInvocationRef invocation = WSMethodInvocationCreate((CFURLRef)[NSURL URLWithString:serverURL], (CFStringRef)method, kWSXMLRPCProtocol);
     WSMethodInvocationSetParameters(invocation, (CFDictionaryRef)parameters, nil);
@@ -162,7 +202,7 @@ static NSString *clientVersion;
 
     if (WSMethodResultIsFault(result)) {
         if (error != NULL) {
-            *error = [NSError errorWithDomain:@"asLJCore2 Error"
+            *error = [NSError errorWithDomain:asLJCore_ErrorDomain
                                          code:[(NSNumber *)CFDictionaryGetValue(result, kWSFaultCode) integerValue]
                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
                                                CFDictionaryGetValue(result, kWSFaultString), NSLocalizedDescriptionKey,
@@ -187,7 +227,7 @@ static NSString *clientVersion;
     NSDate *methodStart = [NSDate date];
 #endif
     
-    NSDictionary *challengeResult = [self rawSynchronousCallMethod:@"getchallenge"
+    NSDictionary *challengeResult = [self rawSynchronousCallMethod:kLJXmlRpcMethodGetChallenge
                                                     withParameters:nil
                                                              atUrl:serverURL
                                                            forUser:username
@@ -200,7 +240,7 @@ static NSString *clientVersion;
         return nil;
     }
     DLOG(@"getting challenge succeeded; calling %@...", methodName);
-    NSString *authChallenge = [challengeResult objectForKey:@"challenge"];
+    NSString *authChallenge = [challengeResult objectForKey:kLJXmlRpcResultChallenge];
     // set response to md5( challenge + md5([password]) )   where md5() returns the hex digest
     NSString *serverFQDN = [[serverURL componentsSeparatedByString:@"/"] objectAtIndex:2];
     NSString *pwdMD5 = [[asLJCoreKeychain getPasswordByLabel:keychainItemName
@@ -219,17 +259,17 @@ static NSString *clientVersion;
      */
     NSMutableDictionary *theParameters = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:
-                                          @"challenge", @"auth_method",
-                                          authChallenge, @"auth_challenge",
-                                          authResponse, @"auth_response",
-                                          username, @"username",
-                                          @"1", @"ver",
-                                          clientVersion, @"clientversion",
+                                          kLJXmlRpcParameterAuthMethodChallenge, kLJXmlRpcParameterAuthMethodKey,
+                                          authChallenge, kLJXmlRpcParameterAuthChallengeKey,
+                                          authResponse, kLJXmlRpcParameterAuthResponseKey,
+                                          username, kLJXmlRpcParameterUsernameKey,
+                                          kLJXmlRpcParameterProtocolVersion1, kLJXmlRpcParameterProtocolVersionKey,
+                                          clientVersion, kLJXmlRpcParameterClientVersionKey,
                                           nil
                                           ];
     [theParameters addEntriesFromDictionary:parameters];
     NSDictionary *result = [self rawSynchronousCallMethod:methodName
-                                           withParameters:[NSDictionary dictionaryWithObject:theParameters forKey:@"param"]
+                                           withParameters:[NSDictionary dictionaryWithObject:theParameters forKey:kLJXmlRpcParameterDictionaryKey]
                                                     atUrl:serverURL
                                                   forUser:username
                                                     error:&myError];

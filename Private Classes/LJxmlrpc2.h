@@ -85,6 +85,33 @@ extern NSString * const kLJXmlRpcParameterMacLineEndings;
 extern NSString * const kLJXmlRpcParameterDaySelectType;
 extern NSString * const kLJXmlRpcParameterOneSelectType;
 
+// result dictionary keys
+extern NSString * const kLJXmlRpcResultMoodStringKey;
+extern NSString * const kLJXmlRpcResultMoodIdKey;
+extern NSString * const kLJXmlRpcResultDayCountsKey;
+extern NSString * const kLJXmlRpcResultDayCountsDateKey;
+extern NSString * const kLJXmlRpcResultDayCountsCountKey;
+extern NSString * const kLJXmlRpcResultEventsKey;
+extern NSString * const kLJXmlRpcResultEventsEventTimeKey;
+extern NSString * const kLJXmlRpcResultEventsEventKey;
+extern NSString * const kLJXmlRpcResultEventsUrlKey;
+extern NSString * const kLJXmlRpcResultEventsItemIdKey;
+extern NSString * const kLJXmlRpcResultTagsKey;
+extern NSString * const kLJXmlRpcResultTagNameKey;
+extern NSString * const kLJXmlRpcResultSessionKey;
+extern NSString * const kLJXmlRpcResultFriendsKey;
+extern NSString * const kLJXmlRpcResultFriendUsernameKey;
+extern NSString * const kLJXmlRpcResultFriendFullNameKey;
+extern NSString * const kLJXmlRpcResultFriendIdentityTypeKey;
+extern NSString * const kLJXmlRpcResultFriendIdentityValueKey;
+extern NSString * const kLJXmlRpcResultFriendIdentityDisplayKey;
+extern NSString * const kLJXmlRpcResultFriendTypeKey;
+extern NSString * const kLJXmlRpcResultFriendBirthdayKey;
+extern NSString * const kLJXmlRpcResultFriendFGColorKey;
+extern NSString * const kLJXmlRpcResultFriendBGColorKey;
+extern NSString * const kLJXmlRpcResultFriendGroupMaskKey;
+#define kLJXmlRpcResultFriendsDictionaryKeys [NSArray arrayWithObjects: kLJXmlRpcResultFriendUsernameKey, kLJXmlRpcResultFriendFullNameKey, kLJXmlRpcResultFriendIdentityTypeKey, kLJXmlRpcResultFriendIdentityValueKey, kLJXmlRpcResultFriendIdentityDisplayKey, kLJXmlRpcResultFriendTypeKey, kLJXmlRpcResultFriendBirthdayKey, kLJXmlRpcResultFriendFGColorKey, kLJXmlRpcResultFriendBGColorKey, kLJXmlRpcResultFriendGroupMaskKey, nil]
+
 @interface LJxmlrpc2 : NSObject <LJCancelable> {
 @private
     BOOL cancelled;

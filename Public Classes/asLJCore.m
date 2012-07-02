@@ -181,8 +181,8 @@ static NSString *keychainItemName;
     NSMutableArray *newMoodStrings = [NSMutableArray arrayWithCapacity:[newMoods count]];
     NSMutableArray *newMoodIDs = [NSMutableArray arrayWithCapacity:[newMoods count]];
     for (id theNewMood in newMoods) {
-        [newMoodStrings addObject:[theNewMood objectForKey:@"name"]];
-        [newMoodIDs addObject:[theNewMood objectForKey:@"id"]];
+        [newMoodStrings addObject:[theNewMood objectForKey:kLJXmlRpcResultMoodStringKey]];
+        [newMoodIDs addObject:[theNewMood objectForKey:kLJXmlRpcResultMoodIdKey]];
     }
     [LJMoods addNewMoods:newMoodStrings
                  withIDs:newMoodIDs
@@ -258,12 +258,12 @@ static NSString *keychainItemName;
 }
 + (NSDictionary *)processGetDayCountsResult:(NSDictionary *)result
 {
-    NSArray *dayCountArray = [result objectForKey:@"daycounts"];
+    NSArray *dayCountArray = [result objectForKey:kLJXmlRpcResultDayCountsKey];
     VLOG(@"Got counts for %d days", [dayCountArray count]);
     NSMutableDictionary *temporaryResults = [NSMutableDictionary dictionaryWithCapacity:[dayCountArray count]];
     for (id theDayCount in dayCountArray) {
-        [temporaryResults setObject:[theDayCount objectForKey:@"count"]
-                             forKey:[theDayCount objectForKey:@"date"]];
+        [temporaryResults setObject:[theDayCount objectForKey:kLJXmlRpcResultDayCountsCountKey]
+                             forKey:[theDayCount objectForKey:kLJXmlRpcResultDayCountsDateKey]];
     }
     return [NSDictionary dictionaryWithDictionary:temporaryResults];
 }
@@ -332,19 +332,19 @@ static NSString *keychainItemName;
 }
 + (NSDictionary *)processGetEntriesResult:(NSDictionary *)result
 {
-    NSArray *eventArray = [result objectForKey:@"events"];
+    NSArray *eventArray = [result objectForKey:kLJXmlRpcResultEventsKey];
     VLOG(@"Got %d events",[eventArray count]);
     NSMutableDictionary *temporaryResults = [NSMutableDictionary dictionaryWithCapacity:[eventArray count]];
     for (id anEvent in eventArray) {
         [temporaryResults setObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                      [NSString stringWithFormat:@"[%@] %@",
-                                      [[[anEvent objectForKey:@"eventtime"] 
+                                      [[[anEvent objectForKey:kLJXmlRpcResultEventsEventTimeKey] 
                                         componentsSeparatedByString:@" "] lastObject],
-                                      [anEvent objectForKey:@"event"]],
+                                      [anEvent objectForKey:kLJXmlRpcResultEventsEventKey]],
                                      @"title",
-                                     [anEvent objectForKey:@"url"],@"url",
+                                     [anEvent objectForKey:kLJXmlRpcResultEventsUrlKey],@"url",
                                      nil]
-                             forKey:[anEvent objectForKey:@"itemid"]];
+                             forKey:[anEvent objectForKey:kLJXmlRpcResultEventsItemIdKey]];
     }
     return [NSDictionary dictionaryWithDictionary:temporaryResults];
 }
@@ -407,11 +407,11 @@ static NSString *keychainItemName;
 }
 + (NSArray *)processGetTagsResult:(NSDictionary *)result
 {
-    NSArray *tagsArray = [result objectForKey:@"tags"];
+    NSArray *tagsArray = [result objectForKey:kLJXmlRpcResultTagsKey];
     VLOG(@"Got %d tags",[tagsArray count]);
     NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[tagsArray count]];
     for (id aTag in tagsArray) {
-        [temporaryResults addObject:[aTag objectForKey:@"name"]];
+        [temporaryResults addObject:[aTag objectForKey:kLJXmlRpcResultTagNameKey]];
     }
     return [NSArray arrayWithArray:temporaryResults];
 }
@@ -531,7 +531,7 @@ static NSString *keychainItemName;
 + (NSString *)processGetSessionCookieResult:(NSDictionary *)result
 {
     VLOG(@"Got session cookie.");
-    return [NSString stringWithString:[result objectForKey:@"ljsession"]];
+    return [NSString stringWithString:[result objectForKey:kLJXmlRpcResultSessionKey]];
 }
 + (LJCall)getSessionCookieFor:(LJAccount *)account
                     onSuccess:(void(^)(NSString *sessionCookie))successBlock
@@ -582,16 +582,19 @@ static NSString *keychainItemName;
 			componentsJoinedByString:@":"];
 }
 
++ (NSString *)getCookieDomainForServer:(NSString *)server
+{
+	if ([server hasPrefix:@"www."]) {
+		return [NSString stringWithFormat:@".%@", [server substringFromIndex:4]];
+	} else {
+		return [NSString stringWithFormat:@".%@", server];
+	}
+}
+
 + (NSHTTPCookie *)makeSessionNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
 												forAccount:(LJAccount *)account
 {
-	NSString *server = [account server];
-	NSString *cookieDomain;
-	if ([server hasPrefix:@"www."]) {
-		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
-	} else {
-		cookieDomain = [NSString stringWithFormat:@".%@",server];
-	}
+	NSString *cookieDomain = [self getCookieDomainForServer:[account server]];
 	return [NSHTTPCookie
 			cookieWithProperties:[NSDictionary dictionaryWithObjectsAndKeys:
 								  @"ljsession",NSHTTPCookieName,
@@ -604,13 +607,7 @@ static NSString *keychainItemName;
 + (NSHTTPCookie *)makeLoggedInNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
 												 forAccount:(LJAccount *)account
 {
-	NSString *server = [account server];
-	NSString *cookieDomain;
-	if ([server hasPrefix:@"www."]) {
-		cookieDomain = [NSString stringWithFormat:@".%@",[server substringFromIndex:4]];
-	} else {
-		cookieDomain = [NSString stringWithFormat:@".%@",server];
-	}
+	NSString *cookieDomain = [self getCookieDomainForServer:[account server]];
 	NSString *loggedInCookie = [self makeLoggedInCookieFromSessionCookie:sessionCookie];
 	return [NSHTTPCookie
 			cookieWithProperties:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -631,22 +628,16 @@ static NSString *keychainItemName;
 }
 + (NSArray *)processGetFriendsResult:(NSDictionary *)result
 {
-    NSArray *friends = [result objectForKey:@"friends"];
+    NSArray *friends = [result objectForKey:kLJXmlRpcResultFriendsKey];
     VLOG(@"Got %d friends", [friends count]);
     NSMutableArray *temporaryResults = [NSMutableArray arrayWithCapacity:[friends count]];
     for (NSDictionary *aFriend in friends) {
-        [temporaryResults addObject:[NSDictionary dictionaryWithObjectsAndKeys:// (value,key), nil to end
-                                     NIL2EMPTY([aFriend objectForKey:@"username"]),@"username",
-                                     NIL2EMPTY([aFriend objectForKey:@"fullname"]),@"fullname",
-                                     NIL2EMPTY([aFriend objectForKey:@"identity_type"]),@"identity_type",
-                                     NIL2EMPTY([aFriend objectForKey:@"identity_value"]),@"identity_value",
-                                     NIL2EMPTY([aFriend objectForKey:@"identity_display"]),@"identity_display",
-                                     NIL2EMPTY([aFriend objectForKey:@"type"]),@"type",
-                                     NIL2EMPTY([aFriend objectForKey:@"birthday"]),@"birthday",
-                                     NIL2EMPTY([aFriend objectForKey:@"fgcolor"]),@"fgcolor",
-                                     NIL2EMPTY([aFriend objectForKey:@"bgcolor"]),@"bgcolor",
-                                     NIL2EMPTY([aFriend objectForKey:@"groupmask"]),@"groupmask",
-                                     nil]]; 
+        NSArray *keys = kLJXmlRpcResultFriendsDictionaryKeys;
+        NSMutableDictionary *cleanedFriend = [NSMutableDictionary dictionaryWithCapacity:[keys count]];
+        [keys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            [cleanedFriend setObject:NIL2EMPTY([aFriend objectForKey:obj]) forKey:obj];
+        }];
+        [temporaryResults addObject:cleanedFriend];
     }
     return [NSArray arrayWithArray:temporaryResults];
 }
@@ -713,10 +704,10 @@ static NSString *keychainItemName;
             success:^(NSDictionary *result) {
                 // extract the one event we want and its metadata "props"
                 NSMutableDictionary *theEvent = [NSMutableDictionary dictionaryWithDictionary:
-                                                 [[result objectForKey:@"events"] lastObject]];
+                                                 [[result objectForKey:kLJXmlRpcResultEventsKey] lastObject]];
                 
                 // parse out the eventtime
-                NSString *eventtime = [theEvent objectForKey:@"eventtime"];  // "YYYY-MM-DD hh:mm:00"
+                NSString *eventtime = [theEvent objectForKey:kLJXmlRpcResultEventsEventTimeKey];  // "YYYY-MM-DD hh:mm:00"
                 [theEvent setObject:[eventtime substringWithRange:NSMakeRange(0, 4)]
                              forKey:@"year"];
                 [theEvent setObject:[eventtime substringWithRange:NSMakeRange(5, 2)]
@@ -765,7 +756,7 @@ static NSString *keychainItemName;
             atUrl:SERVER2URL([account server])
             forUser:[account username]
             success:^(NSDictionary *result) {
-                NSString *postUrl = [result objectForKey:@"url"];
+                NSString *postUrl = [result objectForKey:kLJXmlRpcResultEventsUrlKey];
                 if (postUrl) {
                     postUrl = [NSString stringWithString:postUrl];
                 }
@@ -798,7 +789,7 @@ static NSString *keychainItemName;
             atUrl:SERVER2URL([account server])
             forUser:[account username]
             success:^(NSDictionary *result) {
-                NSString *postUrl = [result objectForKey:@"url"];
+                NSString *postUrl = [result objectForKey:kLJXmlRpcResultEventsUrlKey];
                 if (postUrl) {
                     postUrl = [NSString stringWithString:postUrl];
                 }
