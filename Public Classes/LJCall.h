@@ -26,7 +26,7 @@
  *********************************************************************************/
 
 //
-//  LJCancelable.h
+//  LJCall.h
 //  asLJCore
 //
 //  Created by Isaac Greenspan on 7/1/12.
@@ -35,3 +35,6 @@
 @protocol LJCancelable
 - (void)cancel;
 @end
+
+typedef NSObject<LJCancelable>* LJCall;
+

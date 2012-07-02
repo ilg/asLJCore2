@@ -15,7 +15,7 @@
 		710199EC15A0DCEC00B8030E /* LJMoods.m in Sources */ = {isa = PBXBuildFile; fileRef = 710199E215A0DCEC00B8030E /* LJMoods.m */; };
 		710199ED15A0DCEC00B8030E /* LJxmlrpc2.h in Headers */ = {isa = PBXBuildFile; fileRef = 710199E315A0DCEC00B8030E /* LJxmlrpc2.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		710199EE15A0DCEC00B8030E /* LJxmlrpc2.m in Sources */ = {isa = PBXBuildFile; fileRef = 710199E415A0DCEC00B8030E /* LJxmlrpc2.m */; };
-		71019A0015A0EFE300B8030E /* LJCancelable.h in Headers */ = {isa = PBXBuildFile; fileRef = 710199FF15A0EFD900B8030E /* LJCancelable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		71019A0015A0EFE300B8030E /* LJCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 710199FF15A0EFD900B8030E /* LJCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		719A033915A0F35700D43163 /* LJAccount.h in Headers */ = {isa = PBXBuildFile; fileRef = 719A033715A0F35700D43163 /* LJAccount.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		719A033A15A0F35700D43163 /* LJAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 719A033815A0F35700D43163 /* LJAccount.m */; };
 		719F7F23102EA02100D06772 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 719F7F22102EA02100D06772 /* Security.framework */; };
@@ -47,7 +47,7 @@
 		710199E315A0DCEC00B8030E /* LJxmlrpc2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJxmlrpc2.h; sourceTree = "<group>"; };
 		710199E415A0DCEC00B8030E /* LJxmlrpc2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJxmlrpc2.m; sourceTree = "<group>"; };
 		710199EF15A0DD0900B8030E /* asLJCore_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asLJCore_Prefix.pch; sourceTree = "<group>"; };
-		710199FF15A0EFD900B8030E /* LJCancelable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LJCancelable.h; sourceTree = "<group>"; };
+		710199FF15A0EFD900B8030E /* LJCall.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LJCall.h; sourceTree = "<group>"; };
 		719A033715A0F35700D43163 /* LJAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJAccount.h; sourceTree = "<group>"; };
 		719A033815A0F35700D43163 /* LJAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJAccount.m; sourceTree = "<group>"; };
 		719F7F22102EA02100D06772 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -174,7 +174,7 @@
 				71E6746D15969D8C00729D2C /* asLJCoreAsynchronous.m */,
 				719A033715A0F35700D43163 /* LJAccount.h */,
 				719A033815A0F35700D43163 /* LJAccount.m */,
-				710199FF15A0EFD900B8030E /* LJCancelable.h */,
+				710199FF15A0EFD900B8030E /* LJCall.h */,
 				71E6746E15969D8C00729D2C /* LJEntry.h */,
 				71E6746F15969D8C00729D2C /* LJEntry.m */,
 			);
@@ -191,7 +191,7 @@
 				71E6747A15969D8C00729D2C /* asLJCore.h in Headers */,
 				71E6747C15969D8C00729D2C /* asLJCoreAsynchronous.h in Headers */,
 				719A033915A0F35700D43163 /* LJAccount.h in Headers */,
-				71019A0015A0EFE300B8030E /* LJCancelable.h in Headers */,
+				71019A0015A0EFE300B8030E /* LJCall.h in Headers */,
 				71E6747E15969D8C00729D2C /* LJEntry.h in Headers */,
 				71E6747115969D8C00729D2C /* LJErrors.h in Headers */,
 				710199EB15A0DCEC00B8030E /* LJMoods.h in Headers */,

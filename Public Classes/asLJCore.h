@@ -37,11 +37,9 @@
 
 #import "asLJCoreAsynchronous.h"
 #import "LJAccount.h"
+#import "LJCall.h"
 #import "LJEntry.h"
 #import "LJErrors.h"
-
-@protocol LJCancelable;
-
 
 // for results from -loginTo:error:
 extern NSString * const kasLJCoreLJLoginFullNameKey;
@@ -112,35 +110,35 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
 #pragma mark -
 #pragma mark server interaction
 
-+ (id<LJCancelable>)loginTo:(NSString *)account
-                  onSuccess:(void(^)(NSString *fullName,
-                                     NSString *message,
-                                     NSArray *friendGroups,
-                                     NSArray *useJournals,
-                                     NSArray *picKeywords,
-                                     NSArray *picUrls,
-                                     NSString *defaultPicUrl)
-                             )successBlock
-                    onError:(void(^)(NSError *error))failureBlock;
++ (LJCall)loginTo:(LJAccount *)account
+        onSuccess:(void(^)(NSString *fullName,
+                           NSString *message,
+                           NSArray *friendGroups,
+                           NSArray *useJournals,
+                           NSArray *picKeywords,
+                           NSArray *picUrls,
+                           NSString *defaultPicUrl)
+                   )successBlock
+          onError:(void(^)(NSError *error))failureBlock;
 + (NSDictionary *)loginTo:(NSString *)account
 					error:(NSError **)anError;
 + (NSDictionary *)loginTo:(NSString *)account;
 
-+ (id<LJCancelable>)getDayCountsFor:(NSString *)account
-                        withJournal:(NSString *)journal
-                          onSuccess:(void(^)(NSDictionary *dayCounts))successBlock
-                            onError:(void(^)(NSError *error))failureBlock;
++ (LJCall)getDayCountsFor:(LJAccount *)account
+              withJournal:(NSString *)journal
+                onSuccess:(void(^)(NSDictionary *dayCounts))successBlock
+                  onError:(void(^)(NSError *error))failureBlock;
 + (NSDictionary *)getDayCountsFor:(NSString *)account
 					  withJournal:(NSString *)journal
 							error:(NSError **)anError;
 + (NSDictionary *)getDayCountsFor:(NSString *)account
 					  withJournal:(NSString *)journal;
 
-+ (id<LJCancelable>)getEntriesFor:(NSString *)account
-                      withJournal:(NSString *)journal
-                           onDate:(NSCalendarDate *)date
-                        onSuccess:(void(^)(NSDictionary *entries))successBlock
-                          onError:(void(^)(NSError *error))failureBlock;
++ (LJCall)getEntriesFor:(LJAccount *)account
+            withJournal:(NSString *)journal
+                 onDate:(NSCalendarDate *)date
+              onSuccess:(void(^)(NSDictionary *entries))successBlock
+                onError:(void(^)(NSError *error))failureBlock;
 + (NSDictionary *)getEntriesFor:(NSString *)account
 					withJournal:(NSString *)journal
 						 onDate:(NSCalendarDate *)date
@@ -149,21 +147,21 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
 					withJournal:(NSString *)journal
 						 onDate:(NSCalendarDate *)date;
 
-+ (id<LJCancelable>)getTagsFor:(NSString *)account
-                   withJournal:(NSString *)journal
-                     onSuccess:(void(^)(NSArray *tags))successBlock
-                       onError:(void(^)(NSError *error))failureBlock;
++ (LJCall)getTagsFor:(LJAccount *)account
+         withJournal:(NSString *)journal
+           onSuccess:(void(^)(NSArray *tags))successBlock
+             onError:(void(^)(NSError *error))failureBlock;
 + (NSArray *)getTagsFor:(NSString *)account
 			withJournal:(NSString *)journal
 				  error:(NSError **)anError;
 + (NSArray *)getTagsFor:(NSString *)account
 			withJournal:(NSString *)journal;
 
-+ (id<LJCancelable>)deleteEntryFor:(NSString *)account
-                       withJournal:(NSString *)journal
-                        withItemID:(NSString *)itemid
-                         onSuccess:(void(^)())successBlock
-                           onError:(void(^)(NSError *error))failureBlock;
++ (LJCall)deleteEntryFor:(LJAccount *)account
+             withJournal:(NSString *)journal
+              withItemID:(NSString *)itemid
+               onSuccess:(void(^)())successBlock
+                 onError:(void(^)(NSError *error))failureBlock;
 + (BOOL)deleteEntryFor:(NSString *)account
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid
@@ -172,9 +170,9 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
 		   withJournal:(NSString *)journal
 			withItemID:(NSString *)itemid;
 
-+ (id<LJCancelable>)getSessionCookieFor:(NSString *)account
-                              onSuccess:(void(^)(NSString *sessionCookie))successBlock
-                                onError:(void(^)(NSError *error))failureBlock;
++ (LJCall)getSessionCookieFor:(LJAccount *)account
+                    onSuccess:(void(^)(NSString *sessionCookie))successBlock
+                      onError:(void(^)(NSError *error))failureBlock;
 + (NSString *)getSessionCookieFor:(NSString *)account
 							error:(NSError **)anError;
 + (NSString *)getSessionCookieFor:(NSString *)account;
@@ -185,26 +183,26 @@ extern NSString * const kasLJCoreLJFriendTypeCommunityKey;
 + (NSHTTPCookie *)makeLoggedInNSHTTPCookieFromSessionCookie:(NSString *)sessionCookie
 												 forAccount:(NSString *)account;
 
-+ (id<LJCancelable>)getFriendsFor:(NSString *)account
-                        onSuccess:(void(^)(NSArray *friends))successBlock
-                          onError:(void(^)(NSError *error))failureBlock;
++ (LJCall)getFriendsFor:(LJAccount *)account
+              onSuccess:(void(^)(NSArray *friends))successBlock
+                onError:(void(^)(NSError *error))failureBlock;
 + (NSArray *)getFriendsFor:(NSString *)account
 					 error:(NSError **)anError;
 + (NSArray *)getFriendsFor:(NSString *)account;
 
-+ (id<LJCancelable>)getLJPastEntryWithItemid:(NSNumber *)theItemid
-                                  forJournal:(NSString *)theJournal
-                                  forAccount:(LJAccount *)account
-                                   onSuccess:(void(^)(LJPastEntry *theEntry))successBlock
-                                     onError:(void(^)(NSError *error))failureBlock;
-
-+ (id<LJCancelable>)saveLJPastEntry:(LJPastEntry *)theEntry
-                          onSuccess:(void(^)(NSString *postUrl))successBlock
-                            onError:(void(^)(NSError *error))failureBlock;
-
-+ (id<LJCancelable>)postLJNewEntry:(LJNewEntry *)theEntry
-                         onSuccess:(void(^)(NSString *postUrl))successBlock
++ (LJCall)getLJPastEntryWithItemid:(NSNumber *)theItemid
+                        forJournal:(NSString *)theJournal
+                        forAccount:(LJAccount *)account
+                         onSuccess:(void(^)(LJPastEntry *theEntry))successBlock
                            onError:(void(^)(NSError *error))failureBlock;
+
++ (LJCall)saveLJPastEntry:(LJPastEntry *)theEntry
+                onSuccess:(void(^)(NSString *postUrl))successBlock
+                  onError:(void(^)(NSError *error))failureBlock;
+
++ (LJCall)postLJNewEntry:(LJNewEntry *)theEntry
+               onSuccess:(void(^)(NSString *postUrl))successBlock
+                 onError:(void(^)(NSError *error))failureBlock;
 
 
 #pragma mark -

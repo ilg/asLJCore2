@@ -33,7 +33,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "LJCancelable.h"
+#import "LJCall.h"
 
 
 #pragma mark LJ XML-RPC client/server protocol constants

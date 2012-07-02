@@ -192,16 +192,16 @@ static NSString *keychainItemName;
                forServer:[account server]];
     return result;
 }
-+ (id<LJCancelable>)loginTo:(LJAccount *)account
-                  onSuccess:(void(^)(NSString *fullName,
-                                     NSString *message,
-                                     NSArray *friendGroups,
-                                     NSArray *useJournals,
-                                     NSArray *picKeywords,
-                                     NSArray *picUrls,
-                                     NSString *defaultPicUrl)
-                             )successBlock
-                    onError:(void(^)(NSError *error))failureBlock
++ (LJCall)loginTo:(LJAccount *)account
+        onSuccess:(void(^)(NSString *fullName,
+                           NSString *message,
+                           NSArray *friendGroups,
+                           NSArray *useJournals,
+                           NSArray *picKeywords,
+                           NSArray *picUrls,
+                           NSString *defaultPicUrl)
+                   )successBlock
+          onError:(void(^)(NSError *error))failureBlock
 {
     return [LJxmlrpc2
             asynchronousCallMethod:kLJXmlRpcMethodLogin
@@ -271,10 +271,10 @@ static NSString *keychainItemName;
     }
     return [NSDictionary dictionaryWithDictionary:temporaryResults];
 }
-+ (id<LJCancelable>)getDayCountsFor:(LJAccount *)account
-                        withJournal:(NSString *)journal
-                          onSuccess:(void(^)(NSDictionary *dayCounts))successBlock
-                            onError:(void(^)(NSError *error))failureBlock
++ (LJCall)getDayCountsFor:(LJAccount *)account
+              withJournal:(NSString *)journal
+                onSuccess:(void(^)(NSDictionary *dayCounts))successBlock
+                  onError:(void(^)(NSError *error))failureBlock
 {
     return [LJxmlrpc2
             asynchronousCallMethod:kLJXmlRpcMethodGetDayCounts
@@ -352,11 +352,11 @@ static NSString *keychainItemName;
     }
     return [NSDictionary dictionaryWithDictionary:temporaryResults];
 }
-+ (id<LJCancelable>)getEntriesFor:(LJAccount *)account
-                      withJournal:(NSString *)journal
-                           onDate:(NSCalendarDate *)date
-                        onSuccess:(void(^)(NSDictionary *entries))successBlock
-                          onError:(void(^)(NSError *error))failureBlock
++ (LJCall)getEntriesFor:(LJAccount *)account
+            withJournal:(NSString *)journal
+                 onDate:(NSCalendarDate *)date
+              onSuccess:(void(^)(NSDictionary *entries))successBlock
+                onError:(void(^)(NSError *error))failureBlock
 {
     return [LJxmlrpc2
             asynchronousCallMethod:kLJXmlRpcMethodGetEvents
@@ -419,10 +419,10 @@ static NSString *keychainItemName;
     }
     return [NSArray arrayWithArray:temporaryResults];
 }
-+ (id<LJCancelable>)getTagsFor:(LJAccount *)account
-                   withJournal:(NSString *)journal
-                     onSuccess:(void(^)(NSArray *tags))successBlock
-                       onError:(void(^)(NSError *error))failureBlock
++ (LJCall)getTagsFor:(LJAccount *)account
+         withJournal:(NSString *)journal
+           onSuccess:(void(^)(NSArray *tags))successBlock
+             onError:(void(^)(NSError *error))failureBlock
 {
     return [LJxmlrpc2
             asynchronousCallMethod:kLJXmlRpcMethodGetUserTags
@@ -478,11 +478,11 @@ static NSString *keychainItemName;
             kLJXmlRpcParameterMacLineEndings, kLJXmlRpcParameterLineEndingsKey,
             nil];
 }
-+ (id<LJCancelable>)deleteEntryFor:(LJAccount *)account
-                       withJournal:(NSString *)journal
-                        withItemID:(NSString *)itemid
-                         onSuccess:(void(^)())successBlock
-                           onError:(void(^)(NSError *error))failureBlock
++ (LJCall)deleteEntryFor:(LJAccount *)account
+             withJournal:(NSString *)journal
+              withItemID:(NSString *)itemid
+               onSuccess:(void(^)())successBlock
+                 onError:(void(^)(NSError *error))failureBlock
 {
     return [LJxmlrpc2
             asynchronousCallMethod:kLJXmlRpcMethodEditEvent
@@ -537,9 +537,9 @@ static NSString *keychainItemName;
     VLOG(@"Got session cookie.");
     return [NSString stringWithString:[result objectForKey:@"ljsession"]];
 }
-+ (id<LJCancelable>)getSessionCookieFor:(LJAccount *)account
-                              onSuccess:(void(^)(NSString *sessionCookie))successBlock
-                                onError:(void(^)(NSError *error))failureBlock
++ (LJCall)getSessionCookieFor:(LJAccount *)account
+                    onSuccess:(void(^)(NSString *sessionCookie))successBlock
+                      onError:(void(^)(NSError *error))failureBlock
 {
     return [LJxmlrpc2
             asynchronousCallMethod:kLJXmlRpcMethodSessionGenerate
@@ -654,9 +654,9 @@ static NSString *keychainItemName;
     }
     return [NSArray arrayWithArray:temporaryResults];
 }
-+ (id<LJCancelable>)getFriendsFor:(LJAccount *)account
-                        onSuccess:(void(^)(NSArray *friends))successBlock
-                          onError:(void(^)(NSError *error))failureBlock
++ (LJCall)getFriendsFor:(LJAccount *)account
+              onSuccess:(void(^)(NSArray *friends))successBlock
+                onError:(void(^)(NSError *error))failureBlock
 {
     return [LJxmlrpc2
             asynchronousCallMethod:kLJXmlRpcMethodGetFriends
@@ -697,11 +697,11 @@ static NSString *keychainItemName;
 }
 
 #pragma mark getLJPastEntry
-+ (id<LJCancelable>)getLJPastEntryWithItemid:(NSNumber *)itemId
-                                  forJournal:(NSString *)journal
-                                  forAccount:(LJAccount *)account
-                                   onSuccess:(void(^)(LJPastEntry *theEntry))successBlock
-                                     onError:(void(^)(NSError *error))failureBlock
++ (LJCall)getLJPastEntryWithItemid:(NSNumber *)itemId
+                        forJournal:(NSString *)journal
+                        forAccount:(LJAccount *)account
+                         onSuccess:(void(^)(LJPastEntry *theEntry))successBlock
+                           onError:(void(^)(NSError *error))failureBlock
 {
     return [LJxmlrpc2
             asynchronousCallMethod:kLJXmlRpcMethodGetEvents
@@ -757,9 +757,9 @@ static NSString *keychainItemName;
                   forKey:kLJXmlRpcParameterItemIdKey];
     return paramDict;
 }
-+ (id<LJCancelable>)saveLJPastEntry:(LJPastEntry *)theEntry
-                          onSuccess:(void(^)(NSString *postUrl))successBlock
-                            onError:(void(^)(NSError *error))failureBlock
++ (LJCall)saveLJPastEntry:(LJPastEntry *)theEntry
+                onSuccess:(void(^)(NSString *postUrl))successBlock
+                  onError:(void(^)(NSError *error))failureBlock
 {
     LJAccount *account = [LJAccount accountWithUsername:[theEntry account]
                                                atServer:[theEntry server]];
@@ -790,9 +790,9 @@ static NSString *keychainItemName;
                   forKey:kLJXmlRpcParameterLineEndingsKey];
     return paramDict;
 }
-+ (id<LJCancelable>)postLJNewEntry:(LJNewEntry *)theEntry
-                         onSuccess:(void(^)(NSString *postUrl))successBlock
-                           onError:(void(^)(NSError *error))failureBlock
++ (LJCall)postLJNewEntry:(LJNewEntry *)theEntry
+               onSuccess:(void(^)(NSString *postUrl))successBlock
+                 onError:(void(^)(NSError *error))failureBlock
 {
     LJAccount *account = [LJAccount accountWithUsername:[theEntry account]
                                                atServer:[theEntry server]];
