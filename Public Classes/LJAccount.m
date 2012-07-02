@@ -44,20 +44,6 @@
 @synthesize username = _username;
 @synthesize server = _server;
 
-- (LJAccount *)initFromString:(NSString *)accountString {
-    self = [super init];
-    if (self) {
-        NSArray *parts = [accountString componentsSeparatedByString:@"@"];
-        if ([parts count] == 2) {
-            [self setUsername:[parts objectAtIndex:0]];
-            [self setServer:[parts objectAtIndex:1]];
-        } else {
-            self = nil;
-        }
-    }
-    return self;
-}
-
 - (LJAccount *)initWithUsername:(NSString *)username
                        atServer:(NSString *)server
 {
@@ -71,7 +57,14 @@
 
 
 + (LJAccount *)accountFromString:(NSString *)accountString {
-    return [[[self alloc] initFromString:accountString] autorelease];
+    NSArray *parts = [accountString componentsSeparatedByString:@"@"];
+    if ([parts count] == 2) {
+        return [[[self alloc] initWithUsername:[parts objectAtIndex:0]
+                                      atServer:[parts objectAtIndex:1]
+                 ] autorelease];
+    } else {
+        return nil;
+    }
 }
 
 + (LJAccount *)accountWithUsername:(NSString *)username
